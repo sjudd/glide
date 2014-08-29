@@ -21,9 +21,9 @@ import com.bumptech.glide.request.animation.GlideAnimationFactory;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.util.LogTime;
+import com.bumptech.glide.util.Util;
 
 import java.io.File;
-import java.util.ArrayDeque;
 import java.util.Queue;
 
 /**
@@ -68,7 +68,7 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
     private boolean isRunning;
     private long startTime;
 
-    private static final Queue<GenericRequest> REQUEST_POOL = new ArrayDeque<GenericRequest>();
+    private static final Queue<GenericRequest<?, ?, ?, ?>> REQUEST_POOL = Util.createQueue(0);
 
     @SuppressWarnings("unchecked")
     public static <A, T, Z, R> GenericRequest<A, T, Z, R> obtain(

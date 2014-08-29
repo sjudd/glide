@@ -8,10 +8,10 @@ import android.util.Log;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.util.ByteArrayPool;
+import com.bumptech.glide.util.Util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayDeque;
 import java.util.EnumSet;
 import java.util.Queue;
 import java.util.Set;
@@ -22,13 +22,13 @@ import java.util.Set;
 public abstract class Downsampler implements BitmapDecoder<InputStream> {
     private static final String TAG = "Downsampler";
 
-    private static final boolean CAN_RECYCLE = Build.VERSION.SDK_INT >= 11;
+    private static final boolean CAN_RECYCLE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     private static final Set<ImageHeaderParser.ImageType> TYPES_THAT_USE_POOL = EnumSet.of(
             ImageHeaderParser.ImageType.JPEG, ImageHeaderParser.ImageType.PNG_A, ImageHeaderParser.ImageType.PNG);
 
-    private static final Queue<BitmapFactory.Options> OPTIONS_QUEUE = new ArrayDeque<BitmapFactory.Options>();
+    private static final Queue<BitmapFactory.Options> OPTIONS_QUEUE = Util.createQueue(0);
 
-    @TargetApi(11)
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private static synchronized BitmapFactory.Options getDefaultOptions() {
         BitmapFactory.Options decodeBitmapOptions;
         synchronized (OPTIONS_QUEUE) {
@@ -49,7 +49,7 @@ public abstract class Downsampler implements BitmapDecoder<InputStream> {
         }
     }
 
-    @TargetApi(11)
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private static void resetOptions(BitmapFactory.Options decodeBitmapOptions) {
         decodeBitmapOptions.inTempStorage = null;
         decodeBitmapOptions.inDither = false;
@@ -189,7 +189,7 @@ public abstract class Downsampler implements BitmapDecoder<InputStream> {
         Bitmap.Config config = getConfig(bis, decodeFormat);
         options.inSampleSize = sampleSize;
         options.inPreferredConfig = config;
-        if (options.inSampleSize == 1 || Build.VERSION.SDK_INT >= 19) {
+        if (options.inSampleSize == 1 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (shouldUsePool(bis)) {
                 setInBitmap(options, pool.get(inWidth, inHeight, config));
             }
@@ -199,7 +199,7 @@ public abstract class Downsampler implements BitmapDecoder<InputStream> {
 
     private boolean shouldUsePool(RecyclableBufferedInputStream bis) {
         // On KitKat+, any bitmap can be used to decode any other bitmap.
-        if (Build.VERSION.SDK_INT >= 19) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             return true;
         }
 
@@ -305,9 +305,9 @@ public abstract class Downsampler implements BitmapDecoder<InputStream> {
         return result;
     }
 
-    @TargetApi(11)
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private static void setInBitmap(BitmapFactory.Options options, Bitmap recycled) {
-        if (Build.VERSION.SDK_INT >= 11) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             options.inBitmap = recycled;
         }
     }
