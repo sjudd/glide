@@ -154,6 +154,8 @@ public class LruBitmapPool implements BitmapPool {
         void remove(Bitmap bitmap);
     }
 
+    @SuppressWarnings("unused")
+    // Only used for debugging
     private static class ThrowingBitmapTracker implements BitmapTracker {
         private final Set<Bitmap> bitmaps = Collections.synchronizedSet(new HashSet<Bitmap>());
 
