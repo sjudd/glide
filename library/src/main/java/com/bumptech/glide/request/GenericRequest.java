@@ -120,7 +120,7 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
     }
 
     private GenericRequest() {
-
+        // just create, instances are reused with recycle/init
     }
 
     @Override
