@@ -15,22 +15,23 @@ import com.bumptech.glide.load.Key;
 public abstract class Resource<Z> {
     private volatile int acquired;
     private volatile boolean isRecycled;
-    private ResourceListener listener;
+    private ResourceListener<Z> listener;
     private Key key;
     private boolean isCacheable;
 
-    interface ResourceListener {
-        public void onResourceReleased(Key key, Resource resource);
+    interface ResourceListener<Z> {
+        public void onResourceReleased(Key key, Resource<Z> resource);
     }
 
     /**
      * Returns an instance of the wrapped resource.
      * <p>
      *     Note - This does not have to be the same instance of the wrapped resource class and in fact it is often
-     *     appropriate to return a new instance for each call. For example, {@link android.graphics.drawable.Drawable}s
-     *     should only be used by a single View at a time so each call to this method for Resources that wrap
-     *     {@link android.graphics.drawable.Drawable}s should always return a new
-     *     {@link android.graphics.drawable.Drawable}.
+     *     appropriate to return a new instance for each call. For example,
+     *     {@link android.graphics.drawable.Drawable Drawable}s should only be used by a single
+     *     {@link android.view.View View} at a time so each call to this method for Resources that wrap
+     *     {@link android.graphics.drawable.Drawable Drawable}s should always return a new
+     *     {@link android.graphics.drawable.Drawable Drawable}.
      * </p>
      */
     public abstract Z get();
@@ -51,7 +52,7 @@ public abstract class Resource<Z> {
      */
     protected abstract void recycleInternal();
 
-    void setResourceListener(Key key, ResourceListener listener) {
+    void setResourceListener(Key key, ResourceListener<Z> listener) {
         this.key = key;
         this.listener = listener;
     }

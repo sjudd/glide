@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.UUID;
 
@@ -32,7 +31,7 @@ public class GifResourceDecoder implements ResourceDecoder<InputStream, GifDrawa
     private static final GifHeaderParserPool PARSER_POOL = new DefaultGifHeaderParserPool();
     private final Context context;
     private final BitmapPool bitmapPool;
-    private GifHeaderParserPool parserPool;
+    private final GifHeaderParserPool parserPool;
 
     public GifResourceDecoder(Context context) {
         this(context, Glide.get(context).getBitmapPool());
@@ -49,7 +48,7 @@ public class GifResourceDecoder implements ResourceDecoder<InputStream, GifDrawa
     }
 
     @Override
-    public GifDrawableResource decode(InputStream source, int width, int height) throws IOException {
+    public GifDrawableResource decode(InputStream source, int width, int height) {
         byte[] data = inputStreamToBytes(source);
         final GifHeaderParser parser = parserPool.obtain(data);
         try {
@@ -81,7 +80,7 @@ public class GifResourceDecoder implements ResourceDecoder<InputStream, GifDrawa
     }
 
     // A best effort attempt to get a unique id that can be used as a cache key for frames of the decoded GIF.
-    private String getGifId(byte[] data) {
+    private static String getGifId(byte[] data) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             digest.update(data);
@@ -94,12 +93,12 @@ public class GifResourceDecoder implements ResourceDecoder<InputStream, GifDrawa
         return UUID.randomUUID().toString();
     }
 
-    private byte[] inputStreamToBytes(InputStream is) {
-        int capacity = 16384;
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream(capacity);
+    private static byte[] inputStreamToBytes(InputStream is) {
+        final int bufferSize = 16384, initialCapacity = bufferSize;
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream(initialCapacity);
         try {
             int nRead;
-            byte[] data = new byte[16384];
+            byte[] data = new byte[bufferSize];
             while ((nRead = is.read(data, 0, data.length)) != -1) {
                 buffer.write(data, 0, nRead);
             }
@@ -107,6 +106,7 @@ public class GifResourceDecoder implements ResourceDecoder<InputStream, GifDrawa
         } catch (IOException e) {
             Log.w(TAG, "Error reading data from stream", e);
         }
+        //TODO the returned byte[] may be partial if an IOException was thrown from read
         return buffer.toByteArray();
     }
 
@@ -116,7 +116,7 @@ public class GifResourceDecoder implements ResourceDecoder<InputStream, GifDrawa
     }
 
     private static class DefaultGifHeaderParserPool implements GifHeaderParserPool {
-        private static final Queue<GifHeaderParser> POOL = new ArrayDeque<GifHeaderParser>();
+        private static final Queue<GifHeaderParser> POOL = Util.createQueue(0);
 
         @Override
         public GifHeaderParser obtain(byte[] data) {

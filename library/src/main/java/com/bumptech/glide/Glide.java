@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
@@ -70,7 +71,7 @@ import java.net.URL;
  * {@link MemoryCache}.
  */
 public class Glide {
-    // 250 MB
+    /** 250 MB of cache. */
     static final int DEFAULT_DISK_CACHE_SIZE = 250 * 1024 * 1024;
 
     private static final String DEFAULT_DISK_CACHE_DIR = "image_manager_disk_cache";
@@ -111,12 +112,13 @@ public class Glide {
      * @param context A context.
      * @param cacheName The name of the subdirectory in which to store the cache.
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static File getPhotoCacheDir(Context context, String cacheName) {
         File cacheDir = context.getCacheDir();
         if (cacheDir != null) {
             File result = new File(cacheDir, cacheName);
-            result.mkdirs();
+            if (!result.mkdirs() && (!result.exists() || !result.isDirectory())) {
+                throw new IllegalStateException("Cannot create cache directory structure for " + result);
+            }
             return result;
         }
         if (Log.isLoggable(TAG, Log.ERROR)) {
@@ -196,11 +198,12 @@ public class Glide {
         dataLoadProviderRegistry.register(ImageVideoWrapper.class, GifBitmapWrapper.class,
                 new ImageVideoGifDrawableLoadProvider(imageVideoDataLoadProvider, gifDrawableLoadProvider));
 
-        dataLoadProviderRegistry.register(InputStream.class, File.class,
-                new StreamFileDataLoadProvider());
+        dataLoadProviderRegistry.register(InputStream.class, File.class, new StreamFileDataLoadProvider());
 
         register(File.class, ParcelFileDescriptor.class, new FileDescriptorFileLoader.Factory());
         register(File.class, InputStream.class, new StreamFileLoader.Factory());
+        register(int.class, ParcelFileDescriptor.class, new FileDescriptorResourceLoader.Factory());
+        register(int.class, InputStream.class, new StreamResourceLoader.Factory());
         register(Integer.class, ParcelFileDescriptor.class, new FileDescriptorResourceLoader.Factory());
         register(Integer.class, InputStream.class, new StreamResourceLoader.Factory());
         register(String.class, ParcelFileDescriptor.class, new FileDescriptorStringLoader.Factory());
@@ -331,7 +334,7 @@ public class Glide {
      *
      * @param target The Target to cancel loads for.
      */
-    public static void clear(Target target) {
+    public static void clear(Target<?> target) {
         Request request = target.getRequest();
         if (request != null) {
             request.clear();
@@ -344,7 +347,7 @@ public class Glide {
      *
      * @param target The target to cancel loads for.
      */
-    public static void clear(FutureTarget target) {
+    public static void clear(FutureTarget<?> target) {
         target.clear();
     }
 
@@ -362,7 +365,7 @@ public class Glide {
      * @throws IllegalArgumentException if an object other than Glide's metadata is set as the view's tag.
      */
     public static void clear(View view) {
-        Target viewTarget = new ClearTarget(view);
+        Target<?> viewTarget = new ClearTarget(view);
         clear(viewTarget);
     }
 
@@ -560,7 +563,7 @@ public class Glide {
      * @param fragment The fragment to use.
      * @return A RequestManager for the given Fragment that can be used to start a load.
      */
-    @TargetApi(11)
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static RequestManager with(android.app.Fragment fragment) {
         return RequestManagerRetriever.get(fragment);
     }
@@ -583,20 +586,22 @@ public class Glide {
 
         @Override
         public void onLoadStarted(Drawable placeholder) {
-
+            // Do nothing.
         }
 
         @Override
         public void onLoadFailed(Exception e, Drawable errorDrawable) {
-
+            // Do nothing.
         }
 
         @Override
-        public void onResourceReady(Object resource, GlideAnimation<Object> glideAnimation) { }
+        public void onResourceReady(Object resource, GlideAnimation<Object> glideAnimation) {
+            // Do nothing.
+        }
 
         @Override
         public void onLoadCleared(Drawable placeholder) {
-
+            // Do nothing.
         }
     }
 }

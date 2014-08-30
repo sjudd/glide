@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.robolectric:robolectric-gradle-plugin:0.11.+'
+        classpath 'org.robolectric:robolectric-gradle-plugin:0.12.+'
         classpath 'com.android.tools.build:gradle:0.12.+'
     }
 }
@@ -36,9 +36,16 @@ allprojects {
         // empty classpath
         classpath = files()
     }
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            if (!name.contains("Test")) {
+                options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+            }
+        }
+    }
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.12'
 }
-

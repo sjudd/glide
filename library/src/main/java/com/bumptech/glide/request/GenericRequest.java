@@ -21,9 +21,9 @@ import com.bumptech.glide.request.animation.GlideAnimationFactory;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.util.LogTime;
+import com.bumptech.glide.util.Util;
 
 import java.io.File;
-import java.util.ArrayDeque;
 import java.util.Queue;
 
 /**
@@ -63,14 +63,14 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
     private boolean isCancelled;
     private boolean isError;
     private boolean loadedFromMemoryCache;
-    private Resource resource;
+    // doing our own type check
+    private Resource<?> resource;
     private Engine.LoadStatus loadStatus;
     private boolean isRunning;
     private long startTime;
 
-    private static final Queue<GenericRequest> REQUEST_POOL = new ArrayDeque<GenericRequest>();
+    private static final Queue<GenericRequest<?, ?, ?, ?>> REQUEST_POOL = Util.createQueue(0);
 
-    @SuppressWarnings("unchecked")
     public static <A, T, Z, R> GenericRequest<A, T, Z, R> obtain(
             LoadProvider<A, T, Z, R> loadProvider,
             A model,
@@ -92,9 +92,10 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
             int overrideWidth,
             int overrideHeight,
             DiskCacheStrategy diskCacheStrategy) {
-        GenericRequest request = REQUEST_POOL.poll();
+        @SuppressWarnings("unchecked")
+        GenericRequest<A, T, Z, R> request = (GenericRequest<A, T, Z, R>) REQUEST_POOL.poll();
         if (request == null) {
-            request = new GenericRequest();
+            request = new GenericRequest<A, T, Z, R>();
         }
         request.init(loadProvider,
                 model,
@@ -120,7 +121,7 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
     }
 
     private GenericRequest() {
-
+        // just create, instances are reused with recycle/init
     }
 
     @Override
@@ -188,29 +189,37 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
         // We allow null models by just setting an error drawable. Null models will always have empty providers, we
         // simply skip our sanity checks in that unusual case.
         if (model != null) {
-            if (loadProvider.getCacheDecoder() == null) {
-                throw new NullPointerException("CacheDecoder must not be null, try .cacheDecoder(ResouceDecoder)");
+            check("ModelLoader", loadProvider.getModelLoader(), "try .using(ModelLoader)");
+            check("Transcoder", loadProvider.getTranscoder(), "try .as*(Class).transcode(ResourceTranscoder)");
+            check("Transformation", transformation, "try .transform(UnitTransformation.get())");
+            if (diskCacheStrategy.cacheSource()) {
+                check("SourceEncoder", loadProvider.getSourceEncoder(),
+                        "try .sourceEncoder(Encoder) or .diskCacheStrategy(NONE/RESULT)");
+                // TODO if(resourceClass.isAssignableFrom(InputStream.class) it is possible to wrap sourceDecoder
+                // and use it instead of cacheDecoder: new FileToStreamDecoder<Z>(sourceDecoder)
+                // in that case this shouldn't throw
+                check("CacheDecoder", loadProvider.getCacheDecoder(),
+                        "try .cacheDecoder(ResouceDecoder) or .diskCacheStrategy(NONE/RESULT)");
+            } else {
+                check("SourceDecoder", loadProvider.getSourceDecoder(),
+                        "try .decoder/.imageDecoder/.videoDecoder(ResourceDecoder) or .diskCacheStrategy(ALL/SOURCE)");
             }
-            if (loadProvider.getSourceDecoder() == null) {
-                throw new NullPointerException("SourceDecoder must not be null, try .imageDecoder(ResourceDecoder) "
-                        + "and/or .videoDecoder()");
+            if (diskCacheStrategy.cacheResult()) {
+                check("Encoder", loadProvider.getEncoder(),
+                        "try .encode(ResourceEncoder) or .diskCacheStrategy(NONE/SOURCE)");
             }
-            if (loadProvider.getEncoder() == null) {
-                throw new NullPointerException("Encoder must not be null, try .encode(ResourceEncoder)");
+        }
+    }
+
+    private static void check(String name, Object object, String suggestion) {
+        if (object == null) {
+            StringBuilder message = new StringBuilder(name);
+            message.append(" must not be null");
+            if (suggestion != null) {
+                message.append(", ");
+                message.append(suggestion);
             }
-            if (loadProvider.getTranscoder() == null) {
-                throw new NullPointerException("Transcoder must not be null, try .as(Class, ResourceTranscoder)");
-            }
-            if (loadProvider.getModelLoader() == null) {
-                throw new NullPointerException("ModelLoader must not be null, try .using(ModelLoader)");
-            }
-            if (loadProvider.getSourceEncoder() == null) {
-                throw new NullPointerException("SourceEncoder must not be null, try .sourceEncoder(Encoder)");
-            }
-            if (transformation == null) {
-                throw new NullPointerException("Transformation must not be null, try .transform(UnitTransformation"
-                        + ".get())");
-            }
+            throw new NullPointerException(message.toString());
         }
     }
 
@@ -393,14 +402,14 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void onResourceReady(Resource resource) {
+    public void onResourceReady(Resource<?> resource) {
         isRunning = false;
         if (!canSetResource()) {
             resource.release();
             return;
         }
         Object received = resource != null ? resource.get() : null;
-        if (resource == null || !transcodeClass.isAssignableFrom(received.getClass())) {
+        if (resource == null || received == null || !transcodeClass.isAssignableFrom(received.getClass())) {
             if (resource != null) {
                 resource.release();
             }

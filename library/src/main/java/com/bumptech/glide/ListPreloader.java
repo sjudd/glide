@@ -1,15 +1,12 @@
 package com.bumptech.glide;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.widget.AbsListView;
 
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BaseTarget;
 import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.util.Util;
 
-import java.util.ArrayDeque;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
@@ -47,7 +44,9 @@ public abstract class ListPreloader<T> implements AbsListView.OnScrollListener {
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int i) { }
+    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+        // Do nothing.
+    }
 
     @Override
     public void onScroll(AbsListView absListView, int firstVisible, int visibleCount, int totalCount) {
@@ -71,12 +70,12 @@ public abstract class ListPreloader<T> implements AbsListView.OnScrollListener {
     protected abstract int[] getDimensions(T item);
 
     /**
-     * Returns a list of all models that need to be loaded for the list to display adapter items start - end. A list of
-     * any size can be returned so there can be multiple models per adapter position.
+     * Returns a list of all models that need to be loaded for the list to display adapter items {@code start - end}.
+     * A list of any size can be returned so there can be multiple models per adapter position.
      *
-     * @param start The smallest adapter position. Will be >= 0 && < adapter.getCount() && <= end
-     * @param end The largest adapter position. Will be >= 0 && < adapter.getCount && >= start
-     * @return A non null list of all models for adapter positions between start and end.
+     * @param start The smallest adapter position. Will be {@code >= 0 && < adapter.getCount() && <= end}
+     * @param end The largest adapter position. Will be {@code >= 0 && < adapter.getCount && >= start}
+     * @return A non null list of all models for adapter positions between {@code start} and {@code end}.
      */
     protected abstract List<T> getItems(int start, int end);
 
@@ -87,6 +86,7 @@ public abstract class ListPreloader<T> implements AbsListView.OnScrollListener {
      * @param item The model to load.
      * @return A non null {@link BitmapRequestBuilder}.
      */
+    @SuppressWarnings("rawtypes")
     protected abstract GenericRequestBuilder getRequestBuilder(T item);
 
     private void preload(int start, boolean increasing) {
@@ -128,6 +128,7 @@ public abstract class ListPreloader<T> implements AbsListView.OnScrollListener {
         lastEnd = end;
     }
 
+    @SuppressWarnings("unchecked")
     private void preloadItem(List<T> items, int position) {
         final T item = items.get(position);
         final int[] dimensions = getDimensions(item);
@@ -145,13 +146,8 @@ public abstract class ListPreloader<T> implements AbsListView.OnScrollListener {
     private static final class PreloadTargetQueue {
         private final Queue<PreloadTarget> queue;
 
-        @TargetApi(9)
         private PreloadTargetQueue(int size) {
-            if (Build.VERSION.SDK_INT >= 9) {
-                queue = new ArrayDeque<PreloadTarget>(size);
-            } else {
-                queue = new LinkedList<PreloadTarget>();
-            }
+            queue = Util.createQueue(size);
 
             for (int i = 0; i < size; i++) {
                 queue.offer(new PreloadTarget());
@@ -167,12 +163,12 @@ public abstract class ListPreloader<T> implements AbsListView.OnScrollListener {
         }
     }
 
-    private static class PreloadTarget extends BaseTarget {
+    private static class PreloadTarget extends BaseTarget<Object> {
         private int photoHeight;
         private int photoWidth;
 
         @Override
-        public void onResourceReady(Object resource, GlideAnimation glideAnimation) {
+        public void onResourceReady(Object resource, GlideAnimation<? super Object> glideAnimation) {
             // Do nothing.
         }
 

@@ -1,5 +1,6 @@
 package com.bumptech.glide.load.resource.bitmap;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -104,6 +105,7 @@ public class TransformationUtils {
      * @param pathToOriginal Path to original image file that may have exif data.
      * @return  A rotation in degrees based on exif orientation
      */
+    @SuppressLint("InlinedApi")
     public static int getOrientation(String pathToOriginal) {
         int degreesToRotate = 0;
         try {
@@ -132,7 +134,6 @@ public class TransformationUtils {
      * @param imageToOrient Image Bitmap to orient.
      * @return The oriented bitmap. May be the imageToOrient without modification, or a new Bitmap.
      */
-    @SuppressWarnings("unused")
     public static Bitmap orientImage(String pathToOriginal, Bitmap imageToOrient) {
         int degreesToRotate = getOrientation(pathToOriginal);
         return rotateImage(imageToOrient, degreesToRotate);
@@ -166,7 +167,6 @@ public class TransformationUtils {
             if (Log.isLoggable(TAG, Log.ERROR)) {
                 Log.e(TAG, "Exception when trying to orient image", e);
             }
-            e.printStackTrace();
         }
         return result;
     }

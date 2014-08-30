@@ -1,8 +1,8 @@
 package com.bumptech.glide.load.model;
 
 import com.bumptech.glide.util.LruCache;
+import com.bumptech.glide.util.Util;
 
-import java.util.ArrayDeque;
 import java.util.Queue;
 
 /**
@@ -10,7 +10,7 @@ import java.util.Queue;
  * model, width and height. For a loader that takes a model and returns a url, the cache could be used to safely memoize
  * url creation based on the width and height of the view.
  *
- * @param <A> Some Model type that implements equals and hashcode.
+ * @param <A> Some Model type that implements {@link #equals} and {@link #hashCode}.
  * @param <B> Some useful type that may be expensive to create (URL, file path, etc).
  */
 public class ModelCache<A, B> {
@@ -61,11 +61,11 @@ public class ModelCache<A, B> {
     }
 
     private static final class ModelKey<A> {
-        private static final Queue<ModelKey> KEY_QUEUE = new ArrayDeque<ModelKey>();
+        private static final Queue<ModelKey<?>> KEY_QUEUE = Util.createQueue(0);
 
-        @SuppressWarnings("unchecked")
         public static <A> ModelKey<A> get(A model, int width, int height) {
-            ModelKey<A> modelKey = KEY_QUEUE.poll();
+            @SuppressWarnings("unchecked")
+            ModelKey<A> modelKey = (ModelKey<A>) KEY_QUEUE.poll();
             if (modelKey == null) {
                 modelKey = new ModelKey<A>();
             }
@@ -99,7 +99,7 @@ public class ModelCache<A, B> {
                 return false;
             }
 
-            ModelKey modelKey = (ModelKey) o;
+            ModelKey<?> modelKey = (ModelKey<?>) o;
 
             if (height != modelKey.height) {
                 return false;

@@ -2,14 +2,15 @@ package com.bumptech.glide.load.engine.bitmap_recycle;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
+import android.os.Build;
 
 import java.util.TreeMap;
 
 /**
- * A strategy for reusing bitmaps that relies on {@link Bitmap#reconfigure(int, int, Bitmap.Config)}. Requires KitKat
- * (API 19) or higher.
+ * A strategy for reusing bitmaps that relies on {@link Bitmap#reconfigure(int, int, Bitmap.Config)}.
+ * Requires {@link Build.VERSION_CODES#KITKAT KitKat} (API {@value Build.VERSION_CODES#KITKAT}) or higher.
  */
-@TargetApi(19)
+@TargetApi(Build.VERSION_CODES.KITKAT)
 class SizeStrategy implements LruPoolStrategy {
     private static final int MAX_SIZE_MULTIPLE = 4;
     private final KeyPool keyPool = new KeyPool();
@@ -118,9 +119,9 @@ class SizeStrategy implements LruPoolStrategy {
             case ALPHA_8:
                 return 1;
             default:
-                // We only use this to calculate sizes to get, so choosing 4 bytes per pixel is conservative and
-                // probably forces us to get a larger bitmap than we really need. Since we can't tell for sure, probably
-                // better safe than sorry.
+                // We only use this to calculate sizes to get, so choosing 4 bytes per pixel is conservative
+                // and probably forces us to get a larger bitmap than we really need.
+                // Since we can't tell for sure, probably better safe than sorry.
                 return 4;
         }
     }

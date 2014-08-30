@@ -6,6 +6,7 @@ import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 
@@ -35,6 +36,8 @@ public class SquaringDrawable extends GlideDrawable {
         super.setBounds(bounds);
         wrapped.setBounds(bounds);
     }
+
+    @Override
     public void setChangingConfigurations(int configs) {
         wrapped.setChangingConfigurations(configs);
     }
@@ -54,13 +57,13 @@ public class SquaringDrawable extends GlideDrawable {
         wrapped.setFilterBitmap(filter);
     }
 
-    @TargetApi(11)
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public Callback getCallback() {
         return wrapped.getCallback();
     }
 
-    @TargetApi(19)
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public int getAlpha() {
         return wrapped.getAlpha();
