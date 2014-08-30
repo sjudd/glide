@@ -63,14 +63,14 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
     private boolean isCancelled;
     private boolean isError;
     private boolean loadedFromMemoryCache;
-    private Resource resource;
+    // doing our own type check
+    private Resource<?> resource;
     private Engine.LoadStatus loadStatus;
     private boolean isRunning;
     private long startTime;
 
     private static final Queue<GenericRequest<?, ?, ?, ?>> REQUEST_POOL = Util.createQueue(0);
 
-    @SuppressWarnings("unchecked")
     public static <A, T, Z, R> GenericRequest<A, T, Z, R> obtain(
             LoadProvider<A, T, Z, R> loadProvider,
             A model,
@@ -92,9 +92,10 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
             int overrideWidth,
             int overrideHeight,
             DiskCacheStrategy diskCacheStrategy) {
-        GenericRequest request = REQUEST_POOL.poll();
+        @SuppressWarnings("unchecked")
+        GenericRequest<A, T, Z, R> request = (GenericRequest<A, T, Z, R>) REQUEST_POOL.poll();
         if (request == null) {
-            request = new GenericRequest();
+            request = new GenericRequest<A, T, Z, R>();
         }
         request.init(loadProvider,
                 model,
@@ -393,7 +394,7 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void onResourceReady(Resource resource) {
+    public void onResourceReady(Resource<?> resource) {
         isRunning = false;
         if (!canSetResource()) {
             resource.release();
