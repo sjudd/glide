@@ -128,7 +128,10 @@ class DecodeJob<A, T, Z> {
         return transformEncodeAndTranscode(decoded);
     }
 
-    public void cancel() {
+    public synchronized void cancel() {
+        if (isCancelled) {
+            return;
+        }
         fetcher.cancel();
         isCancelled = true;
     }

@@ -105,9 +105,10 @@ public class HttpUrlFetcher implements DataFetcher<InputStream> {
 
     @Override
     public void cancel() {
-        // TODO: we should consider disconnecting the url connection here, but we can't do so directly because cancel is
-        // often called on the main thread.
         isCancelled = true;
+        if (urlConnection != null) {
+            urlConnection.disconnect();
+        }
     }
 
     interface HttpUrlConnectionFactory {

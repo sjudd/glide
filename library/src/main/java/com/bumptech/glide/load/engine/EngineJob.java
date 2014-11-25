@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.engine;
 
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 
 import com.bumptech.glide.load.Key;
@@ -22,8 +23,16 @@ class EngineJob implements EngineRunnable.EngineRunnableManager {
     private static final EngineResourceFactory DEFAULT_FACTORY = new EngineResourceFactory();
     private static final Handler MAIN_THREAD_HANDLER = new Handler(new MainThreadCallback());
 
+    private static final Handler CANCEL_THREAD_HANDLER;
+    static {
+        HandlerThread cancelThread = new HandlerThread("EngineJobCancel");
+        cancelThread.start();
+        CANCEL_THREAD_HANDLER = new Handler(cancelThread.getLooper(), new CancelCallback());
+    }
+
     private static final int MSG_COMPLETE = 1;
     private static final int MSG_EXCEPTION = 2;
+    private static final int MSG_CANCELLED = 3;
 
     private final List<ResourceCallback> cbs = new ArrayList<ResourceCallback>();
     private final EngineResourceFactory engineResourceFactory;
@@ -116,13 +125,13 @@ class EngineJob implements EngineRunnable.EngineRunnableManager {
         if (hasException || hasResource || isCancelled) {
             return;
         }
-        engineRunnable.cancel();
+        isCancelled = true;
         Future currentFuture = future;
         if (currentFuture != null) {
             currentFuture.cancel(true);
         }
-        isCancelled = true;
         listener.onEngineJobCancelled(this, key);
+        CANCEL_THREAD_HANDLER.obtainMessage(MSG_CANCELLED, engineRunnable).sendToTarget();
     }
 
     // Exposed for testing.
@@ -188,6 +197,19 @@ class EngineJob implements EngineRunnable.EngineRunnableManager {
     static class EngineResourceFactory {
         public <R> EngineResource<R> build(Resource<R> resource, boolean isMemoryCacheable) {
             return new EngineResource<R>(resource, isMemoryCacheable);
+        }
+    }
+
+    private static class CancelCallback implements Handler.Callback {
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (MSG_CANCELLED == msg.what) {
+                EngineRunnable engineRunnable = (EngineRunnable) msg.obj;
+                engineRunnable.cancel();
+                return true;
+            }
+            return false;
         }
     }
 
