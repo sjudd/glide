@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.RETURNS_DEFAULTS;
 
+import android.graphics.Bitmap;
 import android.os.Build;
 
 import com.bumptech.glide.load.DataSource;
@@ -117,6 +118,17 @@ public class Util {
           (DataFetcher.DataCallback<T>) invocationOnMock.getArguments()[1];
       callback.onDataReady(data);
       return null;
+    }
+  }
+
+  public static class CreateBitmap implements Answer<Bitmap> {
+
+    @Override
+    public Bitmap answer(InvocationOnMock invocation) throws Throwable {
+      int width = (Integer) invocation.getArguments()[0];
+      int height = (Integer) invocation.getArguments()[1];
+      Bitmap.Config config = (Bitmap.Config) invocation.getArguments()[2];
+      return Bitmap.createBitmap(width, height, config);
     }
   }
 }
