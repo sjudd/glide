@@ -3,6 +3,7 @@ package com.bumptech.glide.load.model;
 import android.content.Context;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -25,7 +26,7 @@ public class StringLoader<Data> implements ModelLoader<String, Data> {
   }
 
   @Override
-  public LoadData<Data> buildLoadData(String model, int width, int height,
+  public LoadData<Data> buildLoadData(@NonNull String model, int width, int height,
       Options options) {
     Uri uri = parseUri(model);
     return uri == null ? null : uriLoader.buildLoadData(uri, width, height, options);

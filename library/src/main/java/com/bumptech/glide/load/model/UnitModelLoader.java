@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.model;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
@@ -17,7 +18,7 @@ import com.bumptech.glide.signature.ObjectKey;
 public class UnitModelLoader<Model> implements ModelLoader<Model, Model> {
 
   @Override
-  public LoadData<Model> buildLoadData(Model model, int width, int height,
+  public LoadData<Model> buildLoadData(@NonNull Model model, int width, int height,
       Options options) {
     return new LoadData<>(new ObjectKey(model), new UnitFetcher<>(model));
   }

@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.model;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.bumptech.glide.Logs;
@@ -21,7 +22,7 @@ import java.nio.ByteBuffer;
 public class ByteBufferFileLoader implements ModelLoader<File, ByteBuffer> {
 
   @Override
-  public LoadData<ByteBuffer> buildLoadData(File file, int width, int height,
+  public LoadData<ByteBuffer> buildLoadData(@NonNull File file, int width, int height,
       Options options) {
     return new LoadData<>(new ObjectKey(file), new ByteBufferFetcher(file));
   }

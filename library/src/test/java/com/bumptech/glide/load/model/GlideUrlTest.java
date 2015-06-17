@@ -1,9 +1,12 @@
 package com.bumptech.glide.load.model;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.testing.EqualsTester;
+
+import android.net.Uri;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,19 +20,24 @@ import java.net.URL;
 @Config(manifest = Config.NONE, sdk = 18)
 public class GlideUrlTest {
 
-  @Test(expected = NullPointerException.class)
-  public void testThrowsIfGivenURLIsNull() {
-    new GlideUrl((URL) null);
+  @Test
+  public void testReturnsNullIfGivenURLIsNull() {
+    assertThat(GlideUrl.obtain((URL) null)).isNull();
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testThrowsIfGivenStringUrlIsNull() {
-    new GlideUrl((String) null);
+  @Test
+  public void testReturnsNullIfGivenStringUrlIsNull() {
+    assertThat(GlideUrl.obtain((String) null)).isNull();
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testThrowsIfGivenStringURLIsEmpty() {
-    new GlideUrl("");
+  @Test
+  public void testReturnsNullIfGivenUriIsNull() {
+    assertThat(GlideUrl.obtain((Uri) null)).isNull();
+  }
+
+  @Test
+  public void testReturnsNullIfGivenStringURLIsEmpty() {
+    assertThat(GlideUrl.obtain("")).isNull();
   }
 
   @Test
@@ -37,7 +45,7 @@ public class GlideUrlTest {
     String stringUrl = "http://www.google.com";
     URL url = new URL(stringUrl);
 
-    assertEquals(new GlideUrl(stringUrl), new GlideUrl(url));
+    assertEquals(GlideUrl.obtain(stringUrl), GlideUrl.obtain(url));
   }
 
   @Test
@@ -46,13 +54,13 @@ public class GlideUrlTest {
     String stringUrl = "http://nytimes.com";
     URL url = new URL(stringUrl);
 
-    assertEquals(new GlideUrl(stringUrl).hashCode(), new GlideUrl(url).hashCode());
+    assertEquals(GlideUrl.obtain(stringUrl).hashCode(), GlideUrl.obtain(url).hashCode());
   }
 
   @Test
   public void testProducesEquivalentUrlFromString() throws MalformedURLException {
     String stringUrl = "http://www.google.com";
-    GlideUrl glideUrl = new GlideUrl(stringUrl);
+    GlideUrl glideUrl = GlideUrl.obtain(stringUrl);
 
     URL url = glideUrl.toURL();
     assertEquals(stringUrl, url.toString());
@@ -62,7 +70,7 @@ public class GlideUrlTest {
   public void testProducesEquivalentStringFromURL() throws MalformedURLException {
     String expected = "http://www.washingtonpost.com";
     URL url = new URL(expected);
-    GlideUrl glideUrl = new GlideUrl(url);
+    GlideUrl glideUrl = GlideUrl.obtain(url);
 
     assertEquals(expected, glideUrl.toStringUrl());
   }
@@ -76,16 +84,16 @@ public class GlideUrlTest {
     final String escaped = "http://www.commitstrip.com/wp-content/uploads/2014/07/"
         + "Excel-%C3%A0-toutes-les-sauces-650-finalenglish.jpg";
 
-    GlideUrl glideUrlFromString = new GlideUrl(original);
+    GlideUrl glideUrlFromString = GlideUrl.obtain(original);
     assertEquals(escaped, glideUrlFromString.toURL().toString());
 
-    GlideUrl glideUrlFromEscapedString = new GlideUrl(escaped);
+    GlideUrl glideUrlFromEscapedString = GlideUrl.obtain(escaped);
     assertEquals(escaped, glideUrlFromEscapedString.toURL().toString());
 
-    GlideUrl glideUrlFromUrl = new GlideUrl(new URL(original));
+    GlideUrl glideUrlFromUrl = GlideUrl.obtain(new URL(original));
     assertEquals(escaped, glideUrlFromUrl.toURL().toString());
 
-    GlideUrl glideUrlFromEscapedUrl = new GlideUrl(new URL(escaped));
+    GlideUrl glideUrlFromEscapedUrl = GlideUrl.obtain(new URL(escaped));
     assertEquals(escaped, glideUrlFromEscapedUrl.toURL().toString());
   }
 
@@ -97,22 +105,22 @@ public class GlideUrlTest {
     String otherUrl = "http://mail.google.com";
     new EqualsTester()
         .addEqualityGroup(
-            new GlideUrl(url),
-            new GlideUrl(url),
-            new GlideUrl(new URL(url)),
-            new GlideUrl(new URL(url))
+            GlideUrl.obtain(url),
+            GlideUrl.obtain(url),
+            GlideUrl.obtain(new URL(url)),
+            GlideUrl.obtain(new URL(url))
         )
         .addEqualityGroup(
-            new GlideUrl(otherUrl),
-            new GlideUrl(new URL(otherUrl))
+            GlideUrl.obtain(otherUrl),
+            GlideUrl.obtain(new URL(otherUrl))
         )
         .addEqualityGroup(
-            new GlideUrl(url, headers),
-            new GlideUrl(new URL(url), headers)
+            GlideUrl.obtain(url, headers),
+            GlideUrl.obtain(new URL(url), headers)
         )
         .addEqualityGroup(
-            new GlideUrl(url, otherHeaders),
-            new GlideUrl(new URL(url), otherHeaders)
+            GlideUrl.obtain(url, otherHeaders),
+            GlideUrl.obtain(new URL(url), otherHeaders)
         ).testEquals();
   }
 }

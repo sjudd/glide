@@ -2,6 +2,7 @@ package com.bumptech.glide.load.model;
 
 import android.content.Context;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.bumptech.glide.Logs;
@@ -32,7 +33,7 @@ public class FileLoader<Data> implements ModelLoader<File, Data> {
   }
 
   @Override
-  public LoadData<Data> buildLoadData(File model, int width, int height,
+  public LoadData<Data> buildLoadData(@NonNull File model, int width, int height,
       Options options) {
     return new LoadData<>(new ObjectKey(model), new FileFetcher<>(model, fileOpener));
   }

@@ -1,5 +1,6 @@
 package com.bumptech.glide.load.model;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pools.Pool;
 
 import com.bumptech.glide.Priority;
@@ -36,7 +37,7 @@ class MultiModelLoader<Model, Data> implements ModelLoader<Model, Data> {
   }
 
   @Override
-  public LoadData<Data> buildLoadData(Model model, int width, int height,
+  public LoadData<Data> buildLoadData(@NonNull Model model, int width, int height,
       Options options) {
     Key sourceKey = null;
     int size = modelLoaders.size();

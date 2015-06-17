@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -33,8 +34,8 @@ public class ResourceLoader<Data> implements ModelLoader<Integer, Data> {
   }
 
   @Override
-  public LoadData<Data> buildLoadData(Integer model, int width, int height, Options options) {
-
+  public LoadData<Data> buildLoadData(@NonNull Integer model, int width, int height,
+      Options options) {
     Uri uri = getResourceUri(model);
     return uri == null ? null : uriLoader.buildLoadData(uri, width, height, options);
   }

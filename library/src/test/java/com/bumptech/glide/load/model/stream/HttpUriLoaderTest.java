@@ -44,7 +44,7 @@ public class HttpUriLoaderTest {
 
     assertTrue(loader.handles(httpUri));
     verify(urlLoader)
-        .buildLoadData(eq(new GlideUrl(httpUri.toString())), eq(IMAGE_SIDE), eq(IMAGE_SIDE),
+        .buildLoadData(eq(GlideUrl.obtain(httpUri)), eq(IMAGE_SIDE), eq(IMAGE_SIDE),
             eq(OPTIONS));
   }
 
@@ -55,7 +55,7 @@ public class HttpUriLoaderTest {
 
     assertTrue(loader.handles(httpsUri));
     verify(urlLoader)
-        .buildLoadData(eq(new GlideUrl(httpsUri.toString())), eq(IMAGE_SIDE), eq(IMAGE_SIDE),
+        .buildLoadData(eq(GlideUrl.obtain(httpsUri)), eq(IMAGE_SIDE), eq(IMAGE_SIDE),
             eq(OPTIONS));
   }
 
@@ -68,7 +68,7 @@ public class HttpUriLoaderTest {
     assertTrue(loader.handles(mostlyInvalidHttpUri));
     loader.buildLoadData(mostlyInvalidHttpUri, IMAGE_SIDE, IMAGE_SIDE, OPTIONS);
     verify(urlLoader)
-        .buildLoadData(eq(new GlideUrl(mostlyInvalidHttpUri.toString())), eq(IMAGE_SIDE),
+        .buildLoadData(eq(GlideUrl.obtain(mostlyInvalidHttpUri)), eq(IMAGE_SIDE),
             eq(IMAGE_SIDE), eq(OPTIONS));
   }
 }

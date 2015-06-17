@@ -27,7 +27,7 @@ import java.util.Map;
  * <p> This class can also optionally wrap {@link com.bumptech.glide.load.model.Headers} for
  * convenience. </p>
  */
-public class GlideUrl implements Key {
+public final class GlideUrl implements Key {
   private static final String ALLOWED_URI_CHARS = "@#&=*+-_.,:!?()/~'%";
   private final Headers headers;
   @Nullable private final URL url;
@@ -37,21 +37,59 @@ public class GlideUrl implements Key {
   @Nullable private URL safeUrl;
   @Nullable private volatile byte[] cacheKeyBytes;
 
-  public GlideUrl(URL url) {
-    this(url, Headers.NONE);
+  @Nullable
+  public static GlideUrl obtain(@Nullable Uri uri) {
+    if (uri == null) {
+      return null;
+    }
+
+    return obtain(uri.toString(), Headers.NONE);
   }
 
-  public GlideUrl(String url) {
-    this(url, Headers.NONE);
+  @Nullable
+  public static GlideUrl obtain(@Nullable Uri uri, Headers headers) {
+    if (uri == null) {
+      return null;
+    }
+
+    return obtain(uri.toString(), headers);
   }
 
-  public GlideUrl(URL url, Headers headers) {
+  @Nullable
+  public static GlideUrl obtain(@Nullable URL url) {
+    return obtain(url, Headers.NONE);
+  }
+
+  @Nullable
+  public static GlideUrl obtain(@Nullable String url) {
+    return obtain(url, Headers.NONE);
+  }
+
+  @Nullable
+  public static GlideUrl obtain(@Nullable URL url, Headers headers) {
+    if (url == null) {
+      return null;
+    }
+
+    return new GlideUrl(url, headers);
+  }
+
+  @Nullable
+  public static GlideUrl obtain(@Nullable String url, Headers headers) {
+    if (TextUtils.isEmpty(url)) {
+      return null;
+    }
+
+    return new GlideUrl(url, headers);
+  }
+
+  private GlideUrl(URL url, Headers headers) {
     this.url = Preconditions.checkNotNull(url);
     stringUrl = null;
     this.headers = Preconditions.checkNotNull(headers);
   }
 
-  public GlideUrl(String url, Headers headers) {
+  private GlideUrl(String url, Headers headers) {
     this.url = null;
     this.stringUrl = Preconditions.checkNotEmpty(url);
     this.headers = Preconditions.checkNotNull(headers);

@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.model;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pools.Pool;
 
 import com.bumptech.glide.Registry.NoModelLoaderAvailableException;
@@ -187,7 +188,8 @@ public class MultiModelLoaderFactory {
   private static class EmptyModelLoader implements ModelLoader<Object, Object> {
 
     @Override
-    public LoadData<Object> buildLoadData(Object o, int width, int height, Options options) {
+    public LoadData<Object> buildLoadData(@NonNull Object o, int width, int height,
+        Options options) {
       throw new UnsupportedOperationException("EmptyModelLoader does not handle data");
     }
 

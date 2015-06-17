@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.model.stream;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -25,8 +26,10 @@ public class UrlLoader implements ModelLoader<URL, InputStream> {
   }
 
   @Override
-  public LoadData<InputStream> buildLoadData(URL model, int width, int height, Options options) {
-    return glideUrlLoader.buildLoadData(new GlideUrl(model), width, height, options);
+  public LoadData<InputStream> buildLoadData(@NonNull URL model, int width, int height,
+      Options options) {
+    GlideUrl glideUrl = GlideUrl.obtain(model);
+    return glideUrlLoader.buildLoadData(glideUrl, width, height, options);
   }
 
   @Override

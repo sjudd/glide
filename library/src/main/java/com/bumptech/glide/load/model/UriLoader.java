@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.NonNull;
 
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataFetcher;
@@ -45,7 +46,7 @@ public class UriLoader<Data> implements ModelLoader<Uri, Data> {
   }
 
   @Override
-  public LoadData<Data> buildLoadData(Uri model, int width, int height,
+  public LoadData<Data> buildLoadData(@NonNull Uri model, int width, int height,
       Options options) {
     return new LoadData<>(new ObjectKey(model), factory.build(context, model));
   }

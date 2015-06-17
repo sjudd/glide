@@ -64,7 +64,7 @@ public class BaseGlideUrlLoaderTest {
     Object model = new Object();
     int width = 100;
     int height = 200;
-    GlideUrl expectedUrl = mock(GlideUrl.class);
+    GlideUrl expectedUrl = GlideUrl.obtain("www.google.com");
     when(modelCache.get(eq(model), eq(width), eq(height))).thenReturn(expectedUrl);
 
     when(wrapped.buildLoadData(eq(expectedUrl), eq(width), eq(height), eq(options)))
@@ -91,7 +91,8 @@ public class BaseGlideUrlLoaderTest {
           }
         });
     assertEquals(fetcher,
-        urlLoader.buildLoadData(new GlideUrl(urlLoader.resultUrl), width, height, options).fetcher);
+        urlLoader.buildLoadData(GlideUrl.obtain(urlLoader.resultUrl), width, height, options)
+            .fetcher);
   }
 
   @Test

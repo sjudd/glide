@@ -1,7 +1,6 @@
 package com.bumptech.glide.load.model.stream;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Mockito.mock;
 
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataFetcher;
@@ -11,11 +10,13 @@ import com.bumptech.glide.load.model.GlideUrl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.io.InputStream;
 
-@RunWith(JUnit4.class)
+@RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18)
 public class HttpGlideUrlLoaderTest {
   private HttpGlideUrlLoader loader;
   private GlideUrl model;
@@ -24,7 +25,7 @@ public class HttpGlideUrlLoaderTest {
   @Before
   public void setUp() {
     loader = new HttpGlideUrlLoader();
-    model = mock(GlideUrl.class);
+    model = GlideUrl.obtain("www.google.com");
   }
 
   @Test

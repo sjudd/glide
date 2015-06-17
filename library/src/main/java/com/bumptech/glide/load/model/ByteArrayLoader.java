@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.model;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
@@ -27,7 +28,7 @@ public class ByteArrayLoader<Data> implements ModelLoader<byte[], Data> {
   }
 
   @Override
-  public LoadData<Data> buildLoadData(byte[] model, int width, int height,
+  public LoadData<Data> buildLoadData(@NonNull byte[] model, int width, int height,
       Options options) {
     // TODO: compare the actual bytes?
     return new LoadData<>(EmptySignature.obtain(), new Fetcher<>(model, converter));

@@ -1,5 +1,6 @@
 package com.bumptech.glide.load.model.stream;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -37,7 +38,8 @@ public abstract class BaseGlideUrlLoader<Model> implements ModelLoader<Model, In
 
   @Override
   @Nullable
-  public LoadData<InputStream> buildLoadData(Model model, int width, int height, Options options) {
+  public LoadData<InputStream> buildLoadData(@NonNull Model model, int width, int height,
+      Options options) {
     GlideUrl result = null;
     if (modelCache != null) {
       result = modelCache.get(model, width, height);
@@ -49,7 +51,7 @@ public abstract class BaseGlideUrlLoader<Model> implements ModelLoader<Model, In
         return null;
       }
 
-      result = new GlideUrl(stringURL, getHeaders(model, width, height, options));
+      result = GlideUrl.obtain(stringURL, getHeaders(model, width, height, options));
 
       if (modelCache != null) {
         modelCache.put(model, width, height, result);
@@ -61,7 +63,7 @@ public abstract class BaseGlideUrlLoader<Model> implements ModelLoader<Model, In
     List<String> alternateUrls = getAlternateUrls(model, width, height, options);
     LoadData<InputStream> concreteLoaderData = concreteLoader.buildLoadData(result, width, height,
         options);
-    if (alternateUrls.isEmpty()) {
+    if (alternateUrls.isEmpty() || concreteLoaderData == null) {
       return concreteLoaderData;
     } else {
       return new LoadData<>(concreteLoaderData.sourceKey, getAlternateKeys(alternateUrls),
@@ -72,7 +74,7 @@ public abstract class BaseGlideUrlLoader<Model> implements ModelLoader<Model, In
   private static List<Key> getAlternateKeys(List<String> alternateUrls) {
     List<Key> result = new ArrayList<>(alternateUrls.size());
     for (String alternate : alternateUrls) {
-      result.add(new GlideUrl(alternate));
+      result.add(GlideUrl.obtain(alternate));
     }
     return result;
   }

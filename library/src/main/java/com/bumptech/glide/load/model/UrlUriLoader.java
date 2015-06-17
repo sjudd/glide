@@ -2,6 +2,7 @@ package com.bumptech.glide.load.model;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.bumptech.glide.load.Options;
 
@@ -33,9 +34,13 @@ public class UrlUriLoader<Data> implements ModelLoader<Uri, Data> {
   }
 
   @Override
-  public LoadData<Data> buildLoadData(Uri uri, int width, int height, Options options) {
-    GlideUrl glideUrl = new GlideUrl(uri.toString());
-    return urlLoader.buildLoadData(glideUrl, width, height, options);
+  public LoadData<Data> buildLoadData(@NonNull Uri uri, int width, int height, Options options) {
+    GlideUrl glideUrl = GlideUrl.obtain(uri);
+    if (glideUrl == null) {
+      return null;
+    } else {
+      return urlLoader.buildLoadData(glideUrl, width, height, options);
+    }
   }
 
   @Override

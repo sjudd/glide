@@ -30,22 +30,22 @@ import java.net.URL;
 public class HttpUrlFetcherTest {
   @Mock HttpURLConnection urlConnection;
   @Mock HttpUrlFetcher.HttpUrlConnectionFactory connectionFactory;
-  @Mock GlideUrl glideUrl;
   @Mock InputStream stream;
   @Mock DataFetcher.DataCallback<InputStream> callback;
 
   private static final int TIMEOUT_MS = 100;
   private HttpUrlFetcher fetcher;
+  private GlideUrl glideUrl;
 
   @Before
   public void setUp() throws IOException {
     MockitoAnnotations.initMocks(this);
     URL url = new URL("http://www.google.com");
+    glideUrl = GlideUrl.obtain(url);
 
     when(connectionFactory.build(eq(url))).thenReturn(urlConnection);
     when(urlConnection.getInputStream()).thenReturn(stream);
     when(urlConnection.getResponseCode()).thenReturn(200);
-    when(glideUrl.toURL()).thenReturn(url);
 
     fetcher = new HttpUrlFetcher(glideUrl, TIMEOUT_MS, connectionFactory);
   }

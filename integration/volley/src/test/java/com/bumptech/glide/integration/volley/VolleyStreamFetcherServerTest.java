@@ -207,7 +207,7 @@ public class VolleyStreamFetcherServerTest {
 
   private DataFetcher<InputStream> getFetcher(Headers headers) {
     URL url = mockWebServer.getUrl(DEFAULT_PATH);
-    return new VolleyStreamFetcher(requestQueue, new GlideUrl(url.toString(), headers));
+    return new VolleyStreamFetcher(requestQueue, GlideUrl.obtain(url, headers));
   }
 
   private class CountDown implements Answer<Void> {

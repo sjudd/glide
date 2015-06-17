@@ -238,7 +238,7 @@ public class HttpUrlFetcherServerTest {
 
   private HttpUrlFetcher getFetcher(Headers headers) {
     URL url = mockWebServer.getUrl(DEFAULT_PATH);
-    return new HttpUrlFetcher(new GlideUrl(url, headers), TIMEOUT_TIME_MS,
+    return new HttpUrlFetcher(GlideUrl.obtain(url, headers), TIMEOUT_TIME_MS,
         HttpUrlFetcher.DEFAULT_CONNECTION_FACTORY);
   }
 }
