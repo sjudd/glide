@@ -1,7 +1,7 @@
 package com.bumptech.glide.load.engine;
 
-import static com.bumptech.glide.tests.Util.anyResource;
 import static com.bumptech.glide.tests.Util.isADataSource;
+import static com.bumptech.glide.tests.Util.isAResource;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -237,11 +237,11 @@ public class EngineTest {
         assertEquals(expected, resource.get());
         return null;
       }
-    }).when(harness.cb).onResourceReady(anyResource(), isADataSource());
+    }).when(harness.cb).onResourceReady(isAResource(), isADataSource());
 
     harness.doLoad();
 
-    verify(harness.cb).onResourceReady(anyResource(), isADataSource());
+    verify(harness.cb).onResourceReady(isAResource(), isADataSource());
   }
 
   @Test

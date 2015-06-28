@@ -1,6 +1,9 @@
 package com.bumptech.glide.load;
 
+import android.content.Context;
+
 import com.bumptech.glide.load.engine.Resource;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 
 /**
  * A class for performing an arbitrary transformation on a resource that implements
@@ -40,14 +43,19 @@ public interface Transformation<T> extends Key {
    * Transformation. Otherwise the resource you request may be loaded from disk cache and your
    * Transformation may not be called.
    *
-   * @param resource  The resource to transform.
-   * @param outWidth  The width of the view or target the resource will be displayed in, or {@link
-   *                  com.bumptech.glide.request.target.Target#SIZE_ORIGINAL} to indicate the
-   *                  original resource width.
-   * @param outHeight The height of the view or target the resource will be displayed in, or {@link
-   *                  com.bumptech.glide.request.target.Target#SIZE_ORIGINAL} to indicate the
-   *                  original resource height.
+   * @param context    An Application {@link Context} that can be used to create resources or
+   *                   {@link android.graphics.drawable.Drawable Drawables}.
+   * @param bitmapPool An {@link BitmapPool} that can be used to obtain and pool {@link
+   *                   android.graphics.Bitmap Bitmaps} used during the Transformation.
+   * @param resource   The resource to transform.
+   * @param outWidth   The width of the view or target the resource will be displayed in, or {@link
+   *                   com.bumptech.glide.request.target.Target#SIZE_ORIGINAL} to indicate the
+   *                   original resource width.
+   * @param outHeight  The height of the view or target the resource will be displayed in, or {@link
+   *                   com.bumptech.glide.request.target.Target#SIZE_ORIGINAL} to indicate the
+   *                   original resource height.
    * @return The transformed resource.
    */
-  Resource<T> transform(Resource<T> resource, int outWidth, int outHeight);
+  Resource<T> transform(Context context, BitmapPool bitmapPool, Resource<T> resource,
+      int outWidth, int outHeight);
 }

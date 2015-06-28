@@ -15,23 +15,24 @@ import java.security.MessageDigest;
  *
  * Does not maintain the image's aspect ratio
  */
-public class CenterCrop extends BitmapTransformation {
+public final class CenterCrop extends BitmapTransformation {
   private static final String ID = "com.bumptech.glide.load.resource.bitmap.CenterCrop";
   private static final byte[] ID_BYTES = ID.getBytes(CHARSET);
+  private static final CenterCrop CENTER_CROP = new CenterCrop();
 
-  public CenterCrop(Context context) {
-    super(context);
+  public static CenterCrop get() {
+    return CENTER_CROP;
   }
 
-  public CenterCrop(BitmapPool bitmapPool) {
-    super(bitmapPool);
+  private CenterCrop() {
+    // Singleton constructor.
   }
 
   // Bitmap doesn't implement equals, so == and .equals are equivalent here.
   @SuppressWarnings("PMD.CompareObjectsWithEquals")
   @Override
-  protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth,
-      int outHeight) {
+  protected Bitmap transform(@NonNull Context context, @NonNull BitmapPool pool,
+      @NonNull Bitmap toTransform, int outWidth, int outHeight) {
     return TransformationUtils.centerCrop(pool, toTransform, outWidth, outHeight);
   }
 

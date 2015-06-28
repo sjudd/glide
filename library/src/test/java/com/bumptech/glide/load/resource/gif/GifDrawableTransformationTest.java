@@ -1,5 +1,7 @@
 package com.bumptech.glide.load.resource.gif;
 
+import static com.bumptech.glide.tests.Util.isABitmapPool;
+import static com.bumptech.glide.tests.Util.isAContext;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
@@ -8,11 +10,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.app.Application;
 import android.graphics.Bitmap;
 
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPoolAdapter;
 import com.bumptech.glide.load.resource.UnitTransformation;
 import com.bumptech.glide.tests.KeyAssertions;
 import com.bumptech.glide.tests.Util;
@@ -23,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.security.MessageDigest;
@@ -32,15 +37,18 @@ import java.security.NoSuchAlgorithmException;
 @Config(manifest = Config.NONE, sdk = 18)
 public class GifDrawableTransformationTest {
   @Mock Transformation<Bitmap> wrapped;
-  @Mock BitmapPool bitmapPool;
 
-  GifDrawableTransformation transformation;
+  private BitmapPool bitmapPool;
+  private GifDrawableTransformation transformation;
+  private Application context;
 
   @SuppressWarnings("unchecked")
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    transformation = new GifDrawableTransformation(wrapped, bitmapPool);
+    context = RuntimeEnvironment.application;
+    bitmapPool = new BitmapPoolAdapter();
+    transformation = new GifDrawableTransformation(wrapped);
   }
 
   @Test
@@ -61,9 +69,10 @@ public class GifDrawableTransformationTest {
     Bitmap expectedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     Resource<Bitmap> expectedResource = mock(Resource.class);
     when(expectedResource.get()).thenReturn(expectedBitmap);
-    when(wrapped.transform(isA(Resource.class), anyInt(), anyInt())).thenReturn(expectedResource);
+    when(wrapped.transform(isAContext(), isABitmapPool(), Util.<Bitmap>isAResource(), anyInt(),
+        anyInt())).thenReturn(expectedResource);
 
-    transformation.transform(resource, width, height);
+    transformation.transform(context, bitmapPool, resource, width, height);
 
     verify(gifDrawable).setFrameTransformation(isA(Transformation.class), eq(expectedBitmap));
   }
@@ -72,11 +81,11 @@ public class GifDrawableTransformationTest {
   public void testEquals() throws NoSuchAlgorithmException {
     doAnswer(new Util.WriteDigest("first")).when(wrapped)
         .updateDiskCacheKey(isA(MessageDigest.class));
-    KeyAssertions.assertSame(transformation, new GifDrawableTransformation(wrapped, bitmapPool));
+    KeyAssertions.assertSame(transformation, new GifDrawableTransformation(wrapped));
 
     Transformation<Bitmap> other = mock(Transformation.class);
     doAnswer(new Util.WriteDigest("other")).when(other)
         .updateDiskCacheKey(isA(MessageDigest.class));
-    KeyAssertions.assertDifferent(transformation, new GifDrawableTransformation(other, bitmapPool));
+    KeyAssertions.assertDifferent(transformation, new GifDrawableTransformation(other));
   }
 }

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
@@ -43,6 +45,7 @@ public class FitCenterTest {
   private FitCenter fitCenter;
   private int bitmapWidth;
   private int bitmapHeight;
+  private Application context;
 
   @Before
   public void setUp() {
@@ -53,35 +56,36 @@ public class FitCenterTest {
     when(resource.get()).thenReturn(bitmap);
 
     pool = new BitmapPoolAdapter();
+    context = RuntimeEnvironment.application;
 
-    fitCenter = new FitCenter(pool);
+    fitCenter = FitCenter.get();
   }
 
   @Test
   public void testReturnsGivenResourceIfMatchesSizeExactly() {
     Resource<Bitmap> result =
-        fitCenter.transform(resource, bitmapWidth, bitmapHeight);
+        fitCenter.transform(context, pool, resource, bitmapWidth, bitmapHeight);
 
     assertEquals(resource, result);
   }
 
   @Test
   public void testDoesNotRecycleGivenResourceIfMatchesSizeExactly() {
-    fitCenter.transform(resource, bitmapWidth, bitmapHeight);
+    fitCenter.transform(context, pool, resource, bitmapWidth, bitmapHeight);
 
     verify(resource, never()).recycle();
   }
 
   @Test
   public void testDoesNotRecycleGivenResource() {
-    fitCenter.transform(resource, 50, 50);
+    fitCenter.transform(context, pool, resource, 50, 50);
 
     verify(resource, never()).recycle();
   }
 
   @Test
   public void testEquals() throws NoSuchAlgorithmException {
-    KeyAssertions.assertSame(fitCenter, new FitCenter(pool));
+    KeyAssertions.assertSame(fitCenter, FitCenter.get());
 
     doAnswer(new Util.WriteDigest("other")).when(transformation)
         .updateDiskCacheKey(any(MessageDigest.class));

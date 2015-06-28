@@ -77,7 +77,7 @@ class GifFrameLoader {
   void setFrameTransformation(Transformation<Bitmap> transformation, Bitmap firstFrame) {
     this.transformation = Preconditions.checkNotNull(transformation);
     this.firstFrame = Preconditions.checkNotNull(firstFrame);
-    requestBuilder = requestBuilder.apply(new RequestOptions().transform(context, transformation));
+    requestBuilder = requestBuilder.apply(new RequestOptions().transform(transformation));
   }
 
   Transformation<Bitmap> getFrameTransformation() {

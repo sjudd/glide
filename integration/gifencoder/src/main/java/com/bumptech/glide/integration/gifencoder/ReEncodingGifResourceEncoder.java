@@ -1,8 +1,10 @@
 package com.bumptech.glide.integration.gifencoder;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.bumptech.glide.gifdecoder.GifHeader;
 import com.bumptech.glide.gifdecoder.GifHeaderParser;
@@ -59,15 +61,17 @@ public class ReEncodingGifResourceEncoder implements ResourceEncoder<GifDrawable
   private static final Factory FACTORY = new Factory();
   private static final String TAG = "GifEncoder";
   private final GifDecoder.BitmapProvider provider;
+  private Context context;
   private final BitmapPool bitmapPool;
   private final Factory factory;
 
-  public ReEncodingGifResourceEncoder(BitmapPool bitmapPool) {
-    this(bitmapPool, FACTORY);
+  public ReEncodingGifResourceEncoder(Context context) {
+    this(context, Glide.get(context).getBitmapPool(), FACTORY);
   }
 
   // Visible for testing.
-  ReEncodingGifResourceEncoder(BitmapPool bitmapPool, Factory factory) {
+  ReEncodingGifResourceEncoder(Context context, BitmapPool bitmapPool, Factory factory) {
+    this.context = context;
     this.bitmapPool = bitmapPool;
     provider = new GifBitmapProvider(bitmapPool);
     this.factory = factory;
@@ -180,8 +184,8 @@ public class ReEncodingGifResourceEncoder implements ResourceEncoder<GifDrawable
       Transformation<Bitmap> transformation, GifDrawable drawable) {
     // TODO: what if current frame is null?
     Resource<Bitmap> bitmapResource = factory.buildFrameResource(currentFrame, bitmapPool);
-    Resource<Bitmap> transformedResource = transformation
-        .transform(bitmapResource, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+    Resource<Bitmap> transformedResource = transformation.transform(context, bitmapPool,
+        bitmapResource, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
     if (!bitmapResource.equals(transformedResource)) {
       bitmapResource.recycle();
     }

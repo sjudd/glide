@@ -1,6 +1,5 @@
 package com.bumptech.glide.request;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -469,91 +468,85 @@ public abstract class BaseRequestOptions<CHILD extends BaseRequestOptions<CHILD>
    * Applies {@link com.bumptech.glide.load.resource.bitmap.CenterCrop} to all default types, and
    * ignores unknown types.
    *
-   * @param context Any {@link android.content.Context}.
    * @see #optionalTransform(Class, com.bumptech.glide.load.Transformation)
-   * @see #centerCrop(android.content.Context)
+   * @see #centerCrop()
    */
-  public CHILD optionalCenterCrop(Context context) {
-    return optionalTransform(context, DownsampleStrategy.CENTER_OUTSIDE, new CenterCrop(context));
+  public CHILD optionalCenterCrop() {
+    return optionalTransform(DownsampleStrategy.CENTER_OUTSIDE, CenterCrop.get());
   }
 
   /**
    * Applies {@link com.bumptech.glide.load.resource.bitmap.CenterCrop} to all default types and
    * throws an exception if asked to transform an unknown type.
    *
-   * @param context Any {@link android.content.Context}.
    * @see #transform(Class, com.bumptech.glide.load.Transformation)
-   * @see #optionalCenterCrop(android.content.Context)
+   * @see #optionalCenterCrop()
    */
-  public CHILD centerCrop(Context context) {
-    return transform(context, DownsampleStrategy.CENTER_OUTSIDE, new CenterCrop(context));
+  public CHILD centerCrop() {
+    return transform(DownsampleStrategy.CENTER_OUTSIDE, CenterCrop.get());
   }
 
   /**
    * Applies {@link com.bumptech.glide.load.resource.bitmap.FitCenter} to all default types, and
    * ignores unknown types.
    *
-   * @param context Any {@link android.content.Context}.
    * @see #optionalTransform(Class, com.bumptech.glide.load.Transformation)
-   * @see #fitCenter(android.content.Context)
+   * @see #fitCenter()
    */
-  public CHILD optionalFitCenter(Context context) {
-    return optionalTransform(context, DownsampleStrategy.CENTER_INSIDE, new FitCenter(context));
+  public CHILD optionalFitCenter() {
+    return optionalTransform(DownsampleStrategy.CENTER_INSIDE, FitCenter.get());
   }
 
   /**
    * Applies {@link com.bumptech.glide.load.resource.bitmap.FitCenter} to all default types and
    * throws an exception if asked to transform an unknown type.
    *
-   * @param context Any {@link android.content.Context}.
    * @see #transform(Class, com.bumptech.glide.load.Transformation)
-   * @see #optionalFitCenter(android.content.Context)
+   * @see #optionalFitCenter()
    */
-  public CHILD fitCenter(Context context) {
-    return transform(context, DownsampleStrategy.CENTER_INSIDE, new FitCenter(context));
+  public CHILD fitCenter() {
+    return transform(DownsampleStrategy.CENTER_INSIDE, FitCenter.get());
   }
 
   /**
    * Applies {@link CircleCrop} to all default types, and ignores unknown types.
    *
-   * @param context Any {@link Context}.
-   * @see #optionalTransform(Context, Transformation)
-   * @see #circleCrop(Context)
+   * @see #optionalTransform(Transformation)
+   * @see #circleCrop()
    */
-  public CHILD optionalCircleCrop(Context context) {
-    return optionalTransform(context, DownsampleStrategy.CENTER_OUTSIDE, new CircleCrop(context));
+  public CHILD optionalCircleCrop() {
+    return optionalTransform(DownsampleStrategy.CENTER_OUTSIDE, CircleCrop.get());
   }
 
   /**
    * Applies {@link CircleCrop} to all default types and throws an exception if asked to transform
    * an unknown type.
    *
-   * @param context Any {@link Context}.
    * @see #transform(Class, Transformation)
-   * @see #optionalCenterCrop(Context)
+   * @see #optionalCenterCrop()
    */
-  public CHILD circleCrop(Context context) {
-    return transform(context, DownsampleStrategy.CENTER_OUTSIDE, new CircleCrop(context));
+  public CHILD circleCrop() {
+    return transform(DownsampleStrategy.CENTER_OUTSIDE, CircleCrop.get());
   }
 
-  final CHILD optionalTransform(Context context, DownsampleStrategy downsampleStrategy,
+  final CHILD optionalTransform(DownsampleStrategy downsampleStrategy,
       Transformation<Bitmap> transformation) {
     if (isAutoCloneEnabled) {
-      return clone().optionalTransform(context, downsampleStrategy, transformation);
+      return clone().optionalTransform(downsampleStrategy, transformation);
     }
 
     downsample(downsampleStrategy);
-    return optionalTransform(context, transformation);
+    return optionalTransform(transformation);
   }
 
-  final CHILD transform(Context context, DownsampleStrategy downsampleStrategy,
+  final CHILD transform(DownsampleStrategy downsampleStrategy,
       Transformation<Bitmap> transformation) {
     if (isAutoCloneEnabled) {
-      return clone().transform(context, downsampleStrategy, transformation);
+      return clone().transform(downsampleStrategy, transformation);
     }
 
     downsample(downsampleStrategy);
-    return transform(context, transformation);
+    return transform(transformation);
   }
 
   /**
@@ -563,18 +556,17 @@ public abstract class BaseRequestOptions<CHILD extends BaseRequestOptions<CHILD>
    * {@link com.bumptech.glide.load.resource.gif.GifDrawable})
    * and throws an exception if asked to transform an unknown type.
    *
-   * @param context        Any {@link android.content.Context}.
    * @param transformation Any {@link com.bumptech.glide.load.Transformation} for
    *                       {@link android.graphics.Bitmap}s.
-   * @see #optionalTransform(android.content.Context, com.bumptech.glide.load.Transformation)
+   * @see #optionalTransform(com.bumptech.glide.load.Transformation)
    * @see #optionalTransform(Class, com.bumptech.glide.load.Transformation)
    */
-  public CHILD transform(Context context, @NonNull Transformation<Bitmap> transformation) {
+  public CHILD transform(@NonNull Transformation<Bitmap> transformation) {
     if (isAutoCloneEnabled) {
-      return clone().transform(context, transformation);
+      return clone().transform(transformation);
     }
 
-    optionalTransform(context, transformation);
+    optionalTransform(transformation);
     isTransformationRequired = true;
     return selfOrThrowIfLocked();
   }
@@ -585,22 +577,21 @@ public abstract class BaseRequestOptions<CHILD extends BaseRequestOptions<CHILD>
    * {@link android.graphics.drawable.BitmapDrawable}, and
    * {@link com.bumptech.glide.load.resource.gif.GifDrawable}) and ignores unknown types.
    *
-   * @param context        Any {@link android.content.Context}.
    * @param transformation Any {@link com.bumptech.glide.load.Transformation} for
    *                       {@link android.graphics.Bitmap}s.
-   * @see #transform(android.content.Context, com.bumptech.glide.load.Transformation)
+   * @see #transform(com.bumptech.glide.load.Transformation)
    * @see #transform(Class, com.bumptech.glide.load.Transformation)
    */
-  public CHILD optionalTransform(Context context, Transformation<Bitmap> transformation) {
+  public CHILD optionalTransform(Transformation<Bitmap> transformation) {
     if (isAutoCloneEnabled) {
-      return clone().optionalTransform(context, transformation);
+      return clone().optionalTransform(transformation);
     }
 
     optionalTransform(Bitmap.class, transformation);
     // TODO: remove BitmapDrawable decoder and this transformation.
     optionalTransform(BitmapDrawable.class,
-        new BitmapDrawableTransformation(context, transformation));
-    optionalTransform(GifDrawable.class, new GifDrawableTransformation(context, transformation));
+        new BitmapDrawableTransformation(transformation));
+    optionalTransform(GifDrawable.class, new GifDrawableTransformation(transformation));
     return selfOrThrowIfLocked();
   }
 

@@ -3,7 +3,6 @@ package com.bumptech.glide.load.resource.gif;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
@@ -19,20 +18,14 @@ import java.security.MessageDigest;
  */
 public class GifDrawableTransformation implements Transformation<GifDrawable> {
   private final Transformation<Bitmap> wrapped;
-  private final BitmapPool bitmapPool;
 
-  public GifDrawableTransformation(Context context, Transformation<Bitmap> wrapped) {
-    this(wrapped, Glide.get(context).getBitmapPool());
-  }
-
-  public GifDrawableTransformation(Transformation<Bitmap> wrapped, BitmapPool bitmapPool) {
+  public GifDrawableTransformation(Transformation<Bitmap> wrapped) {
     this.wrapped = Preconditions.checkNotNull(wrapped);
-    this.bitmapPool = Preconditions.checkNotNull(bitmapPool);
   }
 
   @Override
-  public Resource<GifDrawable> transform(Resource<GifDrawable> resource, int outWidth,
-      int outHeight) {
+  public Resource<GifDrawable> transform(Context context, BitmapPool bitmapPool,
+      Resource<GifDrawable> resource, int outWidth, int outHeight) {
     GifDrawable drawable = resource.get();
 
     // The drawable needs to be initialized with the correct width and height in order for a view
@@ -42,7 +35,8 @@ public class GifDrawableTransformation implements Transformation<GifDrawable> {
     // report the correct intrinsic width and height.
     Bitmap firstFrame = drawable.getFirstFrame();
     Resource<Bitmap> bitmapResource = new BitmapResource(firstFrame, bitmapPool);
-    Resource<Bitmap> transformed = wrapped.transform(bitmapResource, outWidth, outHeight);
+    Resource<Bitmap> transformed = wrapped.transform(context, bitmapPool, bitmapResource, outWidth,
+        outHeight);
     if (!bitmapResource.equals(transformed)) {
       bitmapResource.recycle();
     }

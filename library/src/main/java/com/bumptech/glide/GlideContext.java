@@ -11,6 +11,9 @@ import android.os.Looper;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.engine.Engine;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.engine.bitmap_recycle.ByteArrayPool;
+import com.bumptech.glide.load.engine.cache.MemoryCache;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.ImageViewTargetFactory;
 import com.bumptech.glide.request.target.Target;
@@ -26,19 +29,24 @@ public class GlideContext extends ContextWrapper implements ComponentCallbacks2 
   private final ImageViewTargetFactory imageViewTargetFactory;
   private final RequestOptions defaultRequestOptions;
   private final Engine engine;
-  private final ComponentCallbacks2 componentCallbacks;
   private final int logLevel;
+  private final BitmapPool bitmapPool;
+  private final ByteArrayPool byteArrayPool;
+  private final MemoryCache memoryCache;
 
-  public GlideContext(Context context, Registry registry,
+  GlideContext(Context context, Registry registry,
       ImageViewTargetFactory imageViewTargetFactory, RequestOptions defaultRequestOptions,
-      Engine engine, ComponentCallbacks2 componentCallbacks, int logLevel) {
+      Engine engine, int logLevel, BitmapPool bitmapPool,
+      ByteArrayPool byteArrayPool, MemoryCache memoryCache) {
     super(context.getApplicationContext());
     this.registry = registry;
     this.imageViewTargetFactory = imageViewTargetFactory;
     this.defaultRequestOptions = defaultRequestOptions;
     this.engine = engine;
-    this.componentCallbacks = componentCallbacks;
     this.logLevel = logLevel;
+    this.bitmapPool = bitmapPool;
+    this.byteArrayPool = byteArrayPool;
+    this.memoryCache = memoryCache;
 
     mainHandler = new Handler(Looper.getMainLooper());
   }
@@ -67,18 +75,39 @@ public class GlideContext extends ContextWrapper implements ComponentCallbacks2 
     return logLevel;
   }
 
+  public BitmapPool getBitmapPool() {
+    return bitmapPool;
+  }
+
+  public ByteArrayPool getByteArrayPool() {
+    return byteArrayPool;
+  }
+
+  void setMemorySizeMultiplier(float multiplier) {
+    memoryCache.setSizeMultiplier(multiplier);
+    bitmapPool.setSizeMultiplier(multiplier);
+  }
+
+  void clearMemory() {
+    memoryCache.clearMemory();
+    bitmapPool.clearMemory();
+    byteArrayPool.clearMemory();
+  }
+
   @Override
   public void onTrimMemory(int level) {
-    componentCallbacks.onTrimMemory(level);
+    memoryCache.trimMemory(level);
+    bitmapPool.trimMemory(level);
+    byteArrayPool.trimMemory(level);
   }
 
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
-    componentCallbacks.onConfigurationChanged(newConfig);
+    // Do nothing.
   }
 
   @Override
   public void onLowMemory() {
-    componentCallbacks.onLowMemory();
+    clearMemory();
   }
 }
