@@ -71,13 +71,13 @@ public class FlickrPhotoGrid extends Fragment implements PhotoViewer {
     fullRequest = Glide.with(this)
         .asDrawable()
         .transition(withNoTransition())
-        .apply(centerCropTransform(getActivity()));
+        .apply(centerCropTransform());
 
     thumbnailRequest = Glide.with(this)
         .asDrawable()
         .transition(withNoTransition())
         .apply(diskCacheStrategyOf(DiskCacheStrategy.DATA)
-            .centerCrop(getActivity())
+            .centerCrop()
             .override(Api.SQUARE_THUMB_SIZE));
 
     preloadRequest =
@@ -114,8 +114,8 @@ public class FlickrPhotoGrid extends Fragment implements PhotoViewer {
 
     FixedPreloadSizeProvider<Photo> preloadSizeProvider =
         new FixedPreloadSizeProvider<>(photoSize, photoSize);
-    RecyclerViewPreloader<Photo> preloader = new RecyclerViewPreloader<>(Glide.with(this), adapter,
-        preloadSizeProvider, args.getInt(PRELOAD_KEY));
+    RecyclerViewPreloader<Photo> preloader = new RecyclerViewPreloader<>(Glide.with(this),
+        adapter, preloadSizeProvider, args.getInt(PRELOAD_KEY));
     grid.addOnScrollListener(preloader);
 
     if (currentPhotos != null) {

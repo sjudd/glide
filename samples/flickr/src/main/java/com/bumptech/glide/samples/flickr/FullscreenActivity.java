@@ -33,7 +33,7 @@ public class FullscreenActivity extends FragmentActivity {
 
     Glide.with(this)
         .load(photo)
-        .apply(fitCenterTransform(this))
+        .apply(fitCenterTransform())
         .into(fullscreenView);
   }
 }

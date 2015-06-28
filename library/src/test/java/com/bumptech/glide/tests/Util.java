@@ -1,16 +1,17 @@
 package com.bumptech.glide.tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.RETURNS_DEFAULTS;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.engine.Resource;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -25,18 +26,35 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 
 // FIXME move to testutil module
-public class Util {
+public final class Util {
+
+  private Util() {
+    // Utility class.
+  }
 
   public static String getExpectedClassId(Class clazz) {
     return clazz.getSimpleName() + "." + clazz.getPackage().getName();
+  }
+
+  public static Bitmap.Config isABitmapConfig() {
+    return isA(Bitmap.Config.class);
+  }
+
+  public static BitmapPool isABitmapPool() {
+    return isA(BitmapPool.class);
+  }
+
+  public static Context isAContext() {
+    return isA(Context.class);
   }
 
   public static DataSource isADataSource() {
     return isA(DataSource.class);
   }
 
-  public static Resource<?> anyResource() {
-    return any(Resource.class);
+  @SuppressWarnings("unchecked")
+  public static <T> Resource<T> isAResource() {
+    return isA(Resource.class);
   }
 
   public static boolean isWindows() {

@@ -14,26 +14,27 @@ import java.security.MessageDigest;
  *
  * <p> Uses a PorterDuff blend mode, see http://ssp.impulsetrain.com/porterduff.html. </p>
  */
-public class CircleCrop extends BitmapTransformation {
+public final class CircleCrop extends BitmapTransformation {
   // The version of this transformation, incremented to correct an error in a previous version.
   // See #455.
   private static final int VERSION = 1;
   private static final String ID = "com.bumptech.glide.load.resource.bitmap.CircleCrop." + VERSION;
   private static final byte[] ID_BYTES = ID.getBytes(CHARSET);
+  private static final CircleCrop CIRCLE_CROP = new CircleCrop();
 
-  public CircleCrop(Context context) {
-    super(context);
+  public static CircleCrop get() {
+    return CIRCLE_CROP;
   }
 
-  public CircleCrop(BitmapPool bitmapPool) {
-    super(bitmapPool);
+  private CircleCrop() {
+    // Singleton constructor.
   }
 
   // Bitmap doesn't implement equals, so == and .equals are equivalent here.
   @SuppressWarnings("PMD.CompareObjectsWithEquals")
   @Override
-  protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth,
-      int outHeight) {
+  protected Bitmap transform(@NonNull Context context, @NonNull BitmapPool pool,
+      @NonNull Bitmap toTransform, int outWidth, int outHeight) {
     return TransformationUtils.circleCrop(pool, toTransform, outWidth, outHeight);
   }
 

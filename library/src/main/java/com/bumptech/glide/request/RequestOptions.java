@@ -1,6 +1,5 @@
 package com.bumptech.glide.request;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -120,47 +119,46 @@ public final class RequestOptions extends BaseRequestOptions<RequestOptions> {
   }
 
   /**
-   * Returns a {@link RequestOptions} object with {@link #fitCenter(Context)} set.
+   * Returns a {@link RequestOptions} object with {@link #fitCenter()} set.
    */
-  public static RequestOptions fitCenterTransform(Context context) {
+  public static RequestOptions fitCenterTransform() {
     if (fitCenterOptions == null) {
       fitCenterOptions = new RequestOptions()
-          .fitCenter(context.getApplicationContext())
+          .fitCenter()
           .autoLock();
     }
     return fitCenterOptions;
   }
 
   /**
-   * Returns a {@link RequestOptions} object with {@link #circleCrop(Context)} set.
+   * Returns a {@link RequestOptions} object with {@link #circleCrop()} set.
    */
-  public static RequestOptions centerCropTransform(Context context) {
+  public static RequestOptions centerCropTransform() {
     if (centerCropOptions == null) {
       centerCropOptions = new RequestOptions()
-          .centerCrop(context.getApplicationContext())
+          .centerCrop()
           .autoLock();
     }
     return centerCropOptions;
   }
 
   /**
-   * Returns a {@link RequestOptions} object with {@link RequestOptions#circleCrop(Context)} set.
+   * Returns a {@link RequestOptions} object with {@link RequestOptions#circleCrop()} set.
    */
-  public static RequestOptions circleCropTransform(Context context) {
+  public static RequestOptions circleCropTransform() {
     if (circleCropOptions == null) {
       circleCropOptions = new RequestOptions()
-          .circleCrop(context.getApplicationContext())
+          .circleCrop()
           .autoLock();
     }
     return circleCropOptions;
   }
 
   /**
-   * Returns a {@link RequestOptions} object with {@link #transform(Context, Transformation)} set.
+   * Returns a {@link RequestOptions} object with {@link #transform(Transformation)} set.
    */
-  public static RequestOptions bitmapTransform(Context context,
-      @NonNull Transformation<Bitmap> transformation) {
-    return new RequestOptions().transform(context, transformation);
+  public static RequestOptions bitmapTransform(@NonNull Transformation<Bitmap> transformation) {
+    return new RequestOptions().transform(transformation);
   }
 
   /**

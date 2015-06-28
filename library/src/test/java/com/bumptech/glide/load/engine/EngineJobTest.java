@@ -1,7 +1,7 @@
 package com.bumptech.glide.load.engine;
 
-import static com.bumptech.glide.tests.Util.anyResource;
 import static com.bumptech.glide.tests.Util.isADataSource;
+import static com.bumptech.glide.tests.Util.isAResource;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -119,7 +119,7 @@ public class EngineJobTest {
     job.onResourceReady(harness.resource, harness.dataSource);
 
     ShadowLooper.runUiThreadTasks();
-    verify(harness.factory).build(anyResource(), eq(harness.isCacheable));
+    verify(harness.factory).build(isAResource(), eq(harness.isCacheable));
   }
 
   @Test
@@ -130,7 +130,7 @@ public class EngineJobTest {
     job.onResourceReady(harness.resource, harness.dataSource);
 
     ShadowLooper.runUiThreadTasks();
-    verify(harness.factory).build(anyResource(), eq(harness.isCacheable));
+    verify(harness.factory).build(isAResource(), eq(harness.isCacheable));
   }
 
   @Test
@@ -151,7 +151,7 @@ public class EngineJobTest {
     job.onResourceReady(harness.resource, harness.dataSource);
 
     ShadowLooper.runUiThreadTasks();
-    verify(harness.cb, never()).onResourceReady(anyResource(), isADataSource());
+    verify(harness.cb, never()).onResourceReady(isAResource(), isADataSource());
   }
 
   @Test
@@ -261,7 +261,7 @@ public class EngineJobTest {
         job.addCallback(newCallback);
         return null;
       }
-    }).when(existingCallback).onResourceReady(anyResource(), isADataSource());
+    }).when(existingCallback).onResourceReady(isAResource(), isADataSource());
 
     job.addCallback(existingCallback);
     job.start(harness.decodeJob);
@@ -304,13 +304,13 @@ public class EngineJobTest {
         job.removeCallback(cb);
         return null;
       }
-    }).when(cb).onResourceReady(anyResource(), isADataSource());
+    }).when(cb).onResourceReady(isAResource(), isADataSource());
 
     job.addCallback(cb);
     job.start(harness.decodeJob);
     job.onResourceReady(harness.resource, harness.dataSource);
 
-    verify(cb, times(1)).onResourceReady(anyResource(), isADataSource());
+    verify(cb, times(1)).onResourceReady(isAResource(), isADataSource());
   }
 
   @Test
@@ -347,13 +347,13 @@ public class EngineJobTest {
         job.removeCallback(notYetCalled);
         return null;
       }
-    }).when(harness.cb).onResourceReady(anyResource(), isADataSource());
+    }).when(harness.cb).onResourceReady(isAResource(), isADataSource());
 
     job.addCallback(notYetCalled);
     job.start(harness.decodeJob);
     job.onResourceReady(harness.resource, harness.dataSource);
 
-    verify(notYetCalled, never()).onResourceReady(anyResource(), isADataSource());
+    verify(notYetCalled, never()).onResourceReady(isAResource(), isADataSource());
   }
 
   @Test
@@ -368,7 +368,7 @@ public class EngineJobTest {
         job.removeCallback(notYetCalled);
         return null;
       }
-    }).when(harness.cb).onResourceReady(anyResource(), isADataSource());
+    }).when(harness.cb).onResourceReady(isAResource(), isADataSource());
 
     job.addCallback(notYetCalled);
     job.start(harness.decodeJob);
@@ -399,7 +399,7 @@ public class EngineJobTest {
     job.start(harness.decodeJob);
     job.onLoadFailed(new GlideException("test"));
 
-    verify(notYetCalled, never()).onResourceReady(anyResource(), isADataSource());
+    verify(notYetCalled, never()).onResourceReady(isAResource(), isADataSource());
   }
 
   @Test

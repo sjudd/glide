@@ -17,31 +17,25 @@ import java.security.MessageDigest;
  */
 public class BitmapDrawableTransformation implements Transformation<BitmapDrawable> {
 
-  private final Context context;
-  private final BitmapPool bitmapPool;
   private final Transformation<Bitmap> wrapped;
 
-  public BitmapDrawableTransformation(Context context, Transformation<Bitmap> wrapped) {
-    this(context, Glide.get(context).getBitmapPool(), wrapped);
-  }
-
-  // Visible for testing.
-  BitmapDrawableTransformation(Context context, BitmapPool bitmapPool,
-      Transformation<Bitmap> wrapped) {
-    this.context = context.getApplicationContext();
-    this.bitmapPool = Preconditions.checkNotNull(bitmapPool);
+  public BitmapDrawableTransformation(Transformation<Bitmap> wrapped) {
     this.wrapped = Preconditions.checkNotNull(wrapped);
   }
 
   @Override
-  public Resource<BitmapDrawable> transform(Resource<BitmapDrawable> drawableResourceToTransform,
-      int outWidth, int outHeight) {
+  public Resource<BitmapDrawable> transform(Context context, BitmapPool bitmapPool,
+      Resource<BitmapDrawable> drawableResourceToTransform, int outWidth, int outHeight) {
+    if (bitmapPool == null) {
+      bitmapPool = Glide.get(context).getBitmapPool();
+    }
+
     BitmapDrawable drawableToTransform = drawableResourceToTransform.get();
     Bitmap bitmapToTransform = drawableToTransform.getBitmap();
 
     BitmapResource bitmapResourceToTransform = BitmapResource.obtain(bitmapToTransform, bitmapPool);
     Resource<Bitmap> transformedBitmapResource =
-        wrapped.transform(bitmapResourceToTransform, outWidth, outHeight);
+        wrapped.transform(context, bitmapPool, bitmapResourceToTransform, outWidth, outHeight);
 
     if (transformedBitmapResource.equals(bitmapResourceToTransform)) {
       return drawableResourceToTransform;

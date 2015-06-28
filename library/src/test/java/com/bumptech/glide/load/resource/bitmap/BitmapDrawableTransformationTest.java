@@ -1,5 +1,7 @@
 package com.bumptech.glide.load.resource.bitmap;
 
+import static com.bumptech.glide.tests.Util.isABitmapPool;
+import static com.bumptech.glide.tests.Util.isAContext;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -9,12 +11,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPoolAdapter;
 import com.bumptech.glide.tests.KeyAssertions;
 import com.bumptech.glide.tests.Util;
 
@@ -37,39 +41,42 @@ import java.security.NoSuchAlgorithmException;
 @Config(manifest = Config.NONE, sdk = 18)
 public class BitmapDrawableTransformationTest {
 
-  @Mock BitmapPool bitmapPool;
   @Mock Transformation<Bitmap> wrapped;
   @Mock Resource<BitmapDrawable> drawableResourceToTransform;
   @Mock BitmapDrawable drawableToTransform;
 
   private BitmapDrawableTransformation transformation;
   private Bitmap bitmapToTransform;
+  private Application context;
+  private BitmapPool bitmapPool;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     bitmapToTransform = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+    context = RuntimeEnvironment.application;
 
     when(drawableResourceToTransform.get()).thenReturn(drawableToTransform);
     when(drawableToTransform.getBitmap()).thenReturn(bitmapToTransform);
-    transformation = new BitmapDrawableTransformation(RuntimeEnvironment.application, bitmapPool,
-        wrapped);
+    transformation = new BitmapDrawableTransformation(wrapped);
+
+    bitmapPool = new BitmapPoolAdapter();
   }
 
   @Test
   public void testReturnsOriginalResourceIfTransformationDoesNotTransform() {
     int outWidth = 123;
     int outHeight = 456;
-    when(wrapped.transform(any(Resource.class), eq(outWidth), eq(outHeight)))
-        .thenAnswer(new Answer<Object>() {
-          @Override
-          public Object answer(InvocationOnMock invocation) throws Throwable {
-            return invocation.getArguments()[0];
-          }
-        });
+    when(wrapped.transform(isAContext(), isABitmapPool(), Util.<Bitmap>isAResource(),
+        eq(outWidth), eq(outHeight))).thenAnswer(new Answer<Object>() {
+      @Override
+      public Object answer(InvocationOnMock invocation) throws Throwable {
+        return invocation.getArguments()[2];
+      }
+    });
 
-    Resource<BitmapDrawable> transformed = transformation.transform(drawableResourceToTransform,
-        outWidth, outHeight);
+    Resource<BitmapDrawable> transformed = transformation.transform(context, bitmapPool,
+        drawableResourceToTransform, outWidth, outHeight);
 
     assertThat(transformed).isEqualTo(drawableResourceToTransform);
   }
@@ -82,11 +89,12 @@ public class BitmapDrawableTransformationTest {
     Bitmap transformedBitmap = Bitmap.createBitmap(outWidth, outHeight, Bitmap.Config.RGB_565);
     Resource<Bitmap> transformedBitmapResource = mock(Resource.class);
     when(transformedBitmapResource.get()).thenReturn(transformedBitmap);
-    when(wrapped.transform(any(Resource.class), eq(outWidth), eq(outHeight)))
+    when(wrapped.transform(isAContext(), isABitmapPool(), Util.<Bitmap>isAResource(),
+        eq(outWidth), eq(outHeight)))
         .thenReturn(transformedBitmapResource);
 
-    Resource<BitmapDrawable> transformed =
-        transformation.transform(drawableResourceToTransform, outWidth, outHeight);
+    Resource<BitmapDrawable> transformed = transformation.transform(context, bitmapPool,
+        drawableResourceToTransform, outWidth, outHeight);
 
     assertThat(transformed.get().getBitmap()).isEqualTo(transformedBitmap);
   }
@@ -98,13 +106,15 @@ public class BitmapDrawableTransformationTest {
     Resource<Bitmap> transformed = mock(Resource.class);
     when(transformed.get())
         .thenReturn(Bitmap.createBitmap(outWidth, outHeight, Bitmap.Config.ARGB_8888));
-    when(wrapped.transform(any(Resource.class), anyInt(), anyInt()))
+    when(wrapped.transform(isAContext(), isABitmapPool(), Util.<Bitmap>isAResource(), anyInt(),
+        anyInt()))
         .thenReturn(transformed);
 
-    transformation.transform(drawableResourceToTransform, outWidth, outHeight);
+    transformation.transform(context, bitmapPool, drawableResourceToTransform, outWidth, outHeight);
     ArgumentCaptor<Resource> captor = ArgumentCaptor.forClass(Resource.class);
 
-    verify(wrapped).transform(captor.capture(), eq(outWidth), eq(outHeight));
+    verify(wrapped).transform(isAContext(), isABitmapPool(), captor.capture(), eq(outWidth),
+        eq(outHeight));
 
     assertThat(captor.getValue().get()).isEqualTo(bitmapToTransform);
   }
@@ -114,12 +124,12 @@ public class BitmapDrawableTransformationTest {
     doAnswer(new Util.WriteDigest("wrapped")).when(wrapped)
         .updateDiskCacheKey(any(MessageDigest.class));
     KeyAssertions.assertSame(transformation,
-        new BitmapDrawableTransformation(RuntimeEnvironment.application, bitmapPool, wrapped));
+        new BitmapDrawableTransformation(wrapped));
 
     Transformation<Bitmap> other = mock(Transformation.class);
     doAnswer(new Util.WriteDigest("other")).when(other)
         .updateDiskCacheKey(any(MessageDigest.class));
     KeyAssertions.assertDifferent(transformation,
-        new BitmapDrawableTransformation(RuntimeEnvironment.application, bitmapPool, other));
+        new BitmapDrawableTransformation(other));
   }
 }

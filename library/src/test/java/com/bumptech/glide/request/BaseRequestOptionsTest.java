@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
@@ -71,7 +70,7 @@ public class BaseRequestOptionsTest {
 
   @Test
   public void testApplyingDontTransform_overridesTransformations() {
-    options.transform(RuntimeEnvironment.application, transformation);
+    options.transform(transformation);
     options.dontTransform();
     assertThat(options.isTransformationSet()).isFalse();
     assertThat(options.isTransformationRequired()).isFalse();
@@ -81,7 +80,7 @@ public class BaseRequestOptionsTest {
   @Test
   public void testApplyingTransformation_overridesDontTransform() {
     options.dontTransform();
-    options.transform(RuntimeEnvironment.application, transformation);
+    options.transform(transformation);
 
     assertThat(options.isTransformationAllowed()).isTrue();
     assertThat(options.isTransformationRequired()).isTrue();
@@ -90,7 +89,7 @@ public class BaseRequestOptionsTest {
 
   @Test
   public void testApplyingOptions_withDontTransform_overridesTransformations() {
-    options.transform(RuntimeEnvironment.application, transformation);
+    options.transform(transformation);
     TestOptions other = new TestOptions();
     other.dontTransform();
 
@@ -106,7 +105,7 @@ public class BaseRequestOptionsTest {
   public void testApplyingOptions_withTransformation_overridesDontTransform() {
     options.dontTransform();
     TestOptions other = new TestOptions();
-    other.transform(RuntimeEnvironment.application, transformation);
+    other.transform(transformation);
 
     options.apply(other);
 
@@ -128,7 +127,7 @@ public class BaseRequestOptionsTest {
 
   @Test
   public void testApplyingDefaultOptions_withTransform_retrainsTransform() {
-    options.transform(RuntimeEnvironment.application, transformation);
+    options.transform(transformation);
     options.apply(new TestOptions());
 
     assertThat(options.isTransformationAllowed()).isTrue();

@@ -2,9 +2,7 @@ package com.bumptech.glide;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ComponentCallbacks2;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -84,19 +82,16 @@ import java.util.List;
  * {@link com.bumptech.glide.load.engine.cache.DiskCache} and {@link MemoryCache}.
  */
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public class Glide implements ComponentCallbacks2 {
+public final class Glide {
   private static final String DEFAULT_DISK_CACHE_DIR = "image_manager_disk_cache";
   private static final String TAG = "Glide";
   private static volatile Glide glide;
 
   private final Engine engine;
-  private final BitmapPool bitmapPool;
-  private final MemoryCache memoryCache;
   private final BitmapPreFiller bitmapPreFiller;
   private final GlideContext glideContext;
   private final Registry registry;
   private final ArrayPool arrayPool;
-  private final ByteArrayPool byteArrayPool;
   private final ConnectivityMonitorFactory connectivityMonitorFactory;
   private final List<RequestManager> managers = new ArrayList<>();
 
@@ -180,11 +175,9 @@ public class Glide implements ComponentCallbacks2 {
       int logLevel,
       RequestOptions defaultRequestOptions) {
     this.engine = engine;
-    this.bitmapPool = bitmapPool;
     this.arrayPool = arrayPool;
-    this.memoryCache = memoryCache;
     this.connectivityMonitorFactory = connectivityMonitorFactory;
-    this.byteArrayPool = new LruByteArrayPool();
+    ByteArrayPool byteArrayPool = new LruByteArrayPool();
 
     DecodeFormat decodeFormat = defaultRequestOptions.getOptions().get(Downsampler.DECODE_FORMAT);
     bitmapPreFiller = new BitmapPreFiller(memoryCache, bitmapPool, decodeFormat);
@@ -260,7 +253,7 @@ public class Glide implements ComponentCallbacks2 {
 
     ImageViewTargetFactory imageViewTargetFactory = new ImageViewTargetFactory();
     glideContext = new GlideContext(context, registry, imageViewTargetFactory,
-        defaultRequestOptions, engine, this, logLevel);
+        defaultRequestOptions, engine, logLevel, bitmapPool, arrayPool, byteArrayPool, memoryCache);
   }
 
   /**
@@ -283,11 +276,11 @@ public class Glide implements ComponentCallbacks2 {
    * recommended. </p>
    */
   public BitmapPool getBitmapPool() {
-    return bitmapPool;
+    return glideContext.getBitmapPool();
   }
 
   public ByteArrayPool getByteArrayPool() {
-    return byteArrayPool;
+    return glideContext.getByteArrayPool();
   }
 
   public ArrayPool getArrayPool() {
@@ -338,12 +331,7 @@ public class Glide implements ComponentCallbacks2 {
    * @see android.content.ComponentCallbacks2#onLowMemory()
    */
   public void clearMemory() {
-    // Engine asserts this anyway when removing resources, fail faster and consistently
-    Util.assertMainThread();
-    // memory cache needs to be cleared before bitmap pool to clear re-pooled Bitmaps too. See #687.
-    memoryCache.clearMemory();
-    bitmapPool.clearMemory();
-    arrayPool.clearMemory();
+    glideContext.clearMemory();
   }
 
   /**
@@ -352,12 +340,7 @@ public class Glide implements ComponentCallbacks2 {
    * @see android.content.ComponentCallbacks2#onTrimMemory(int)
    */
   public void trimMemory(int level) {
-    // Engine asserts this anyway when removing resources, fail faster and consistently
-    Util.assertMainThread();
-    // memory cache needs to be trimmed before bitmap pool to trim re-pooled Bitmaps too. See #687.
-    memoryCache.trimMemory(level);
-    bitmapPool.trimMemory(level);
-    arrayPool.trimMemory(level);
+    glideContext.onTrimMemory(level);
   }
 
   /**
@@ -383,11 +366,7 @@ public class Glide implements ComponentCallbacks2 {
    * to change the default. </p>
    */
   public void setMemoryCategory(MemoryCategory memoryCategory) {
-    // Engine asserts this anyway when removing resources, fail faster and consistently
-    Util.assertMainThread();
-    // memory cache needs to be trimmed before bitmap pool to trim re-pooled Bitmaps too. See #687.
-    memoryCache.setSizeMultiplier(memoryCategory.getMultiplier());
-    bitmapPool.setSizeMultiplier(memoryCategory.getMultiplier());
+    glideContext.setMemorySizeMultiplier(memoryCategory.getMultiplier());
   }
 
   /**
@@ -499,20 +478,5 @@ public class Glide implements ComponentCallbacks2 {
       }
       managers.remove(requestManager);
     }
-  }
-
-  @Override
-  public void onTrimMemory(int level) {
-    trimMemory(level);
-  }
-
-  @Override
-  public void onConfigurationChanged(Configuration newConfig) {
-    // Do nothing.
-  }
-
-  @Override
-  public void onLowMemory() {
-    clearMemory();
   }
 }
