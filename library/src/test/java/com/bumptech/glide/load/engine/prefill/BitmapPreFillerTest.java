@@ -15,6 +15,7 @@ import com.google.common.collect.Range;
 
 import android.graphics.Bitmap;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.engine.cache.MemoryCache;
@@ -27,14 +28,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class BitmapPreFillerTest {
   private static final int DEFAULT_BITMAP_WIDTH = 100;
   private static final int DEFAULT_BITMAP_HEIGHT = 50;

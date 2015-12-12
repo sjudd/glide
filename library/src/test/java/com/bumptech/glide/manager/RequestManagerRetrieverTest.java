@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.tests.BackgroundUtil;
 import com.bumptech.glide.tests.GlideShadowLooper;
@@ -28,14 +29,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18, shadows = GlideShadowLooper.class)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class,
+    shadows = GlideShadowLooper.class)
 public class RequestManagerRetrieverTest {
   private static final String PARENT_TAG = "parent";
   private RetrieverHarness[] harnesses;

@@ -13,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
@@ -25,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
@@ -34,8 +35,9 @@ import org.robolectric.shadows.ShadowCanvas;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18, shadows = { CenterInsideTest.DrawNothingCanvas.class })
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class,
+    shadows = { CenterInsideTest.DrawNothingCanvas.class })
 public class CenterInsideTest {
 
   @Mock Resource<Bitmap> resource;

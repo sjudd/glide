@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import android.content.Context;
 import android.support.v4.util.Pools.Pool;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.Registry.NoModelLoaderAvailableException;
 import com.bumptech.glide.util.pool.FactoryPools;
 
@@ -21,15 +22,15 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class MultiModelLoaderFactoryTest {
 
   @Mock ModelLoaderFactory<String, String> firstFactory;

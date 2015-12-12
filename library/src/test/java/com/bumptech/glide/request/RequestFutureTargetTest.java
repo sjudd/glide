@@ -14,6 +14,7 @@ import static org.mockito.Mockito.verify;
 
 import android.os.Handler;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 
 import org.junit.Before;
@@ -21,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.concurrent.CancellationException;
@@ -29,8 +30,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class RequestFutureTargetTest {
   private int width;
   private int height;

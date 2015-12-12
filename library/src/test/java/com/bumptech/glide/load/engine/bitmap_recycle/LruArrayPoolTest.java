@@ -7,16 +7,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.bumptech.glide.BuildConfig;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.DEFAULT, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.DEFAULT, sdk = 18, constants = BuildConfig.class)
 public class LruArrayPoolTest {
   private static final int MAX_SIZE = 10;
   private static final Class ARRAY_CLASS = byte[].class;

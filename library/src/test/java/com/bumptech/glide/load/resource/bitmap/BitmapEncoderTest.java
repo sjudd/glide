@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import android.graphics.Bitmap;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.EncodeStrategy;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.engine.Resource;
@@ -17,7 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
@@ -28,8 +29,8 @@ import org.robolectric.shadows.ShadowBitmap;
 import java.io.File;
 import java.io.IOException;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18, shadows = {
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class, shadows = {
     BitmapEncoderTest.AlphaShadowBitmap.class })
 public class BitmapEncoderTest {
   private EncoderHarness harness;

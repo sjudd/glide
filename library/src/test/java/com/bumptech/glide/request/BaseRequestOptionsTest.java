@@ -4,6 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import android.graphics.Bitmap;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.Transformation;
 
 import org.junit.Before;
@@ -11,12 +12,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class BaseRequestOptionsTest {
 
   private TestOptions options;

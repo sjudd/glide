@@ -30,7 +30,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
@@ -48,9 +48,9 @@ import java.util.concurrent.CountDownLatch;
  * Tests {@link com.bumptech.glide.integration.volley.VolleyStreamFetcher} against server
  * responses.
  */
-@RunWith(RobolectricTestRunner.class)
+@RunWith(RobolectricGradleTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 18,
-    shadows = VolleyStreamFetcherServerTest.FakeSystemClock.class)
+    shadows = VolleyStreamFetcherServerTest.FakeSystemClock.class, constants = BuildConfig.class)
 public class VolleyStreamFetcherServerTest {
   private static final String DEFAULT_PATH = "/fakepath";
 

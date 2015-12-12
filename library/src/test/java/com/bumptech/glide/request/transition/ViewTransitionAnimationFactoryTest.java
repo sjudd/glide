@@ -12,17 +12,18 @@ import android.content.Context;
 import android.view.View;
 import android.view.animation.Animation;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.DataSource;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class ViewTransitionAnimationFactoryTest {
   private ViewTransition.ViewTransitionAnimationFactory viewTransitionAnimationFactory;
   private ViewAnimationFactory factory;

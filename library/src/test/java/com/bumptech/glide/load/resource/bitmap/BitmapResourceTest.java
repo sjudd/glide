@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import android.graphics.Bitmap;
 import android.os.Build;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.tests.Util;
 
@@ -15,12 +16,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 //TODO: add a test for bitmap size using getAllocationByteSize when robolectric supports kitkat.
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class BitmapResourceTest {
   private int currentBuildVersion;
   private BitmapResourceHarness harness;

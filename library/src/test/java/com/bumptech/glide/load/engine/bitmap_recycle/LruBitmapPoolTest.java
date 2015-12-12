@@ -14,10 +14,12 @@ import static org.mockito.Mockito.when;
 
 import android.graphics.Bitmap;
 
+import com.bumptech.glide.BuildConfig;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowBitmap;
@@ -28,8 +30,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class LruBitmapPoolTest {
   private static final int MAX_SIZE = 10;
   private static final Set<Bitmap.Config> ALLOWED_CONFIGS =

@@ -6,13 +6,15 @@ import com.google.common.testing.EqualsTester;
 
 import android.graphics.Bitmap;
 
+import com.bumptech.glide.BuildConfig;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class PreFillTypeTest {
 
   @Test(expected = IllegalArgumentException.class)

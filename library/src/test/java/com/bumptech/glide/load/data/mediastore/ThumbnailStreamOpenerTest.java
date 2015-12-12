@@ -12,13 +12,14 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.engine.bitmap_recycle.ByteArrayPool;
 import com.bumptech.glide.load.engine.bitmap_recycle.LruByteArrayPool;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
@@ -29,8 +30,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class ThumbnailStreamOpenerTest {
   private Harness harness;
 

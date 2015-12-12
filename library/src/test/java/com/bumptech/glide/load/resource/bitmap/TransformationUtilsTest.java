@@ -20,6 +20,7 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Build;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.tests.Util;
 import com.bumptech.glide.util.Preconditions;
@@ -29,7 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
@@ -37,9 +38,9 @@ import org.robolectric.annotation.Implements;
 import org.robolectric.shadows.ShadowBitmap;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18, shadows = {
-    TransformationUtilsTest.AlphaShadowBitmap.class })
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class,
+    shadows = { TransformationUtilsTest.AlphaShadowBitmap.class })
 public class TransformationUtilsTest {
 
   @Mock BitmapPool bitmapPool;

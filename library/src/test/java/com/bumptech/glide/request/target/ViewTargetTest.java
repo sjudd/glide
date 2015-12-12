@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.transition.Transition;
 
@@ -26,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
@@ -40,9 +41,10 @@ import org.robolectric.shadows.ShadowViewTreeObserver;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18, shadows = { ViewTargetTest.SizedShadowView.class,
-    ViewTargetTest.PreDrawShadowViewTreeObserver.class })
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class,
+    shadows = { ViewTargetTest.SizedShadowView.class,
+        ViewTargetTest.PreDrawShadowViewTreeObserver.class })
 public class ViewTargetTest {
   private View view;
   private ViewTarget target;

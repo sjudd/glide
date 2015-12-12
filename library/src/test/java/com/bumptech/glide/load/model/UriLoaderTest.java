@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import android.content.Context;
 import android.net.Uri;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataFetcher;
 
@@ -17,7 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
@@ -27,8 +28,8 @@ import java.io.IOException;
 /**
  * Tests for the {@link UriLoader} class.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class UriLoaderTest {
   // Not a magic number, just arbitrary non zero.
   private static final int IMAGE_SIDE = 120;

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.RequestManager;
 
 import org.junit.Before;
@@ -17,12 +18,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.exceptions.base.MockitoAssertionError;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class RequestManagerFragmentTest {
   private static final String TAG = "tag";
   private Harness[] harnesses;

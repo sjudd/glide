@@ -57,7 +57,11 @@ def getAndroidJar() {
         classpath = files(getAndroidLibraryVariants(variantName).collect {
             files(it.javaCompile.classpath.files, getAndroidJar())
         })
-        classpath += getInternalJavaProjects().collect { files(it.configurations.compile) }
+        getInternalJavaProjects().collect {
+            files(it.configurations.compile)
+        }.each {
+            classpath += it
+        }
 
         options {
             links("http://docs.oracle.com/javase/7/docs/api/")

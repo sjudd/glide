@@ -2,6 +2,7 @@ package com.bumptech.glide.load.resource.gif;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.engine.bitmap_recycle.LruByteArrayPool;
@@ -11,15 +12,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class StreamGifDecoderTest {
   private static final byte[] GIF_HEADER = new byte[] { 0x47, 0x49, 0x46 };
 

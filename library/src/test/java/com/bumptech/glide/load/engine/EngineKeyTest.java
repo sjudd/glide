@@ -5,6 +5,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Option;
 import com.bumptech.glide.load.Options;
@@ -17,7 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.UnsupportedEncodingException;
@@ -30,8 +31,8 @@ import java.util.Collections;
  * equals} and SHA-1 disk cache key are different on any difference in ID or existence of a certain
  * workflow part. Also checking whether the equals method is symmetric.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class EngineKeyTest {
   private Harness harness;
 

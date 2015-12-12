@@ -11,10 +11,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.widget.RemoteViews;
 
+import com.bumptech.glide.BuildConfig;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
@@ -22,9 +24,9 @@ import org.robolectric.annotation.Implements;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowNotificationManager;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18, shadows = NotificationTargetTest
-    .UpdateShadowNotificationManager.class)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class,
+    shadows = NotificationTargetTest.UpdateShadowNotificationManager.class)
 public class NotificationTargetTest {
   private UpdateShadowNotificationManager shadowManager;
   private RemoteViews remoteViews;

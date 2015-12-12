@@ -8,19 +8,20 @@ import com.google.common.testing.EqualsTester;
 
 import android.support.annotation.Nullable;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.model.LazyHeaders.Builder;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class LazyHeadersTest {
   private static final String DEFAULT_USER_AGENT = "default_user_agent";
   private static final String DEFAULT_USER_AGENT_PROPERTY = "http.agent";

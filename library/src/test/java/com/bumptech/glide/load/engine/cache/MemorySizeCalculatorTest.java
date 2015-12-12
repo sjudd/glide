@@ -10,20 +10,21 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Build;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.tests.Util;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivityManager;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class MemorySizeCalculatorTest {
   private MemorySizeHarness harness;
   private int initialSdkVersion;

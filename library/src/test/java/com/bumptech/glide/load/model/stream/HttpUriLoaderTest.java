@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 
 import android.net.Uri;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.ModelLoader;
@@ -15,14 +16,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class HttpUriLoaderTest {
   private static final int IMAGE_SIDE = 100;
   private static final Options OPTIONS = new Options();

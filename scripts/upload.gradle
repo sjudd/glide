@@ -113,9 +113,7 @@ afterEvaluate { project ->
             it.buildType.name.equalsIgnoreCase('release')
         }
 
-        def androidSdkDirectory = project.android.sdkDirectory
-
-        task androidJavadocs(type: Javadoc, dependsOn: compileReleaseJava) {
+        task androidJavadocs(type: Javadoc, dependsOn: compileDebugSources) {
             source = releaseVariants.collect { it.javaCompile.source }
             classpath = files(releaseVariants.collect { files(it.javaCompile.classpath.files,
                     project.android.bootClasspath) })

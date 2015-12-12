@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 
+import com.bumptech.glide.BuildConfig;
 import com.bumptech.glide.Priority;
 
 import org.junit.Before;
@@ -16,7 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
@@ -24,8 +25,8 @@ import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, sdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 18, constants = BuildConfig.class)
 public class LocalUriFetcherTest {
   private TestLocalUriFetcher fetcher;
   @Mock DataFetcher.DataCallback<Closeable> callback;
