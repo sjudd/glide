@@ -71,6 +71,7 @@ public class FixedSizeDrawable extends Drawable {
     return wrapped.getChangingConfigurations();
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void setDither(boolean dither) {
     wrapped.setDither(dither);

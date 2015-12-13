@@ -5,4 +5,5 @@
     <issue id="InvalidPackage" severity="ignore">
         <ignore regexp="okio-1.0.0.jar"/>
     </issue>
+    <issue id="GoogleAppIndexingWarning" severity="ignore" />
 </lint>

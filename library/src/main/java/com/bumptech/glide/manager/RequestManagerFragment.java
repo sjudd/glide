@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -161,10 +162,10 @@ public class RequestManagerFragment extends Fragment {
   }
 
   @Override
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
+  public void onAttach(Context context) {
+    super.onAttach(context);
     try {
-      registerFragmentWithRoot(activity);
+      registerFragmentWithRoot(getActivity());
     } catch (IllegalArgumentException e) {
       // OnAttach can be called after the activity is destroyed, see #497.
       if (Log.isLoggable(TAG, Log.WARN)) {
