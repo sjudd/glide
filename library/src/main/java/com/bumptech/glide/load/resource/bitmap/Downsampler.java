@@ -161,6 +161,9 @@ public final class Downsampler {
   @SuppressWarnings("resource")
   public Resource<Bitmap> decode(InputStream is, int requestedWidth, int requestedHeight,
       Options options, DecodeCallbacks callbacks) throws IOException {
+    if (true) {
+      return null;
+    }
     Preconditions.checkArgument(is.markSupported(), "You must provide an InputStream that supports"
         + " mark()");
 

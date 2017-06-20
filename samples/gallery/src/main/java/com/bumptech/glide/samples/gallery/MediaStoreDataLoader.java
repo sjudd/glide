@@ -22,6 +22,7 @@ public class MediaStoreDataLoader extends AsyncTaskLoader<List<MediaStoreData>> 
           MediaStore.Images.ImageColumns.DATE_MODIFIED,
           MediaStore.Images.ImageColumns.MIME_TYPE,
           MediaStore.Images.ImageColumns.ORIENTATION,
+          MediaStore.Images.ImageColumns.DATA,
       };
 
   private static final String[] VIDEO_PROJECTION =
@@ -31,6 +32,7 @@ public class MediaStoreDataLoader extends AsyncTaskLoader<List<MediaStoreData>> 
           MediaStore.Video.VideoColumns.DATE_MODIFIED,
           MediaStore.Video.VideoColumns.MIME_TYPE,
           "0 AS " + MediaStore.Images.ImageColumns.ORIENTATION,
+          MediaStore.Video.VideoColumns.DATA,
       };
 
   private List<MediaStoreData> cached;
@@ -125,6 +127,7 @@ public class MediaStoreDataLoader extends AsyncTaskLoader<List<MediaStoreData>> 
       final int dateModifiedColNum = cursor.getColumnIndexOrThrow(dateModifiedCol);
       final int mimeTypeColNum = cursor.getColumnIndex(mimeTypeCol);
       final int orientationColNum = cursor.getColumnIndexOrThrow(orientationCol);
+      final int filepathColNum = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
       while (cursor.moveToNext()) {
         long id = cursor.getLong(idColNum);
@@ -132,9 +135,10 @@ public class MediaStoreDataLoader extends AsyncTaskLoader<List<MediaStoreData>> 
         String mimeType = cursor.getString(mimeTypeColNum);
         long dateModified = cursor.getLong(dateModifiedColNum);
         int orientation = cursor.getInt(orientationColNum);
+        String filepath = cursor.getString(filepathColNum);
 
         data.add(new MediaStoreData(id, Uri.withAppendedPath(contentUri, Long.toString(id)),
-            mimeType, dateTaken, dateModified, orientation, type));
+            mimeType, dateTaken, dateModified, orientation, type, filepath));
       }
     } finally {
       cursor.close();

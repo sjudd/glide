@@ -15,6 +15,7 @@ import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.signature.MediaStoreSignature;
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,7 +73,7 @@ class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ListViewHolde
     requestBuilder
         .clone()
         .signature(signature)
-        .load(current.uri)
+        .load(new File(current.filepath))
         .into(viewHolder.image);
   }
 
@@ -103,7 +104,7 @@ class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ListViewHolde
     return requestBuilder
         .clone()
         .signature(signature)
-        .load(item.uri);
+        .load(new File(item.filepath));
   }
 
   @Override
