@@ -6,6 +6,8 @@ android:
   - tools
   - build-tools-26.0.1
   - android-26
+  - build-tools-22.0.1
+  - android-22
   - sys-img-armeabi-v7a-google_apis-22
 
 
