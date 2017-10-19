@@ -23,7 +23,7 @@ jdk:
 
 sudo: false
 
-script: './gradlew build connectedCheck --parallel'
+script: './gradlew connectedCheck --parallel'
 
 after_success:
 - scripts/travis-sonatype-publish.sh
