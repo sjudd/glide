@@ -5,7 +5,7 @@ android:
   - platform-tools
   - build-tools-26.0.1
   - android-26
-  - sys-img-x86-android-26
+  - sys-img-x86-google_apis-26
 
 
 licenses:
