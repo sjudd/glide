@@ -11,7 +11,7 @@ android:
   - android-26
   - android-22
   - sys-img-armeabi-v7a-google_apis-22
-
+  - addon-google_apis-google-22
 
 licenses:
   - 'android-sdk-license.*'
