@@ -22,6 +22,7 @@ env:
   matrix:
     - COMPONENT=unit
     - COMPONENT=instrumentation
+    - COMPONENT=samples
 
 before_script:
   - ./scripts/travis_before_script.sh
@@ -30,8 +31,7 @@ script:
   - ./scripts/travis_script.sh
 
 after_success:
-  - ./scripts/travis_sonatype_publish.sh
-  - ./gradlew jacocoTestReport coveralls
+  - ./scripts/travis_after_success.sh
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
