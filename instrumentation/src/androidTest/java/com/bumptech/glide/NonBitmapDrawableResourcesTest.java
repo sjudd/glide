@@ -73,7 +73,7 @@ public class NonBitmapDrawableResourcesTest {
   @Test
   public void load_withShapeDrawableResourceId_asDrawable_producesNonNullDrawable()
       throws ExecutionException, InterruptedException {
-    Drawable drawable = Glide.with(context)
+    Drawable drawable = Glide.with(InstrumentationRegistry.getTargetContext())
         .load(ResourceIds.drawable.shape_drawable)
         .submit()
         .get();
