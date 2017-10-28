@@ -21,6 +21,10 @@ public final class ResourceIds {
     int vector_drawable = getResourceId("drawable", "vector_drawable");
   }
 
+  public interface raw {
+    int issue_2515 = getResourceId("raw", "issue_2515");
+  }
+
   private static int getResourceId(String type, String resourceName) {
     Context context = InstrumentationRegistry.getTargetContext();
     Resources res = context.getResources();
