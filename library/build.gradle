@@ -9,6 +9,7 @@ dependencies {
     compile project(':third_party:gif_decoder')
     compile project(':third_party:disklrucache')
     compile project(':annotation')
+    
     provided "com.android.support:support-fragment:${ANDROID_SUPPORT_VERSION}"
     provided "com.android.support:appcompat-v7:${ANDROID_SUPPORT_VERSION}"
     testCompile project(':testutil')
