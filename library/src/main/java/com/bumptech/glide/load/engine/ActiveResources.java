@@ -15,7 +15,6 @@ import java.util.Map;
 
 final class ActiveResources {
   private final Map<Key, ResourceWeakReference> activeEngineResources = new HashMap<>();
-  private final Map<Key, Resource<?>> activeResources = new HashMap<>();
   // Lazily instantiate to avoid exceptions if Glide is initialized on a background thread. See
   // #295.
   @Nullable
@@ -28,20 +27,16 @@ final class ActiveResources {
 
   void activate(Key key, EngineResource<?> resource) {
     activeEngineResources.put(key, new ResourceWeakReference(key, resource, getReferenceQueue()));
-    activeResources.put(key, resource.getResource());
   }
 
   void deactivate(Key key) {
     activeEngineResources.remove(key);
-    activeResources.remove(key);
   }
 
   @Nullable
   EngineResource<?> get(Key key) {
     ResourceWeakReference activeRef = activeEngineResources.get(key);
     if (activeRef == null) {
-      Preconditions.checkArgument(
-          activeResources.get(key) == null, "found unexpected entry for: " + key);
       return null;
     }
 
@@ -53,14 +48,13 @@ final class ActiveResources {
   }
 
   private void cleanupActiveReference(@NonNull ResourceWeakReference ref) {
-    Resource<?> resource = activeResources.remove(ref.key);
     activeEngineResources.remove(ref.key);
 
     if (!ref.isCacheable) {
       return;
     }
     EngineResource<?> newResource =
-        new EngineResource<>(resource, /*isCacheable=*/ true, /*isRecyclable=*/ false);
+        new EngineResource<>(ref.resource, /*isCacheable=*/ true, /*isRecyclable=*/ false);
     newResource.setResourceListener(ref.key, listener);
     listener.onResourceReleased(ref.key, newResource);
   }
@@ -89,12 +83,14 @@ final class ActiveResources {
 
   private static class ResourceWeakReference extends WeakReference<EngineResource<?>> {
     @Synthetic final Key key;
+    @Synthetic final EngineResource<?> resource;
     @Synthetic final boolean isCacheable;
 
     ResourceWeakReference(
         Key key, EngineResource<?> r, ReferenceQueue<? super EngineResource<?>> q) {
       super(r, q);
       this.key = Preconditions.checkNotNull(key);
+      this.resource = Preconditions.checkNotNull(r);
       isCacheable = r.isCacheable();
     }
   }
