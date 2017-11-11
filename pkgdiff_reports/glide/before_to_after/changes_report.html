@@ -1,0 +1,3420 @@
+<!-- changed:0;added:0;removed:0;moved:0;renamed:0;changed:0;tool_version:1.7.2 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="glide, changes, report" />
+    <meta name="description" content="Changes report for the glide package between before and after versions" />
+    <title>
+        glide: before to after changes report
+    </title>
+    <style type="text/css">
+    body {
+    font-family:Arial, sans-serif;
+    background-color:White;
+    color:Black;
+}
+hr {
+    color:Black;
+    background-color:Black;
+    height:1px;
+    border:0;
+}
+h1 {
+    margin-bottom:0px;
+    padding-bottom:0px;
+    font-size:1.625em;
+}
+h2 {
+    margin-bottom:0px;
+    padding-bottom:0px;
+    font-size:1.25em;
+    white-space:nowrap;
+}
+table.summary {
+    border-collapse:collapse;
+    border:1px outset black;
+}
+table.summary th {
+    background-color:#eeeeee;
+    font-weight:bold;
+    text-align:left;
+    font-size:0.94em;
+    white-space:nowrap;
+    border:1px inset gray;
+    padding: 3px;
+}
+table.summary td {
+    text-align:right;
+    white-space:nowrap;
+    border:1px inset gray;
+    padding: 3px 5px 3px 5px;
+}
+table.summary td.left {
+    text-align:left;
+}
+table.summary th.left {
+    text-align:left;
+    font-weight:100;
+}
+table.summary td.f_path {
+    font-size:0.875em;
+    font-family:Consolas, 'DejaVu Sans Mono', 'Droid Sans Mono', Monaco, Monospace;
+    white-space:normal;
+    word-wrap:break-word;
+    max-width:57em;
+}
+table.summary td.value {
+    padding-left:10px;
+}
+td.passed, tr.passed {
+    background-color:#CCFFCC;
+}
+td.warning, tr.warning {
+    background-color:#F4F4AF;
+}
+td.renamed, tr.renamed {
+    background-color:#FFDAA3;
+}
+td.moved, tr.moved {
+    background-color:#FFDAA3;
+}
+td.failed, tr.failed {
+    background-color:#FFC3CE;
+}
+td.new, tr.new {
+    background-color:#C6DEFF;
+}
+a.default {
+    color:#336699;
+}
+div.p_list {
+    padding-left:10px;
+    color:#333333;
+    font-size:0.94em;
+}
+.top_ref {
+    font-size:0.69em;
+}
+.footer {
+    font-size:0.75em;
+}
+
+    </style>
+    <script type="text/javascript" language="JavaScript">
+    <!--
+    function sort(el, status)
+{ 
+    var col_sort = el.innerHTML;
+    var tr = el.parentNode;
+    var table = tr.parentNode;
+    var td, col_sort_num;
+    for (var i=0; (td = tr.getElementsByTagName('th').item(i)); i++)
+    {
+        if(td.innerHTML == col_sort)
+        {
+            col_sort_num = i;
+            if(td.prevsort == 'y') {
+                el.up = Number(!el.up);
+            }
+            else if(td.prevsort == 'n') {
+                td.prevsort = 'y';
+                el.up = 0;
+            }
+            else
+            {
+                if(col_sort_num==0)
+                { // already sorted
+                    td.prevsort = 'n';
+                    el.up = 1;
+                }
+                else if(col_sort_num==2)
+                { // delta
+                    td.prevsort = 'n';
+                    el.up = 1;
+                }
+                else
+                {
+                    td.prevsort = 'y';
+                    el.up = 0;
+                }
+            }
+        }
+        else
+        {
+            if(td.prevsort == 'y') {
+                td.prevsort = 'n';
+            }
+        }
+    }
+    
+    var a = new Array();
+    for(var i=1; i < table.rows.length; i++)
+    {
+        var cols = table.rows[i].getElementsByTagName('td');
+        if(cols.item(status)==null)
+        { // double status
+            a[i-2][2] = table.rows[i];
+        }
+        else
+        {
+            a[i-1] = new Array();
+            var indent = cols.item(col_sort_num).innerHTML;
+            if(indent=='') indent='0';
+            if(indent.substr(indent.length-1, 1)=="%")
+            { // delta
+                indent = indent.substr(0, indent.length-1)*100;
+            }
+            a[i-1][0] = indent;
+            a[i-1][1] = table.rows[i];
+            a[i-1][2] = null;
+        }
+    }
+    
+    // sort table
+    a.sort(sort_array);
+    if(el.up) a.reverse();
+    
+    // draw table
+    for(var i in a)
+    {
+        table.appendChild(a[i][1]);
+        if(a[i][2]!=null) {
+            table.appendChild(a[i][2]);
+        }
+    }
+}
+
+function sort_array(a,b)
+{
+    if(a[0] == b[0]) return 0;
+    if(a[0] > b[0]) return 1;
+    return -1;
+}
+    -->
+    </script>
+    </head>
+<body>
+<div><a name='Top'></a>
+<h1>Changes report for the <span style='color:Blue;'>glide</span> package between <span style='color:Red;'>before</span> and <span style='color:Red;'>after</span> versions</h1>
+<br/><table class='summary'>
+    <tr><td class='new' width='80px'>added</td><td class='passed' width='80px'>unchanged</td></tr>
+    <tr><td class='warning'>changed</td><td class='failed'>removed</td></tr></table>
+<h2>Test Info</h2><hr/>
+<table class='summary'>
+<tr><th class='left'>Package Name</th><td>glide</td></tr>
+<tr><th class='left'>Package Format</th><td>JAR</td></tr>
+<tr><th class='left'>Version #1</th><td>before</td></tr>
+<tr><th class='left'>Version #2</th><td>after</td></tr>
+</table>
+<h2>Test Results</h2><hr/>
+<table class='summary'>
+<tr><th class='left'>Total Packages</th><td><a href='#Packages' style='color:Blue;'>2</a></td></tr>
+<tr><th class='left'>Total Files</th><td><a href='#Files' style='color:Blue;'>534</a></td></tr>
+<tr><th class='left'>Verdict</th><td><span style='color:Green;'><b>Unchanged</b></span></td></tr>
+</table>
+<a name='Deps'></a>
+<a name='Files'></a><h2>Changes In Files</h2><hr/>
+<table class='summary'>
+<tr><th>File Type</th><th>Total</th><th>Added</th><th>Removed</th><th>Changed</th></tr>
+<tr>
+<td class='left'>Java class</td>
+<td><a href='#JavaClasses' style='color:Blue;'>501</a></td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td class='left'>Directory</td>
+<td><a href='#Directories' style='color:Blue;'>32</a></td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td class='left'>Information file</td>
+<td><a href='#InformationFiles' style='color:Blue;'>1</a></td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</table>
+<a name='JavaClasses'></a>
+<h2>Java Classes (501)</h2><hr/>
+<table class='summary'>
+<tr>
+<th title='sort' onclick='javascript:sort(this, 1)' style='cursor:pointer'>Name</th>
+<th title='sort' onclick='javascript:sort(this, 1)' style='cursor:pointer'>Status</th>
+<th title='sort' onclick='javascript:sort(this, 1)' style='cursor:pointer'>Delta</th>
+<th>Visual<br/>Diff</th>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/disklrucache/DiskLruCache$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/disklrucache/DiskLruCache$DiskLruCacheThreadFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/disklrucache/DiskLruCache$Editor.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/disklrucache/DiskLruCache$Entry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/disklrucache/DiskLruCache$Value.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/disklrucache/DiskLruCache.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/disklrucache/StrictLineReader$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/disklrucache/StrictLineReader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/disklrucache/Util.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/GeneratedAppGlideModule.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/GenericTransitionOptions.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/gifdecoder/GifDecoder$BitmapProvider.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/gifdecoder/GifDecoder$GifDecodeStatus.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/gifdecoder/GifDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/gifdecoder/GifFrame$GifDisposalMethod.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/gifdecoder/GifFrame.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/gifdecoder/GifHeader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/gifdecoder/GifHeaderParser.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/gifdecoder/StandardGifDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/Glide.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/GlideBuilder$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/GlideBuilder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/GlideContext.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/ListPreloader$PreloadModelProvider.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/ListPreloader$PreloadSizeProvider.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/ListPreloader$PreloadTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/ListPreloader$PreloadTargetQueue.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/ListPreloader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/AssetPathFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/DataFetcher$DataCallback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/DataFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/DataRewinder$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/DataRewinder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/DataRewinderRegistry$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/DataRewinderRegistry$DefaultRewinder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/DataRewinderRegistry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/ExifOrientationStream.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/FileDescriptorAssetPathFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/FileDescriptorLocalUriFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/HttpUrlFetcher$DefaultHttpUrlConnectionFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/HttpUrlFetcher$HttpUrlConnectionFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/HttpUrlFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/InputStreamRewinder$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/InputStreamRewinder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/LocalUriFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/mediastore/FileService.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/mediastore/MediaStoreUtil.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/mediastore/ThumbFetcher$ImageThumbnailQuery.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/mediastore/ThumbFetcher$VideoThumbnailQuery.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/mediastore/ThumbFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/mediastore/ThumbnailQuery.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/mediastore/ThumbnailStreamOpener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/StreamAssetPathFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/StreamLocalUriFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/DataSource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/DecodeFormat.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/Encoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/EncodeStrategy.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/ArrayAdapterInterface.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/ArrayPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/AttributeStrategy$Key.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/AttributeStrategy$KeyPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/AttributeStrategy.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/BaseKeyPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/BitmapPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/BitmapPoolAdapter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/ByteArrayAdapter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/GroupedLinkedMap$LinkedEntry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/GroupedLinkedMap.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/IntegerArrayAdapter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/LruArrayPool$Key.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/LruArrayPool$KeyPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/LruArrayPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/LruBitmapPool$BitmapTracker.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/LruBitmapPool$NullBitmapTracker.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/LruBitmapPool$ThrowingBitmapTracker.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/LruBitmapPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/LruPoolStrategy.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/Poolable.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/PrettyPrintTreeMap.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/SizeConfigStrategy$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/SizeConfigStrategy$Key.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/SizeConfigStrategy$KeyPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/SizeConfigStrategy.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/SizeStrategy$Key.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/SizeStrategy$KeyPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle/SizeStrategy.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskCache$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskCache$Writer.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskCache.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskCacheAdapter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskCacheWriteLocker$WriteLock.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskCacheWriteLocker$WriteLockPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskCacheWriteLocker.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskLruCacheFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskLruCacheFactory$2.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskLruCacheFactory$CacheDirectoryGetter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskLruCacheFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/DiskLruCacheWrapper.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/ExternalCacheDiskCacheFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/ExternalCacheDiskCacheFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/ExternalPreferredCacheDiskCacheFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/ExternalPreferredCacheDiskCacheFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/InternalCacheDiskCacheFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/InternalCacheDiskCacheFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/LruResourceCache.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/MemoryCache$ResourceRemovedListener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/MemoryCache.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/MemoryCacheAdapter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/MemorySizeCalculator$Builder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/MemorySizeCalculator$DisplayMetricsScreenDimensions.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/MemorySizeCalculator$ScreenDimensions.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/MemorySizeCalculator.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/SafeKeyGenerator$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/SafeKeyGenerator$PoolableDigestContainer.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache/SafeKeyGenerator.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DataCacheGenerator.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DataCacheKey.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DataCacheWriter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DataFetcherGenerator$FetcherReadyCallback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DataFetcherGenerator.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodeHelper.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodeJob$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodeJob$Callback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodeJob$DecodeCallback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodeJob$DeferredEncodeManager.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodeJob$DiskCacheProvider.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodeJob$ReleaseManager.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodeJob$RunReason.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodeJob$Stage.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodeJob.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodePath$DecodeCallback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DecodePath.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DiskCacheStrategy$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DiskCacheStrategy$2.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DiskCacheStrategy$3.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DiskCacheStrategy$4.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DiskCacheStrategy$5.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/DiskCacheStrategy.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Engine$DecodeJobFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Engine$DecodeJobFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Engine$EngineJobFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Engine$EngineJobFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Engine$LazyDiskCacheProvider.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Engine$LoadStatus.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Engine$RefQueueIdleHandler.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Engine$ResourceWeakReference.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Engine.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/EngineJob$EngineResourceFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/EngineJob$MainThreadCallback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/EngineJob.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/EngineJobListener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/EngineKey.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/EngineKeyFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/EngineResource$ResourceListener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/EngineResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/executor/GlideExecutor$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/executor/GlideExecutor$DefaultThreadFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/executor/GlideExecutor$DefaultThreadFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/executor/GlideExecutor$UncaughtThrowableStrategy$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/executor/GlideExecutor$UncaughtThrowableStrategy$2.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/executor/GlideExecutor$UncaughtThrowableStrategy$3.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/executor/GlideExecutor$UncaughtThrowableStrategy.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/executor/GlideExecutor.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/GlideException$IndentedAppendable.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/GlideException.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Initializable.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/LoadPath.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/LockedResource$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/LockedResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/prefill/BitmapPreFiller.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/prefill/BitmapPreFillRunner$Clock.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/prefill/BitmapPreFillRunner$UniqueKey.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/prefill/BitmapPreFillRunner.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/prefill/PreFillQueue.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/prefill/PreFillType$Builder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/prefill/PreFillType.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/Resource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/ResourceCacheGenerator.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/ResourceCacheKey.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/ResourceRecycler$ResourceRecyclerCallback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/ResourceRecycler.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/SourceGenerator.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/HttpException.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/ImageHeaderParser$ImageType.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/ImageHeaderParser.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/ImageHeaderParserUtils.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/Key.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/AssetUriLoader$AssetFetcherFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/AssetUriLoader$FileDescriptorFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/AssetUriLoader$StreamFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/AssetUriLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteArrayLoader$ByteBufferFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteArrayLoader$ByteBufferFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteArrayLoader$Converter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteArrayLoader$Fetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteArrayLoader$StreamFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteArrayLoader$StreamFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteArrayLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteBufferEncoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteBufferFileLoader$ByteBufferFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteBufferFileLoader$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ByteBufferFileLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/DataUrlLoader$DataDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/DataUrlLoader$DataUriFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/DataUrlLoader$StreamFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/DataUrlLoader$StreamFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/DataUrlLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/FileLoader$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/FileLoader$FileDescriptorFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/FileLoader$FileDescriptorFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/FileLoader$FileFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/FileLoader$FileOpener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/FileLoader$StreamFactory$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/FileLoader$StreamFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/FileLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/GlideUrl.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/Headers$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/Headers.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/LazyHeaderFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/LazyHeaders$Builder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/LazyHeaders$StringHeaderFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/LazyHeaders.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/MediaStoreFileLoader$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/MediaStoreFileLoader$FilePathFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/MediaStoreFileLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/Model.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ModelCache$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ModelCache$ModelKey.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ModelCache.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ModelLoader$LoadData.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ModelLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ModelLoaderFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ModelLoaderRegistry$ModelLoaderCache$Entry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ModelLoaderRegistry$ModelLoaderCache.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ModelLoaderRegistry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/MultiModelLoader$MultiFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/MultiModelLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/MultiModelLoaderFactory$EmptyModelLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/MultiModelLoaderFactory$Entry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/MultiModelLoaderFactory$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/MultiModelLoaderFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ResourceLoader$FileDescriptorFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ResourceLoader$StreamFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ResourceLoader$UriFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/ResourceLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/BaseGlideUrlLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/HttpGlideUrlLoader$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/HttpGlideUrlLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/HttpUriLoader$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/HttpUriLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/MediaStoreImageThumbLoader$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/MediaStoreImageThumbLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/MediaStoreVideoThumbLoader$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/MediaStoreVideoThumbLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/UrlLoader$StreamFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream/UrlLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/StreamEncoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/StringLoader$FileDescriptorFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/StringLoader$StreamFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/StringLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/UnitModelLoader$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/UnitModelLoader$UnitFetcher.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/UnitModelLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/UriLoader$FileDescriptorFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/UriLoader$LocalUriFetcherFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/UriLoader$StreamFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/UriLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/UrlUriLoader$StreamFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/UrlUriLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/MultiTransformation.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/Option$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/Option$CacheKeyUpdater.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/Option.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/Options.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/BitmapDrawableDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/BitmapDrawableEncoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/BitmapDrawableResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/BitmapDrawableTransformation.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/BitmapEncoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/BitmapResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/BitmapTransformation.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/BitmapTransitionOptions.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/ByteBufferBitmapDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/CenterCrop.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/CenterInside.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/CircleCrop.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DefaultImageHeaderParser$ByteBufferReader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DefaultImageHeaderParser$RandomAccessReader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DefaultImageHeaderParser$Reader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DefaultImageHeaderParser$StreamReader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DefaultImageHeaderParser.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/Downsampler$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/Downsampler$DecodeCallbacks.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/Downsampler.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DownsampleStrategy$AtLeast.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DownsampleStrategy$AtMost.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DownsampleStrategy$CenterInside.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DownsampleStrategy$CenterOutside.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DownsampleStrategy$FitCenter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DownsampleStrategy$None.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DownsampleStrategy$SampleSizeRounding.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DownsampleStrategy.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DrawableToBitmapConverter$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DrawableToBitmapConverter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/DrawableTransformation.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/FitCenter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/HardwareConfigState.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/LazyBitmapDrawableResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/RecyclableBufferedInputStream$InvalidMarkException.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/RecyclableBufferedInputStream.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/ResourceBitmapDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/RoundedCorners.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/StreamBitmapDecoder$UntrustedCallbacks.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/StreamBitmapDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/TransformationUtils$NoLock.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/TransformationUtils.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/UnitBitmapDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/VideoBitmapDecoder$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/VideoBitmapDecoder$2.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/VideoBitmapDecoder$MediaMetadataRetrieverFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap/VideoBitmapDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bytes/ByteBufferRewinder$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bytes/ByteBufferRewinder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bytes/BytesResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/drawable/DrawableDecoderCompat.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/drawable/DrawableResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/drawable/DrawableTransitionOptions.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/drawable/NonOwnedDrawableResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/drawable/ResourceDrawableDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/drawable/UnitDrawableDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/file/FileDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/file/FileResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/ByteBufferGifDecoder$GifDecoderFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/ByteBufferGifDecoder$GifHeaderParserPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/ByteBufferGifDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifBitmapProvider.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifDrawable$GifState.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifDrawable.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifDrawableEncoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifDrawableResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifDrawableTransformation.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifFrameLoader$DelayTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifFrameLoader$FrameCallback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifFrameLoader$FrameLoaderCallback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifFrameLoader$OnEveryFrameListener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifFrameLoader.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifFrameResourceDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/GifOptions.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif/StreamGifDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/SimpleResource.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/transcode/BitmapBytesTranscoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/transcode/BitmapDrawableTranscoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/transcode/GifDrawableBytesTranscoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/transcode/ResourceTranscoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/transcode/TranscoderRegistry$Entry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/transcode/TranscoderRegistry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/transcode/UnitTranscoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/UnitTransformation.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/ResourceDecoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/ResourceEncoder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/Transformation.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/ActivityFragmentLifecycle.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/ApplicationLifecycle.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/ConnectivityMonitor$ConnectivityListener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/ConnectivityMonitor.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/ConnectivityMonitorFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/DefaultConnectivityMonitor$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/DefaultConnectivityMonitor.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/DefaultConnectivityMonitorFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/EmptyRequestManagerTreeNode.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/Lifecycle.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/LifecycleListener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/NullConnectivityMonitor.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/RequestManagerFragment$FragmentRequestManagerTreeNode.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/RequestManagerFragment.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/RequestManagerRetriever$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/RequestManagerRetriever$RequestManagerFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/RequestManagerRetriever.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/RequestManagerTreeNode.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/RequestTracker.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/SupportRequestManagerFragment$SupportFragmentRequestManagerTreeNode.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/SupportRequestManagerFragment.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager/TargetTracker.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/MemoryCategory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/module/AppGlideModule.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/module/AppliesOptions.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/module/GlideModule.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/module/LibraryGlideModule.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/module/ManifestParser.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/module/RegistersComponents.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/Priority.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/provider/EncoderRegistry$Entry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/provider/EncoderRegistry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/provider/ImageHeaderParserRegistry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/provider/LoadPathCache.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/provider/ModelToResourceClassCache.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/provider/ResourceDecoderRegistry$Entry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/provider/ResourceDecoderRegistry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/provider/ResourceEncoderRegistry$Entry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/provider/ResourceEncoderRegistry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/Registry$MissingComponentException.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/Registry$NoImageHeaderParserException.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/Registry$NoModelLoaderAvailableException.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/Registry$NoResultEncoderAvailableException.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/Registry$NoSourceEncoderAvailableException.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/Registry.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/ErrorRequestCoordinator.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/FutureTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/Request.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/RequestCoordinator.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/RequestFutureTarget$GlideExecutionException.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/RequestFutureTarget$Waiter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/RequestFutureTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/RequestListener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/RequestOptions.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/ResourceCallback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/SingleRequest$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/SingleRequest$Status.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/SingleRequest.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/AppWidgetTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/BaseTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/BitmapImageViewTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/BitmapThumbnailImageViewTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/DrawableImageViewTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/DrawableThumbnailImageViewTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/FixedSizeDrawable$State.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/FixedSizeDrawable.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/ImageViewTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/ImageViewTargetFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/NotificationTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/PreloadTarget$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/PreloadTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/SimpleTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/SizeReadyCallback.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/Target.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/ThumbnailImageViewTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/ViewTarget$SizeDeterminer$SizeDeterminerLayoutListener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/ViewTarget$SizeDeterminer.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target/ViewTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/ThumbnailRequestCoordinator.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/BitmapContainerTransitionFactory$BitmapGlideAnimation.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/BitmapContainerTransitionFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/BitmapTransitionFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/DrawableCrossFadeFactory$Builder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/DrawableCrossFadeFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/DrawableCrossFadeTransition.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/NoTransition$NoAnimationFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/NoTransition.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/Transition$ViewAdapter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/Transition.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/TransitionFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/ViewAnimationFactory$ConcreteViewTransitionAnimationFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/ViewAnimationFactory$ResourceViewTransitionAnimationFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/ViewAnimationFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/ViewPropertyAnimationFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/ViewPropertyTransition$Animator.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/ViewPropertyTransition.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/ViewTransition$ViewTransitionAnimationFactory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition/ViewTransition.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/RequestBuilder$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/RequestBuilder$2.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/RequestBuilder.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/RequestManager$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/RequestManager$2.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/RequestManager$ClearTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/RequestManager$RequestManagerConnectivityListener.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/RequestManager.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/signature/ApplicationVersionSignature.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/signature/EmptySignature.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/signature/MediaStoreSignature.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/signature/ObjectKey.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/TransitionOptions.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/ByteBufferUtil$ByteBufferStream.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/ByteBufferUtil$SafeArray.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/ByteBufferUtil.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/ContentLengthInputStream.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/ExceptionCatchingInputStream.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/FixedPreloadSizeProvider.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/LogTime.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/LruCache.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/MarkEnforcingInputStream.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/MultiClassKey.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/FactoryPools$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/FactoryPools$2.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/FactoryPools$3.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/FactoryPools$Factory.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/FactoryPools$FactoryPool.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/FactoryPools$Poolable.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/FactoryPools$Resetter.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/FactoryPools.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/StateVerifier$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/StateVerifier$DebugStateVerifier.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/StateVerifier$DefaultStateVerifier.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool/StateVerifier.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/Preconditions.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/Synthetic.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/Util$1.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/Util.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/ViewPreloadSizeProvider$SizeViewTarget.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/ViewPreloadSizeProvider.class</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<a name='Directories'></a>
+<h2>Directories (32)</h2><hr/>
+<table class='summary'>
+<tr>
+<th title='sort' onclick='javascript:sort(this, 1)' style='cursor:pointer'>Name</th>
+<th title='sort' onclick='javascript:sort(this, 1)' style='cursor:pointer'>Status</th>
+</tr>
+<tr>
+<td class='left f_path'>com</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/disklrucache</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/gifdecoder</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/data/mediastore</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/bitmap_recycle</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/cache</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/executor</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/engine/prefill</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/model/stream</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bitmap</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/bytes</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/drawable</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/file</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/gif</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/load/resource/transcode</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/manager</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/module</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/provider</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/target</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/request/transition</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/signature</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>com/bumptech/glide/util/pool</td>
+<td class='passed'>unchanged</td>
+</tr>
+<tr>
+<td class='left f_path'>META-INF</td>
+<td class='passed'>unchanged</td>
+</tr>
+</table>
+<a name='InformationFiles'></a>
+<h2>Information Files (1)</h2><hr/>
+<table class='summary'>
+<tr>
+<th title='sort' onclick='javascript:sort(this, 1)' style='cursor:pointer'>Name</th>
+<th title='sort' onclick='javascript:sort(this, 1)' style='cursor:pointer'>Status</th>
+<th title='sort' onclick='javascript:sort(this, 1)' style='cursor:pointer'>Delta</th>
+<th>Visual<br/>Diff</th>
+</tr>
+<tr>
+<td class='left f_path'>META-INF/MANIFEST.MF</td>
+<td class='passed'>unchanged</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<a name='Packages'></a>
+<h2>Packages (2)</h2><hr/>
+<div class='p_list'>
+glide_after.jar<br/>
+glide_before.jar<br/>
+</div>
+<br/><a class='top_ref' href='#Top'>to the top</a><br/>
+</div>
+<br/><br/><br/><hr/>
+<div class='footer' style='width:100%;' align='right'><i>Generated by <a href='http://lvc.github.com/pkgdiff/'>PkgDiff</a> 1.7.2 &#160;</i></div><br/>
+</body></html>
