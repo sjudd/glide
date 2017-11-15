@@ -100,7 +100,6 @@ public class FlickrPhotoGrid extends Fragment implements PhotoViewer {
     grid.getRecycledViewPool().setMaxRecycledViews(0, spanCount * heightCount * 2);
     grid.setItemViewCacheSize(0);
     adapter = new PhotoAdapter();
-    grid.setAdapter(adapter);
 
     FixedPreloadSizeProvider<Photo> preloadSizeProvider =
         new FixedPreloadSizeProvider<>(photoSize, photoSize);
@@ -119,6 +118,19 @@ public class FlickrPhotoGrid extends Fragment implements PhotoViewer {
 
     return result;
   }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    grid.setAdapter(null);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    grid.setAdapter(adapter);
+  }
+
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
@@ -171,7 +183,8 @@ public class FlickrPhotoGrid extends Fragment implements PhotoViewer {
 
       fullRequest.load(current)
           .thumbnail(thumbnail ? thumbnailRequest.load(current) : null)
-          .into(holder.imageView);
+          .into(holder.imageView)
+          .clearOnDetach();
 
       holder.imageView.setOnClickListener(new View.OnClickListener() {
         @Override

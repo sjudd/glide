@@ -54,6 +54,18 @@ public class FlickrPhotoList extends Fragment implements PhotoViewer {
   }
 
   @Override
+  public void onPause() {
+    super.onPause();
+    list.setAdapter(null);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    list.setAdapter(adapter);
+  }
+
+  @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     final View result = inflater.inflate(R.layout.flickr_photo_list, container, false);
@@ -62,7 +74,6 @@ public class FlickrPhotoList extends Fragment implements PhotoViewer {
     layoutManager = new LinearLayoutManager(getActivity());
     list.setLayoutManager(layoutManager);
     adapter = new FlickrPhotoListAdapter();
-    list.setAdapter(adapter);
 
     preloadSizeProvider = new ViewPreloadSizeProvider<>();
     RecyclerViewPreloader<Photo> preloader =
@@ -143,7 +154,8 @@ public class FlickrPhotoList extends Fragment implements PhotoViewer {
       final Photo current = photos.get(position);
       fullRequest.load(current)
           .thumbnail(thumbRequest.load(current))
-          .into(holder.imageView);
+          .into(holder.imageView)
+          .clearOnDetach();
 
       holder.imageView.setOnClickListener(new View.OnClickListener() {
         @Override
