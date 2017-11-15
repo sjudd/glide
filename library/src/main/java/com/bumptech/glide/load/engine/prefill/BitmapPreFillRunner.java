@@ -101,8 +101,7 @@ final class BitmapPreFillRunner implements Runnable {
       }
 
       // Don't over fill the memory cache to avoid evicting useful resources, but make sure it's
-      // not empty so
-      // we use all available space.
+      // not empty so that we use all available space.
       if (getFreeMemoryCacheBytes() >= Util.getBitmapByteSize(bitmap)) {
         memoryCache.put(new UniqueKey(), BitmapResource.obtain(bitmap, bitmapPool));
       } else {
@@ -110,9 +109,10 @@ final class BitmapPreFillRunner implements Runnable {
       }
 
       if (Log.isLoggable(TAG, Log.DEBUG)) {
-        Log.d(TAG,
-            "allocated [" + toAllocate.getWidth() + "x" + toAllocate.getHeight() + "] " + toAllocate
-                .getConfig() + " size: " + Util.getBitmapByteSize(bitmap));
+        Log.d(
+            TAG,
+            "allocated [" + toAllocate.getWidth() + "x" + toAllocate.getHeight() + "] "
+                + toAllocate.getConfig() + " size: " + Util.getBitmapByteSize(bitmap));
       }
     }
 
