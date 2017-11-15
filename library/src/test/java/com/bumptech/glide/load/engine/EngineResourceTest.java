@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.engine;
 
 import static com.bumptech.glide.tests.Util.mockResource;
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -65,6 +66,7 @@ public class EngineResourceTest {
   public void testDelegatesGetSizeToWrappedResource() {
     int expectedSize = 1234;
     when(resource.getSize()).thenReturn(expectedSize);
+    engineResource = new EngineResource<>(resource, /*isCacheable=*/ true, /*isRecyclable=*/ true);
     assertEquals(expectedSize, engineResource.getSize());
   }
 
@@ -165,5 +167,15 @@ public class EngineResourceTest {
 
     verify(listener, never()).onResourceReleased(any(Key.class), any(EngineResource.class));
     verify(resource, never()).recycle();
+  }
+
+  @Test
+  public void getSize_whenUnderlyingResourceSizeChanges_doesNotChange() {
+    resource = mockResource();
+    when(resource.getSize()).thenReturn(100);
+    engineResource = new EngineResource<>(resource, /*isCacheable=*/ true, /*isRecyclable=*/ true);
+    assertThat(engineResource.getSize()).isEqualTo(100);
+    when(resource.getSize()).thenReturn(50);
+    assertThat(engineResource.getSize()).isEqualTo(100);
   }
 }

@@ -15,6 +15,7 @@ public class BitmapResource implements Resource<Bitmap>,
     Initializable {
   private final Bitmap bitmap;
   private final BitmapPool bitmapPool;
+  private final int sizeBytes;
 
   /**
    * Returns a new {@link BitmapResource} wrapping the given {@link Bitmap} if the Bitmap is
@@ -35,6 +36,7 @@ public class BitmapResource implements Resource<Bitmap>,
   public BitmapResource(Bitmap bitmap, BitmapPool bitmapPool) {
     this.bitmap = Preconditions.checkNotNull(bitmap, "Bitmap must not be null");
     this.bitmapPool = Preconditions.checkNotNull(bitmapPool, "BitmapPool must not be null");
+    sizeBytes = Util.getBitmapByteSize(bitmap);
   }
 
   @Override
@@ -49,7 +51,7 @@ public class BitmapResource implements Resource<Bitmap>,
 
   @Override
   public int getSize() {
-    return Util.getBitmapByteSize(bitmap);
+    return sizeBytes;
   }
 
   @Override

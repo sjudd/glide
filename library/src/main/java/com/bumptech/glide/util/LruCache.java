@@ -1,6 +1,7 @@
 package com.bumptech.glide.util;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.Map;
  * @param <Y> The type of the values.
  */
 public class LruCache<T, Y> {
+  private static final String TAG = "LruCache";
   private final LinkedHashMap<T, Y> cache = new LinkedHashMap<>(100, 0.75f, true);
   private final long initialMaxSize;
   private long maxSize;
@@ -49,6 +51,10 @@ public class LruCache<T, Y> {
    * Returns the size of a given item, defaulting to one. The units must match those used in the
    * size passed in to the constructor. Subclasses can override this method to return sizes in
    * various units, usually bytes.
+   *
+   * <p>This size must be consistent for a given value. If the size returned here changes for a
+   * particular value while the value is still in the cache, the cache's state will become invalid
+   * and may throw exceptions.
    *
    * @param item The item to get the size of.
    */
@@ -169,7 +175,16 @@ public class LruCache<T, Y> {
     Map.Entry<T, Y> last;
     Iterator<Map.Entry<T, Y>> cacheIterator;
     while (currentSize > size) {
-      cacheIterator  = cache.entrySet().iterator();
+      cacheIterator = cache.entrySet().iterator();
+      if (!cacheIterator.hasNext()) {
+        if (Log.isLoggable(TAG, Log.ERROR)) {
+          Log.e(TAG, "Inconsistent sizes reported that have lead to invalid evictions. Check that"
+              + " all Resources report consistent sizes or otherwise ensure that the cache's"
+              + " getSize method returns a consistent size for a given value.");
+        }
+        currentSize = 0;
+        return;
+      }
       last = cacheIterator.next();
       final Y toRemove = last.getValue();
       currentSize -= getSize(toRemove);

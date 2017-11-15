@@ -13,6 +13,7 @@ import com.bumptech.glide.util.Preconditions;
 class EngineResource<Z> implements Resource<Z> {
   private final boolean isCacheable;
   private final boolean isRecyclable;
+  private final int sizeBytes;
   private ResourceListener listener;
   private Key key;
   private int acquired;
@@ -27,6 +28,7 @@ class EngineResource<Z> implements Resource<Z> {
     resource = Preconditions.checkNotNull(toWrap);
     this.isCacheable = isCacheable;
     this.isRecyclable = isRecyclable;
+    sizeBytes = resource.getSize();
   }
 
   void setResourceListener(Key key, ResourceListener listener) {
@@ -54,7 +56,7 @@ class EngineResource<Z> implements Resource<Z> {
 
   @Override
   public int getSize() {
-    return resource.getSize();
+    return sizeBytes;
   }
 
   @Override
