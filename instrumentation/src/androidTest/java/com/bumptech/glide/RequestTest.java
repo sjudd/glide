@@ -15,6 +15,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.widget.ImageView;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.executor.GlideExecutor;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.test.ConcurrencyHelper;
 import com.bumptech.glide.test.GlideApp;
@@ -30,10 +31,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * Tests the behaviors of Requests and Targets.
+ * Tests the behaviors of Requests of all types.
  */
 @RunWith(AndroidJUnit4.class)
-public class TargetTest {
+public class RequestTest {
   @Rule public TearDownGlide tearDownGlide = new TearDownGlide();
   @Mock private RequestListener<Drawable> requestListener;
   private ConcurrencyHelper concurrency = new ConcurrencyHelper();
@@ -47,6 +48,11 @@ public class TargetTest {
     imageView = new ImageView(context);
     imageView.measure(100, 100);
     imageView.layout(0, 0, 100, 100);
+
+    // Some emulators only have a single resize thread, so waiting on a latch will block them
+    // forever.
+    Glide.init(context,
+        new GlideBuilder().setResizeExecutor(GlideExecutor.newUnlimitedSourceExecutor()));
   }
 
   @Test
