@@ -28,6 +28,7 @@ subprojects {
         targetCompatibility = 1.7
     }
 
+
     // Avoid issues like #2452.
     tasks.withType(Jar) {
         duplicatesStrategy = DuplicatesStrategy.FAIL
@@ -42,6 +43,18 @@ subprojects { project ->
         }
         maven {
             url "https://maven.google.com"
+        }
+    }
+
+    afterEvaluate {
+        if (project.plugins.findPlugin('com.android.application') != null
+                || project.plugins.findPlugin('com.android.library') != null) {
+            android {
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_1_7
+                    targetCompatibility JavaVersion.VERSION_1_7
+                }
+            }
         }
     }
 
