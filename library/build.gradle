@@ -2,8 +2,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
-apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
 
 dependencies {
     api project(':third_party:gif_decoder')
@@ -39,12 +37,6 @@ android {
         targetSdkVersion TARGET_SDK_VERSION as int
         versionName VERSION_NAME as String
         consumerProguardFiles 'proguard-rules.txt'
-    }
-
-    buildTypes {
-        debug {
-            testCoverageEnabled = true
-        }
     }
 }
 
@@ -110,40 +102,6 @@ afterEvaluate {
     }
 
     check.dependsOn('pmd')
-
-    jacoco {
-        toolVersion JACOCO_VERSION
-    }
-    coveralls {
-        jacocoReportPath = "${project.buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-    }
-
-    tasks.create("jacocoTestReport", JacocoReport) {
-        dependsOn tasks.testDebugUnitTest
-        def coverageSourceDirs = android.sourceSets.main.java.srcDirs
-        group = "Reporting"
-        description = "Generate Jacoco coverage reports"
-
-        classDirectories = fileTree(
-                dir: "${project.buildDir}/intermediates/classes/debug",
-                excludes: ['**/R.class',
-                           '**/R$*.class',
-                           '**/BuildConfig.*',
-                           '**/Manifest*.*',
-                           '**/BitmapRequestBuilder.class',
-                           '**/DrawableRequestBuilder.class',
-                           '**/GifRequestBuilder.class',]
-        )
-
-        additionalSourceDirs = files(coverageSourceDirs)
-        sourceDirectories = files(coverageSourceDirs)
-        executionData = files("${project.buildDir}/jacoco/testDebug.exec")
-
-        reports {
-            xml.enabled = true
-            html.enabled = true
-        }
-    }
 }
 
 apply from: "${rootProject.projectDir}/scripts/upload.gradle"
