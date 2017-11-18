@@ -88,9 +88,7 @@ public class LruBitmapPoolTest {
   public void testEvictedBitmapsAreRecycled() {
     fillPool(pool, MAX_SIZE);
     List<Bitmap> bitmaps = new ArrayList<>(MAX_SIZE);
-    for (Bitmap b : strategy.bitmaps) {
-      bitmaps.add(b);
-    }
+    bitmaps.addAll(strategy.bitmaps);
 
     pool.clearMemory();
 
@@ -202,7 +200,7 @@ public class LruBitmapPoolTest {
 
   @Test
   public void testBitmapsWithAllowedNullConfigsAreAllowed() {
-    pool = new LruBitmapPool(100, strategy, Collections.<Bitmap.Config>singleton(null));
+    pool = new LruBitmapPool(100, strategy, Collections.singleton(null));
 
     Bitmap bitmap = createMutableBitmap();
     Shadows.shadowOf(bitmap).setConfig(null);
@@ -230,7 +228,7 @@ public class LruBitmapPoolTest {
   }
 
   private static class MockStrategy implements LruPoolStrategy {
-    private LinkedList<Bitmap> bitmaps = new LinkedList<>();
+    private final LinkedList<Bitmap> bitmaps = new LinkedList<>();
     private int numRemoves;
     private int numPuts;
 

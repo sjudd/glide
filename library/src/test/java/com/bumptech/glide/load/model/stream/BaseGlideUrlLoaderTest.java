@@ -15,14 +15,13 @@ import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.ModelCache;
 import com.bumptech.glide.load.model.ModelLoader;
+import com.bumptech.glide.util.Preconditions;
 import java.io.InputStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -30,9 +29,9 @@ import org.robolectric.annotation.Config;
 @Config(manifest = Config.NONE, sdk = 18)
 public class BaseGlideUrlLoaderTest {
 
-  @Mock ModelCache<Object, GlideUrl> modelCache;
-  @Mock ModelLoader<GlideUrl, InputStream> wrapped;
-  @Mock DataFetcher<InputStream> fetcher;
+  @Mock private ModelCache<Object, GlideUrl> modelCache;
+  @Mock private ModelLoader<GlideUrl, InputStream> wrapped;
+  @Mock private DataFetcher<InputStream> fetcher;
   private TestLoader urlLoader;
   private Options options;
 
@@ -68,7 +67,9 @@ public class BaseGlideUrlLoaderTest {
     when(wrapped.buildLoadData(eq(expectedUrl), eq(width), eq(height), eq(options)))
         .thenReturn(new ModelLoader.LoadData<>(mock(Key.class), fetcher));
 
-    assertEquals(fetcher, urlLoader.buildLoadData(model, width, height, options).fetcher);
+    assertEquals(
+        fetcher,
+        Preconditions.checkNotNull(urlLoader.buildLoadData(model, width, height, options)).fetcher);
   }
 
   @Test
@@ -78,18 +79,17 @@ public class BaseGlideUrlLoaderTest {
 
     urlLoader.resultUrl = "fakeUrl";
     when(wrapped.buildLoadData(any(GlideUrl.class), eq(width), eq(height), eq(options)))
-        .thenAnswer(new Answer<ModelLoader.LoadData<InputStream>>() {
-          @Override
-          public ModelLoader.LoadData<InputStream> answer(InvocationOnMock invocationOnMock)
-              throws Throwable {
-            GlideUrl glideUrl = (GlideUrl) invocationOnMock.getArguments()[0];
-            assertEquals(urlLoader.resultUrl, glideUrl.toStringUrl());
-            return new ModelLoader.LoadData<>(mock(Key.class), fetcher);
+        .thenAnswer(invocationOnMock -> {
+          GlideUrl glideUrl = (GlideUrl) invocationOnMock.getArguments()[0];
+          assertEquals(urlLoader.resultUrl, glideUrl.toStringUrl());
+          return new ModelLoader.LoadData<>(mock(Key.class), fetcher);
 
-          }
         });
-    assertEquals(fetcher,
-        urlLoader.buildLoadData(new GlideUrl(urlLoader.resultUrl), width, height, options).fetcher);
+    assertEquals(
+        fetcher,
+        Preconditions.checkNotNull(
+            urlLoader.buildLoadData(
+                new GlideUrl(urlLoader.resultUrl), width, height, options)).fetcher);
   }
 
   @Test
@@ -99,13 +99,10 @@ public class BaseGlideUrlLoaderTest {
     int width = 400;
     int height = 500;
 
-    doAnswer(new Answer<Void>() {
-      @Override
-      public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-        GlideUrl glideUrl = (GlideUrl) invocationOnMock.getArguments()[3];
-        assertEquals(urlLoader.resultUrl, glideUrl.toStringUrl());
-        return null;
-      }
+    doAnswer(invocationOnMock -> {
+      GlideUrl glideUrl = (GlideUrl) invocationOnMock.getArguments()[3];
+      assertEquals(urlLoader.resultUrl, glideUrl.toStringUrl());
+      return null;
     }).when(modelCache).put(eq(model), eq(width), eq(height), any(GlideUrl.class));
 
     urlLoader.buildLoadData(model, width, height, options);
@@ -124,13 +121,16 @@ public class BaseGlideUrlLoaderTest {
     when(wrapped.buildLoadData(any(GlideUrl.class), eq(width), eq(height), eq(options)))
         .thenReturn(new ModelLoader.LoadData<>(mock(Key.class), fetcher));
 
-    assertEquals(fetcher, urlLoader.buildLoadData(new Object(), width, height, options).fetcher);
+    assertEquals(
+        fetcher,
+        Preconditions.checkNotNull(
+            urlLoader.buildLoadData(new Object(), width, height, options)).fetcher);
   }
 
   private class TestLoader extends BaseGlideUrlLoader<Object> {
-    public String resultUrl;
+    String resultUrl;
 
-    public TestLoader(ModelLoader<GlideUrl, InputStream> concreteLoader,
+    TestLoader(ModelLoader<GlideUrl, InputStream> concreteLoader,
         ModelCache<Object, GlideUrl> modelCache) {
       super(concreteLoader, modelCache);
     }

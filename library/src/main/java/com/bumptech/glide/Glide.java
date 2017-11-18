@@ -349,7 +349,7 @@ public class Glide implements ComponentCallbacks2 {
             Registry.BUCKET_BITMAP, ParcelFileDescriptor.class, Bitmap.class, videoBitmapDecoder)
         .append(
             Registry.BUCKET_BITMAP, Bitmap.class, Bitmap.class, new UnitBitmapDecoder())
-        .append(Bitmap.class, Bitmap.class, UnitModelLoader.Factory.<Bitmap>getInstance())
+        .append(Bitmap.class, Bitmap.class, UnitModelLoader.Factory.getInstance())
         .append(Bitmap.class, bitmapEncoder)
         /* BitmapDrawables */
         .append(
@@ -379,7 +379,7 @@ public class Glide implements ComponentCallbacks2 {
         /* GIF Frames */
         // Compilation with Gradle requires the type to be specified for UnitModelLoader here.
         .append(
-            GifDecoder.class, GifDecoder.class, UnitModelLoader.Factory.<GifDecoder>getInstance())
+            GifDecoder.class, GifDecoder.class, UnitModelLoader.Factory.getInstance())
         .append(
             Registry.BUCKET_BITMAP,
             GifDecoder.class,
@@ -396,7 +396,7 @@ public class Glide implements ComponentCallbacks2 {
         .append(File.class, File.class, new FileDecoder())
         .append(File.class, ParcelFileDescriptor.class, new FileLoader.FileDescriptorFactory())
         // Compilation with Gradle requires the type to be specified for UnitModelLoader here.
-        .append(File.class, File.class, UnitModelLoader.Factory.<File>getInstance())
+        .append(File.class, File.class, UnitModelLoader.Factory.getInstance())
         /* Models */
         .register(new InputStreamRewinder.Factory(arrayPool))
         .append(int.class, InputStream.class, resourceLoaderStreamFactory)
@@ -434,8 +434,8 @@ public class Glide implements ComponentCallbacks2 {
         .append(GlideUrl.class, InputStream.class, new HttpGlideUrlLoader.Factory())
         .append(byte[].class, ByteBuffer.class, new ByteArrayLoader.ByteBufferFactory())
         .append(byte[].class, InputStream.class, new ByteArrayLoader.StreamFactory())
-        .append(Uri.class, Uri.class, UnitModelLoader.Factory.<Uri>getInstance())
-        .append(Drawable.class, Drawable.class, UnitModelLoader.Factory.<Drawable>getInstance())
+        .append(Uri.class, Uri.class, UnitModelLoader.Factory.getInstance())
+        .append(Drawable.class, Drawable.class, UnitModelLoader.Factory.getInstance())
         .append(Drawable.class, Drawable.class, new UnitDrawableDecoder())
         /* Transcoders */
         .register(
@@ -559,7 +559,8 @@ public class Glide implements ComponentCallbacks2 {
    *     This method should always be called on a background thread, since it is a blocking call.
    * </p>
    */
-  @SuppressWarnings("unused") // Public API
+  // Public API.
+  @SuppressWarnings({"unused", "WeakerAccess"})
   public void clearDiskCache() {
     Util.assertBackgroundThread();
     engine.clearDiskCache();

@@ -35,8 +35,8 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 18)
 public class GifDrawableTransformationTest {
-  @Mock Transformation<Bitmap> wrapped;
-  @Mock BitmapPool bitmapPool;
+  @Mock private Transformation<Bitmap> wrapped;
+  @Mock private BitmapPool bitmapPool;
 
   private GifDrawableTransformation transformation;
   private Context context;
@@ -74,7 +74,7 @@ public class GifDrawableTransformationTest {
     Bitmap expectedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     Resource<Bitmap> expectedResource = mockResource();
     when(expectedResource.get()).thenReturn(expectedBitmap);
-    when(wrapped.transform(any(Context.class), Util.<Bitmap>anyResource(), anyInt(), anyInt()))
+    when(wrapped.transform(any(Context.class), Util.anyResource(), anyInt(), anyInt()))
         .thenReturn(expectedResource);
 
     transformation.transform(context, resource, width, height);

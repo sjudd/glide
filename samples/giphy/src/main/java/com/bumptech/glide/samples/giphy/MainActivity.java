@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
+import com.bumptech.glide.util.Preconditions;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
 import java.util.Collections;
 import java.util.List;
@@ -79,8 +80,8 @@ public class MainActivity extends Activity implements Api.Monitor {
     private static final Api.GifResult[] EMPTY_RESULTS = new Api.GifResult[0];
 
     private final Activity activity;
-    private RequestBuilder<Drawable> requestBuilder;
-    private ViewPreloadSizeProvider<Api.GifResult> preloadSizeProvider;
+    private final RequestBuilder<Drawable> requestBuilder;
+    private final ViewPreloadSizeProvider<Api.GifResult> preloadSizeProvider;
 
     private Api.GifResult[] results = EMPTY_RESULTS;
 
@@ -109,18 +110,15 @@ public class MainActivity extends Activity implements Api.Monitor {
     @Override
     public void onBindViewHolder(GifViewHolder holder, int position) {
       final Api.GifResult result = results[position];
-      holder.gifView.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          ClipboardManager clipboard =
-              (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-          ClipData clip =
-              ClipData.newPlainText("giphy_url", result.images.fixed_height.url);
-          clipboard.setPrimaryClip(clip);
+      holder.gifView.setOnClickListener(view -> {
+        ClipboardManager clipboard =
+            (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip =
+            ClipData.newPlainText("giphy_url", result.images.fixed_height.url);
+        Preconditions.checkNotNull(clipboard).setPrimaryClip(clip);
 
-          Intent fullscreenIntent = FullscreenActivity.getIntent(activity, result);
-          activity.startActivity(fullscreenIntent);
-        }
+        Intent fullscreenIntent = FullscreenActivity.getIntent(activity, result);
+        activity.startActivity(fullscreenIntent);
       });
 
       requestBuilder.load(result).into(holder.gifView);

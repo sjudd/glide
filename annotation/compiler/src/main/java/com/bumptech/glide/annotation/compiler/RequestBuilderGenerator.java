@@ -4,7 +4,7 @@ import com.bumptech.glide.annotation.GlideExtension;
 import com.bumptech.glide.annotation.GlideOption;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -13,7 +13,6 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
@@ -81,6 +80,8 @@ import javax.lang.model.type.TypeMirror;
  * </code>
  * </pre>
  */
+// Requires min sdk of 24+.
+@SuppressWarnings("Guava")
 final class RequestBuilderGenerator {
   private static final String REQUEST_OPTIONS_PACKAGE_NAME = "com.bumptech.glide.request";
   private static final String REQUEST_OPTIONS_SIMPLE_NAME = "RequestOptions";
@@ -185,12 +186,7 @@ final class RequestBuilderGenerator {
         processingEnv.getTypeUtils().erasure(requestBuilderType.asType());
     return Lists.transform(
         processorUtil.findInstanceMethodsReturning(requestBuilderType, rawRequestBuilderType),
-        new Function<ExecutableElement, MethodSpec>() {
-          @Override
-          public MethodSpec apply(ExecutableElement input) {
-            return generateRequestBuilderOverride(input);
-          }
-        });
+        this::generateRequestBuilderOverride);
   }
 
   /**
@@ -213,12 +209,9 @@ final class RequestBuilderGenerator {
             .add("return ($T) super.$N(",
                 generatedRequestBuilderOfType, methodToOverride.getSimpleName())
             .add(FluentIterable.from(methodToOverride.getParameters())
-                .transform(new Function<VariableElement, String>() {
-                  @Override
-                  public String apply(VariableElement input) {
-                    return input.getSimpleName().toString();
-                  }
-                })
+                .transform(
+                    (Function<VariableElement, String>) input ->
+                        Preconditions.checkNotNull(input).getSimpleName().toString())
                 .join(Joiner.on(", ")))
             .add(");\n")
             .build());
@@ -249,18 +242,8 @@ final class RequestBuilderGenerator {
     }
     return FluentIterable
         .from(generatedOptions.methodSpecs)
-        .filter(new Predicate<MethodSpec>() {
-          @Override
-          public boolean apply(MethodSpec input) {
-            return isUsefulGeneratedRequestOption(input);
-          }
-        })
-        .transform(new Function<MethodSpec, MethodSpec>() {
-          @Override
-          public MethodSpec apply(MethodSpec input) {
-            return generateGeneratedRequestOptionEquivalent(input);
-          }
-        })
+        .filter(this::isUsefulGeneratedRequestOption)
+        .transform(this::generateGeneratedRequestOptionEquivalent)
         .toList();
   }
 
@@ -289,12 +272,7 @@ final class RequestBuilderGenerator {
     CodeBlock callRequestOptionsMethod = CodeBlock.builder()
         .add(".$N(", requestOptionMethod.name)
         .add(FluentIterable.from(requestOptionMethod.parameters)
-            .transform(new Function<ParameterSpec, String>() {
-              @Override
-              public String apply(ParameterSpec input) {
-                return input.name;
-              }
-            })
+            .transform(input -> Preconditions.checkNotNull(input).name)
             .join(Joiner.on(", ")))
         .add(");\n")
         .build();
@@ -306,15 +284,11 @@ final class RequestBuilderGenerator {
         .varargs(requestOptionMethod.varargs)
         .addAnnotations(
             FluentIterable.from(requestOptionMethod.annotations)
-                .filter(new Predicate<AnnotationSpec>() {
-                  @Override
-                  public boolean apply(AnnotationSpec input) {
-                    return !input.type.equals(TypeName.get(Override.class))
-                        // SafeVarargs can only be applied to final methods. GlideRequest is
-                        // non-final to allow for mocking.
-                        && !input.type.equals(TypeName.get(SafeVarargs.class));
-                  }
-                })
+                .filter(input ->
+                    !Preconditions.checkNotNull(input).type.equals(TypeName.get(Override.class))
+                    // SafeVarargs can only be applied to final methods. GlideRequest is
+                    // non-final to allow for mocking.
+                    && !input.type.equals(TypeName.get(SafeVarargs.class)))
                 .toList()
         )
         .addTypeVariables(requestOptionMethod.typeVariables)

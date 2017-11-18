@@ -47,7 +47,7 @@ public class CachingTest {
 
   @Rule public TearDownGlide tearDownGlide = new TearDownGlide();
   @Mock private RequestListener<Drawable> requestListener;
-  private ConcurrencyHelper concurrency = new ConcurrencyHelper();
+  private final ConcurrencyHelper concurrency = new ConcurrencyHelper();
 
   private Context context;
 
@@ -267,12 +267,7 @@ public class CachingTest {
   }
 
 
-  private void clearMemoryCacheOnMainThread() throws InterruptedException {
-    concurrency.runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        Glide.get(context).clearMemory();
-      }
-    });
+  private void clearMemoryCacheOnMainThread() {
+    concurrency.runOnMainThread(() -> Glide.get(context).clearMemory());
   }
 }

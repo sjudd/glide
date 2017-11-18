@@ -47,7 +47,7 @@ public interface ModelLoader<Model, Data> {
     public final DataFetcher<Data> fetcher;
 
     public LoadData(Key sourceKey, DataFetcher<Data> fetcher) {
-      this(sourceKey, Collections.<Key>emptyList(), fetcher);
+      this(sourceKey, Collections.emptyList(), fetcher);
     }
 
     public LoadData(Key sourceKey, List<Key> alternateKeys, DataFetcher<Data> fetcher) {

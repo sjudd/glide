@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.model;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.util.Pools.Pool;
 import com.bumptech.glide.Registry.NoModelLoaderAvailableException;
 import com.bumptech.glide.load.Options;
@@ -16,6 +17,8 @@ import java.util.Set;
  * Capable of building an {@link ModelLoader} that wraps one or more other {@link ModelLoader}s for
  * a given model and data class.
  */
+// Hides Model throughout.
+@SuppressWarnings("TypeParameterHidesVisibleType")
 public class MultiModelLoaderFactory {
   private static final Factory DEFAULT_FACTORY = new Factory();
   private static final ModelLoader<Object, Object> EMPTY_MODEL_LOADER = new EmptyModelLoader();
@@ -28,7 +31,7 @@ public class MultiModelLoaderFactory {
     this(throwableListPool, DEFAULT_FACTORY);
   }
 
-  // Visible for testing.
+  @VisibleForTesting
   MultiModelLoaderFactory(Pool<List<Throwable>> throwableListPool,
       Factory factory) {
     this.throwableListPool = throwableListPool;
@@ -65,7 +68,7 @@ public class MultiModelLoaderFactory {
       Entry<?, ?> entry = iterator.next();
       if (entry.handles(modelClass, dataClass)) {
         iterator.remove();
-        factories.add(this.<Model, Data>getFactory(entry));
+        factories.add(this.getFactory(entry));
       }
     }
     return factories;
@@ -85,7 +88,7 @@ public class MultiModelLoaderFactory {
         }
         if (entry.handles(modelClass)) {
           alreadyUsedEntries.add(entry);
-          loaders.add(this.<Model, Object>build(entry));
+          loaders.add(this.build(entry));
           alreadyUsedEntries.remove(entry);
         }
       }
@@ -123,7 +126,7 @@ public class MultiModelLoaderFactory {
         }
         if (entry.handles(modelClass, dataClass)) {
           alreadyUsedEntries.add(entry);
-          loaders.add(this.<Model, Data>build(entry));
+          loaders.add(this.build(entry));
           alreadyUsedEntries.remove(entry);
         }
       }

@@ -18,8 +18,6 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -55,9 +53,15 @@ public class EngineKeyTest {
     }
 
     public EngineKey build() {
-      return new EngineKey(id, signature, width, height,
-          Collections.<Class<?>, Transformation<?>>singletonMap(Object.class, transformation),
-          resourceClass, transcodeClass, options);
+      return new EngineKey(
+          id,
+          signature,
+          width,
+          height,
+          Collections.singletonMap(Object.class, transformation),
+          resourceClass,
+          transcodeClass,
+          options);
     }
   }
 
@@ -98,13 +102,10 @@ public class EngineKeyTest {
       throws UnsupportedEncodingException, NoSuchAlgorithmException {
     EngineKey first = harness.build();
     Key signature = mock(Key.class);
-    doAnswer(new Answer<Void>() {
-      @Override
-      public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-        MessageDigest digest = (MessageDigest) invocationOnMock.getArguments()[0];
-        digest.update("signature".getBytes("UTF-8"));
-        return null;
-      }
+    doAnswer(invocationOnMock -> {
+      MessageDigest digest = (MessageDigest) invocationOnMock.getArguments()[0];
+      digest.update("signature".getBytes("UTF-8"));
+      return null;
     }).when(signature).updateDiskCacheKey(any(MessageDigest.class));
     harness.signature = signature;
     EngineKey second = harness.build();

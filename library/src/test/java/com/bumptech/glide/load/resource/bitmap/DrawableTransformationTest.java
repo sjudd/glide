@@ -79,13 +79,8 @@ public class DrawableTransformationTest {
   public void transform_withBitmapDrawable_andFunctionalBitmapTransformation_doesNotRecycle() {
     when(bitmapTransformation.transform(
         any(Context.class), anyBitmapResource(), anyInt(), anyInt()))
-        .thenAnswer(new Answer<Resource<Bitmap>>() {
-          @Override
-          public Resource<Bitmap> answer(InvocationOnMock invocationOnMock) throws Throwable {
-            return BitmapResource.obtain(
-                Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888), bitmapPool);
-          }
-        });
+        .thenAnswer(invocationOnMock -> BitmapResource.obtain(
+            Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888), bitmapPool));
     Bitmap bitmap = Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888);
     BitmapDrawable drawable = new BitmapDrawable(context.getResources(), bitmap);
     @SuppressWarnings("unchecked")
@@ -108,26 +103,20 @@ public class DrawableTransformationTest {
         .thenAnswer(new ReturnGivenResource());
 
     ColorDrawable colorDrawable = new ColorDrawable(Color.RED);
-    final Resource<Drawable> input = new SimpleResource<Drawable>(colorDrawable);
+    final Resource<Drawable> input = new SimpleResource<>(colorDrawable);
 
-    doAnswer(new Answer() {
-      @Override
-      public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-        Bitmap bitmap = (Bitmap) invocationOnMock.getArguments()[0];
-        assertThat(bitmap.getWidth()).isEqualTo(100);
-        assertThat(bitmap.getHeight()).isEqualTo(200);
-        return null;
-      }
+    doAnswer(invocationOnMock -> {
+      Bitmap bitmap = (Bitmap) invocationOnMock.getArguments()[0];
+      assertThat(bitmap.getWidth()).isEqualTo(100);
+      assertThat(bitmap.getHeight()).isEqualTo(200);
+      return null;
     }).when(bitmapPool).put(any(Bitmap.class));
     when(bitmapPool.get(anyInt(), anyInt(), any(Bitmap.Config.class)))
-        .thenAnswer(new Answer<Bitmap>() {
-          @Override
-          public Bitmap answer(InvocationOnMock invocationOnMock) throws Throwable {
-            int width = (Integer) invocationOnMock.getArguments()[0];
-            int height = (Integer) invocationOnMock.getArguments()[1];
-            Bitmap.Config config = (Bitmap.Config) invocationOnMock.getArguments()[2];
-            return Bitmap.createBitmap(width, height, config);
-          }
+        .thenAnswer(invocationOnMock -> {
+          int width = (Integer) invocationOnMock.getArguments()[0];
+          int height = (Integer) invocationOnMock.getArguments()[1];
+          Bitmap.Config config = (Bitmap.Config) invocationOnMock.getArguments()[2];
+          return Bitmap.createBitmap(width, height, config);
         });
 
     transformation.transform(context, input, /*outWidth=*/ 100, /*outHeight=*/ 200);

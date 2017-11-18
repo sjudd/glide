@@ -3,6 +3,7 @@ package com.bumptech.glide.load.engine.executor;
 import android.os.StrictMode;
 import android.os.StrictMode.ThreadPolicy;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 import com.bumptech.glide.util.Synthetic;
 import java.io.File;
@@ -184,7 +185,7 @@ public final class GlideExecutor extends ThreadPoolExecutor {
         UncaughtThrowableStrategy.DEFAULT,
         false /*preventNetworkOperations*/,
         false /*executeSynchronously*/,
-        new SynchronousQueue<Runnable>());
+        new SynchronousQueue<>());
   }
 
   public static GlideExecutor newAnimationExecutor() {
@@ -203,10 +204,10 @@ public final class GlideExecutor extends ThreadPoolExecutor {
         UncaughtThrowableStrategy.DEFAULT,
         /*preventNetworkOperations=*/ true,
         /*executeSynchronously=*/ false,
-        new PriorityBlockingQueue<Runnable>());
+        new PriorityBlockingQueue<>());
   }
 
-  // Visible for testing.
+  @VisibleForTesting
   GlideExecutor(int poolSize, String name,
       UncaughtThrowableStrategy uncaughtThrowableStrategy, boolean preventNetworkOperations,
       boolean executeSynchronously) {
@@ -231,7 +232,7 @@ public final class GlideExecutor extends ThreadPoolExecutor {
         uncaughtThrowableStrategy,
         preventNetworkOperations,
         executeSynchronously,
-        new PriorityBlockingQueue<Runnable>());
+        new PriorityBlockingQueue<>());
   }
 
   GlideExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTimeInMs, String name,

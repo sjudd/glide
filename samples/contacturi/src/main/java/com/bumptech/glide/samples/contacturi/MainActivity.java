@@ -16,11 +16,11 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.util.Preconditions;
 
 /**
  * An activity that demonstrates loading photos using
@@ -59,31 +59,26 @@ public class MainActivity extends Activity {
       READ_CONTACTS);
     }
 
-    findViewById(R.id.button_pick_contact).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Intent intent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
-        startActivityForResult(intent, REQUEST_CONTACT);
-      }
+    findViewById(R.id.button_pick_contact).setOnClickListener(v -> {
+      Intent intent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+      startActivityForResult(intent, REQUEST_CONTACT);
     });
 
-    findViewById(R.id.button_find).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-                                       Uri.encode(numberEntry.getText().toString()));
-        GlideApp.with(MainActivity.this)
-                .load(uri)
-                .override(Target.SIZE_ORIGINAL)
-                .into(imageViewLookup);
-        }
-    });
+    findViewById(R.id.button_find).setOnClickListener(v -> {
+      Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+                                     Uri.encode(numberEntry.getText().toString()));
+      GlideApp.with(MainActivity.this)
+              .load(uri)
+              .override(Target.SIZE_ORIGINAL)
+              .into(imageViewLookup);
+      });
   }
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == REQUEST_CONTACT && resultCode == RESULT_OK) {
-      final Cursor cursor = getContentResolver().query(data.getData(), null, null, null, null);
+      Uri uri = Preconditions.checkNotNull(data.getData());
+      final Cursor cursor = getContentResolver().query(uri, null, null, null, null);
       try {
         if (cursor != null && cursor.moveToFirst()) {
           final long contactId = cursor.getLong(cursor.getColumnIndex(Contacts._ID));

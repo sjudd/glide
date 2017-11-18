@@ -2,6 +2,7 @@ package com.bumptech.glide.load.engine.executor;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import android.support.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,12 +21,7 @@ public class GlideExecutorTest {
     final List<Integer> resultPriorities = Collections.synchronizedList(new ArrayList<Integer>());
     GlideExecutor executor = GlideExecutor.newDiskCacheExecutor();
     for (int i = 5; i > 0; i--) {
-      executor.execute(new MockRunnable(i, new MockRunnable.OnRun() {
-        @Override
-        public void onRun(int priority) {
-          resultPriorities.add(priority);
-        }
-      }));
+      executor.execute(new MockRunnable(i, resultPriorities::add));
     }
 
     executor.shutdown();
@@ -36,21 +32,21 @@ public class GlideExecutorTest {
     assertThat(resultPriorities).containsExactly(5, 1, 2, 3, 4).inOrder();
   }
 
-  private static class MockRunnable implements Runnable,
+  private static final class MockRunnable implements Runnable,
       Comparable<MockRunnable> {
     private final int priority;
     private final OnRun onRun;
 
     @Override
-    public int compareTo(MockRunnable another) {
+    public int compareTo(@NonNull MockRunnable another) {
       return priority - another.priority;
     }
 
-    public interface OnRun {
+    interface OnRun {
       void onRun(int priority);
     }
 
-    public MockRunnable(int priority, OnRun onRun) {
+    MockRunnable(int priority, OnRun onRun) {
       this.priority = priority;
       this.onRun = onRun;
     }

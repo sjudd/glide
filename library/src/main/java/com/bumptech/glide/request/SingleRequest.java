@@ -38,13 +38,8 @@ public final class SingleRequest<R> implements Request,
   private static final String TAG = "Request";
   /** Tag for logging externally useful events (request completion, timing etc). */
   private static final String GLIDE_TAG = "Glide";
-  private static final Pools.Pool<SingleRequest<?>> POOL = FactoryPools.simple(150,
-      new FactoryPools.Factory<SingleRequest<?>>() {
-        @Override
-        public SingleRequest<?> create() {
-          return new SingleRequest<Object>();
-        }
-      });
+  private static final Pools.Pool<SingleRequest<?>> POOL =
+      FactoryPools.simple(150, SingleRequest::new);
   private boolean isCallingCallbacks;
 
   private enum Status {
@@ -149,6 +144,7 @@ public final class SingleRequest<R> implements Request,
     return request;
   }
 
+  @SuppressWarnings("WeakerAccess")
   @Synthetic
   SingleRequest() {
     // just create, instances are reused with recycle/init

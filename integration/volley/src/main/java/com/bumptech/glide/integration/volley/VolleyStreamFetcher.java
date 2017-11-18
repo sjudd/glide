@@ -21,15 +21,11 @@ import java.util.Map;
 /**
  * A DataFetcher backed by volley for fetching images via http.
  */
+// Public API.
+@SuppressWarnings("WeakerAccess")
 public class VolleyStreamFetcher implements DataFetcher<InputStream> {
   private static final String TAG = "VolleyStreamFetcher";
-  public static final VolleyRequestFactory DEFAULT_REQUEST_FACTORY = new VolleyRequestFactory() {
-    @Override
-    public Request<byte[]> create(String url, DataCallback<? super InputStream> callback,
-        Request.Priority priority, Map<String, String> headers) {
-      return new GlideRequest(url, callback, priority, headers);
-    }
-  };
+  public static final VolleyRequestFactory DEFAULT_REQUEST_FACTORY = GlideRequest::new;
 
   private final RequestQueue requestQueue;
   private final VolleyRequestFactory requestFactory;
@@ -97,13 +93,15 @@ public class VolleyStreamFetcher implements DataFetcher<InputStream> {
    * Default {@link com.android.volley.Request} implementation for Glide that receives errors and
    * results on volley's background thread.
    */
+  // Public API.
+  @SuppressWarnings("unused")
   public static class GlideRequest extends Request<byte[]> {
     private final DataCallback<? super InputStream> callback;
     private final Priority priority;
     private final Map<String, String> headers;
 
     public GlideRequest(String url, DataCallback<? super InputStream> callback, Priority priority) {
-      this(url, callback, priority, Collections.<String, String>emptyMap());
+      this(url, callback, priority, Collections.emptyMap());
     }
 
     public GlideRequest(String url, DataCallback<? super InputStream> callback, Priority priority,

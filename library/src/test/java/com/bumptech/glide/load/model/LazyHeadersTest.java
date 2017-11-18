@@ -4,7 +4,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import android.support.annotation.Nullable;
 import com.bumptech.glide.load.model.LazyHeaders.Builder;
 import com.google.common.testing.EqualsTester;
 import java.util.Map;
@@ -267,13 +266,7 @@ public class LazyHeadersTest {
   @Test
   public void testKeyNotIncludedWithFactoryThatReturnsNullValue() {
     Builder builder = new Builder();
-    builder.setHeader("test", new LazyHeaderFactory() {
-      @Nullable
-      @Override
-      public String buildHeader() {
-        return null;
-      }
-    });
+    builder.setHeader("test", () -> null);
     LazyHeaders headers = builder.build();
     assertThat(headers.getHeaders()).doesNotContainKey("test");
   }
@@ -281,13 +274,7 @@ public class LazyHeadersTest {
   @Test
   public void testKeyNotIncludedWithFactoryThatReturnsEmptyValue() {
     Builder builder = new Builder();
-    builder.setHeader("test", new LazyHeaderFactory() {
-      @Nullable
-      @Override
-      public String buildHeader() {
-        return "";
-      }
-    });
+    builder.setHeader("test", () -> "");
     LazyHeaders headers = builder.build();
     assertThat(headers.getHeaders()).doesNotContainKey("test");
   }
@@ -295,20 +282,8 @@ public class LazyHeadersTest {
   @Test
   public void testKeyIncludedWithOneFactoryThatReturnsNullAndOneFactoryThatDoesNotReturnNull() {
     Builder builder = new Builder();
-    builder.addHeader("test", new LazyHeaderFactory() {
-      @Nullable
-      @Override
-      public String buildHeader() {
-        return null;
-      }
-    });
-    builder.addHeader("test", new LazyHeaderFactory() {
-      @Nullable
-      @Override
-      public String buildHeader() {
-        return "value";
-      }
-    });
+    builder.addHeader("test", () -> null);
+    builder.addHeader("test", () -> "value");
     LazyHeaders headers = builder.build();
     assertThat(headers.getHeaders()).containsEntry("test", "value");
   }

@@ -18,7 +18,6 @@ import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.tests.BackgroundUtil;
 import com.bumptech.glide.tests.GlideShadowLooper;
 import com.bumptech.glide.tests.TearDownGlide;
 import com.bumptech.glide.tests.Util;
@@ -288,12 +287,7 @@ public class RequestManagerRetrieverTest {
   @Test
   public void testDoesNotThrowWhenGetWithContextCalledFromBackgroundThread()
       throws InterruptedException {
-    testInBackground(new BackgroundUtil.BackgroundTester() {
-      @Override
-      public void runTest() throws Exception {
-        retriever.get(RuntimeEnvironment.application);
-      }
-    });
+    testInBackground(() -> retriever.get(RuntimeEnvironment.application));
   }
 
   // See Issue #117: https://github.com/bumptech/glide/issues/117.
@@ -343,12 +337,12 @@ public class RequestManagerRetrieverTest {
     void addFragmentWithTag(String tag, RequestManager manager);
   }
 
-  public class DefaultRetrieverHarness implements RetrieverHarness {
+  final class DefaultRetrieverHarness implements RetrieverHarness {
     private final ActivityController<Activity> controller =
         Robolectric.buildActivity(Activity.class);
     private final android.app.Fragment parent;
 
-    public DefaultRetrieverHarness() {
+    DefaultRetrieverHarness() {
       this.parent = new android.app.Fragment();
 
       controller.create();

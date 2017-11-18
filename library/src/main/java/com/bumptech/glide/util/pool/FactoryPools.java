@@ -1,5 +1,6 @@
 package com.bumptech.glide.util.pool;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pools.Pool;
 import android.support.v4.util.Pools.SimplePool;
 import android.support.v4.util.Pools.SynchronizedPool;
@@ -15,12 +16,7 @@ import java.util.List;
 public final class FactoryPools {
   private static final String TAG = "FactoryPools";
   private static final int DEFAULT_POOL_SIZE = 20;
-  private static final Resetter<Object> EMPTY_RESETTER = new Resetter<Object>() {
-    @Override
-    public void reset(Object object) {
-      // Do nothing.
-    }
-  };
+  private static final Resetter<Object> EMPTY_RESETTER = object -> { };
 
   private FactoryPools() { }
 
@@ -35,7 +31,7 @@ public final class FactoryPools {
    * @param <T> The type of object the pool will contains.
    */
   public static <T extends Poolable> Pool<T> simple(int size, Factory<T> factory) {
-    return build(new SimplePool<T>(size), factory);
+    return build(new SimplePool<>(size), factory);
   }
 
   /**
@@ -49,7 +45,7 @@ public final class FactoryPools {
    * @param <T> The type of object the pool will contains.
    */
   public static <T extends Poolable> Pool<T> threadSafe(int size, Factory<T> factory) {
-    return build(new SynchronizedPool<T>(size), factory);
+    return build(new SynchronizedPool<>(size), factory);
   }
 
   /**
@@ -74,22 +70,14 @@ public final class FactoryPools {
    *
    * @param <T> The type of object that the {@link List Lists} will contain.
    */
+  // Public API.
+  @SuppressWarnings("WeakerAccess")
   public static <T> Pool<List<T>> threadSafeList(int size) {
-    return build(new SynchronizedPool<List<T>>(size), new Factory<List<T>>() {
-      @Override
-      public List<T> create() {
-        return new ArrayList<>();
-      }
-    }, new Resetter<List<T>>() {
-      @Override
-      public void reset(List<T> object) {
-        object.clear();
-      }
-    });
+    return build(new SynchronizedPool<>(size), ArrayList::new, List::clear);
   }
 
   private static <T extends Poolable> Pool<T> build(Pool<T> pool, Factory<T> factory) {
-    return build(pool, factory, FactoryPools.<T>emptyResetter());
+    return build(pool, factory, FactoryPools.emptyResetter());
   }
 
   private static <T> Pool<T> build(Pool<T> pool, Factory<T> factory,
@@ -155,7 +143,7 @@ public final class FactoryPools {
     }
 
     @Override
-    public boolean release(T instance) {
+    public boolean release(@NonNull T instance) {
       if (instance instanceof Poolable) {
         ((Poolable) instance).getVerifier().setRecycled(true /*isRecycled*/);
       }

@@ -28,6 +28,8 @@ import java.util.Map;
 /**
  * A builder class for setting default structural classes for Glide to use.
  */
+// Public API.
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class GlideBuilder {
   private final Map<Class<?>, TransitionOptions<?, ?>> defaultTransitionOptions = new ArrayMap<>();
   private Engine engine;
@@ -92,12 +94,7 @@ public final class GlideBuilder {
    */
   @Deprecated
   public GlideBuilder setDiskCache(final DiskCache diskCache) {
-    return setDiskCache(new DiskCache.Factory() {
-      @Override
-      public DiskCache build() {
-        return diskCache;
-      }
-    });
+    return setDiskCache(() -> diskCache);
   }
 
   /**
@@ -278,10 +275,8 @@ public final class GlideBuilder {
     return this;
   }
 
-  GlideBuilder setRequestManagerFactory(
-      @Nullable RequestManagerRetriever.RequestManagerFactory factory) {
+  void setRequestManagerFactory(@Nullable RequestManagerFactory factory) {
     this.requestManagerFactory = factory;
-    return this;
   }
 
   // For testing.
@@ -339,8 +334,8 @@ public final class GlideBuilder {
               GlideExecutor.newAnimationExecutor());
     }
 
-    RequestManagerRetriever requestManagerRetriever = new RequestManagerRetriever(
-        requestManagerFactory);
+    RequestManagerRetriever requestManagerRetriever =
+        new RequestManagerRetriever(requestManagerFactory);
 
     return new Glide(
         context,

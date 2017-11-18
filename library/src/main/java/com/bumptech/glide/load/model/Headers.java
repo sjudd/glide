@@ -16,12 +16,7 @@ public interface Headers {
    * @deprecated Use {@link #DEFAULT} instead.
    */
   @Deprecated
-  Headers NONE = new Headers() {
-      @Override
-      public Map<String, String> getHeaders() {
-          return Collections.emptyMap();
-      }
-  };
+  Headers NONE = Collections::emptyMap;
 
   /**
    * A Headers object containing reasonable defaults that should be used when users don't want

@@ -18,8 +18,6 @@ import org.junit.runners.JUnit4;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 @RunWith(JUnit4.class)
 public class ThumbnailRequestCoordinatorTest {
@@ -87,13 +85,10 @@ public class ThumbnailRequestCoordinatorTest {
 
   @Test
   public void testDoesNotStartFullIfClearedByThumb() {
-    doAnswer(new Answer<Void>() {
-      @Override
-      public Void answer(InvocationOnMock invocation) throws Throwable {
-        coordinator.clear();
+    doAnswer(invocation -> {
+      coordinator.clear();
 
-        return null;
-      }
+      return null;
     }).when(thumb).begin();
 
     coordinator.begin();

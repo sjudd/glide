@@ -31,91 +31,61 @@ public class RequestManagerFragmentTest {
 
   @Test
   public void testSupportCanSetAndGetRequestManager() {
-    runTest(new TestCase() {
-      @Override
-      public void runTest(Harness harness) {
-        RequestManager manager = mock(RequestManager.class);
-        harness.setRequestManager(manager);
-        assertEquals(manager, harness.getManager());
-      }
+    runTest(harness -> {
+      RequestManager manager = mock(RequestManager.class);
+      harness.setRequestManager(manager);
+      assertEquals(manager, harness.getManager());
     });
   }
 
   @Test
   public void testReturnsLifecycle() {
-    runTest(new TestCase() {
-      @Override
-      public void runTest(Harness harness) {
-        assertEquals(harness.getHarnessLifecycle(), harness.getFragmentLifecycle());
-      }
-    });
+    runTest(harness -> assertEquals(harness.getHarnessLifecycle(), harness.getFragmentLifecycle()));
   }
 
   @Test
   public void testDoesNotAddNullRequestManagerToLifecycleWhenSet() {
-    runTest(new TestCase() {
-      @Override
-      public void runTest(Harness harness) {
-        harness.setRequestManager(null);
-        verify(harness.getHarnessLifecycle(), never()).addListener(any(LifecycleListener.class));
-      }
+    runTest(harness -> {
+      harness.setRequestManager(null);
+      verify(harness.getHarnessLifecycle(), never()).addListener(any(LifecycleListener.class));
     });
   }
 
   @Test
   public void testCallsLifecycleStart() {
-    runTest(new TestCase() {
-      @Override
-      public void runTest(Harness harness) {
-        harness.getController().start();
+    runTest(harness -> {
+      harness.getController().start();
 
-        verify(harness.getHarnessLifecycle()).onStart();
-      }
+      verify(harness.getHarnessLifecycle()).onStart();
     });
   }
 
   @Test
   public void testCallsRequestManagerStop() {
-    runTest(new TestCase() {
-      @Override
-      public void runTest(Harness harness) {
-        harness.getController().start().resume().pause().stop();
+    runTest(harness -> {
+      harness.getController().start().resume().pause().stop();
 
-        verify(harness.getHarnessLifecycle()).onStop();
-      }
+      verify(harness.getHarnessLifecycle()).onStop();
     });
   }
 
   @Test
   public void testCallsRequestManagerDestroy() {
-    runTest(new TestCase() {
-      @Override
-      public void runTest(Harness harness) {
-        harness.getController().start().resume().pause().stop().destroy();
+    runTest(harness -> {
+      harness.getController().start().resume().pause().stop().destroy();
 
-        verify(harness.getHarnessLifecycle()).onDestroy();
-      }
+      verify(harness.getHarnessLifecycle()).onDestroy();
     });
   }
 
   @Test
   public void testOnLowMemoryCallOnNullRequestManagerDoesNotCrash() {
-    runTest(new TestCase() {
-      @Override
-      public void runTest(Harness harness) {
-        harness.onLowMemory();
-      }
-    });
+    runTest(Harness::onLowMemory);
   }
 
   @Test
   public void testOnTrimMemoryCallOnNullRequestManagerDoesNotCrash() {
-    runTest(new TestCase() {
-      @Override
-      public void runTest(Harness harness) {
-        harness.onTrimMemory(100 /*level*/);
-      }
-    });
+    runTest(harness -> harness.onTrimMemory(100 /*level*/));
   }
 
   private void runTest(TestCase testCase) {
@@ -129,7 +99,7 @@ public class RequestManagerFragmentTest {
   }
 
   private interface TestCase {
-    public void runTest(Harness harness);
+    void runTest(Harness harness);
   }
 
   private interface Harness {
@@ -145,7 +115,7 @@ public class RequestManagerFragmentTest {
 
     void onLowMemory();
 
-    void onTrimMemory(int level);
+    void onTrimMemory(@SuppressWarnings("SameParameterValue") int level);
   }
 
   private static class RequestManagerHarness implements Harness {

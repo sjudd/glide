@@ -137,7 +137,7 @@ class MultiModelLoader<Model, Data> implements ModelLoader<Model, Data> {
 
     @Override
     public void onLoadFailed(Exception e) {
-      exceptions.add(e);
+      Preconditions.checkNotNull(exceptions).add(e);
       startNextOrFail();
     }
 

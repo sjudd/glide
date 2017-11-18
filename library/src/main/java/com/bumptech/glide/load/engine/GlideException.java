@@ -15,6 +15,8 @@ import java.util.List;
 /**
  * An exception with zero or more causes indicating why a load in Glide failed.
  */
+// Public API.
+@SuppressWarnings("WeakerAccess")
 public final class GlideException extends Exception {
   private static final StackTraceElement[] EMPTY_ELEMENTS = new StackTraceElement[0];
 
@@ -24,7 +26,7 @@ public final class GlideException extends Exception {
   private Class<?> dataClass;
 
   public GlideException(String message) {
-    this(message, Collections.<Throwable>emptyList());
+    this(message, Collections.emptyList());
   }
 
   public GlideException(String detailMessage, Throwable cause) {

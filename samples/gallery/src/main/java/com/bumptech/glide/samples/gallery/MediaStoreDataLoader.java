@@ -8,7 +8,6 @@ import android.provider.MediaStore;
 import android.support.v4.content.AsyncTaskLoader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -37,7 +36,7 @@ public class MediaStoreDataLoader extends AsyncTaskLoader<List<MediaStoreData>> 
   private boolean observerRegistered = false;
   private final ForceLoadContentObserver forceLoadContentObserver = new ForceLoadContentObserver();
 
-  public MediaStoreDataLoader(Context context) {
+  MediaStoreDataLoader(Context context) {
     super(context);
   }
 
@@ -83,12 +82,10 @@ public class MediaStoreDataLoader extends AsyncTaskLoader<List<MediaStoreData>> 
   public List<MediaStoreData> loadInBackground() {
     List<MediaStoreData> data = queryImages();
     data.addAll(queryVideos());
-    Collections.sort(data, new Comparator<MediaStoreData>() {
-      @Override
-      public int compare(MediaStoreData mediaStoreData, MediaStoreData mediaStoreData2) {
-        return Long.valueOf(mediaStoreData2.dateTaken).compareTo(mediaStoreData.dateTaken);
-      }
-    });
+    Collections.sort(
+        data,
+        (mediaStoreData, mediaStoreData2) ->
+            Long.valueOf(mediaStoreData2.dateTaken).compareTo(mediaStoreData.dateTaken));
     return data;
   }
 
@@ -111,7 +108,7 @@ public class MediaStoreDataLoader extends AsyncTaskLoader<List<MediaStoreData>> 
   private List<MediaStoreData> query(Uri contentUri, String[] projection, String sortByCol,
       String idCol, String dateTakenCol, String dateModifiedCol, String mimeTypeCol,
       String orientationCol, MediaStoreData.Type type) {
-    final List<MediaStoreData> data = new ArrayList<MediaStoreData>();
+    final List<MediaStoreData> data = new ArrayList<>();
     Cursor cursor = getContext().getContentResolver()
         .query(contentUri, projection, null, null, sortByCol + " DESC");
 

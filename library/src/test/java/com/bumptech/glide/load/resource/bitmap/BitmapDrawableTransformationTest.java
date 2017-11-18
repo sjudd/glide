@@ -29,8 +29,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -40,9 +38,9 @@ import org.robolectric.annotation.Config;
 @SuppressWarnings("deprecation")
 public class BitmapDrawableTransformationTest {
 
-  @Mock BitmapPool bitmapPool;
-  @Mock Transformation<Bitmap> wrapped;
-  @Mock Resource<BitmapDrawable> drawableResourceToTransform;
+  @Mock private BitmapPool bitmapPool;
+  @Mock private Transformation<Bitmap> wrapped;
+  @Mock private Resource<BitmapDrawable> drawableResourceToTransform;
 
   private BitmapDrawableTransformation transformation;
   private Bitmap bitmapToTransform;
@@ -70,14 +68,8 @@ public class BitmapDrawableTransformationTest {
     int outWidth = 123;
     int outHeight = 456;
     when(wrapped.transform(
-        anyContext(), Util.<Bitmap>anyResource(), eq(outWidth), eq(outHeight)))
-        .thenAnswer(new Answer<Resource<Bitmap>>() {
-          @SuppressWarnings("unchecked")
-          @Override
-          public Resource<Bitmap> answer(InvocationOnMock invocation) throws Throwable {
-            return (Resource<Bitmap>) invocation.getArguments()[1];
-          }
-        });
+        anyContext(), Util.anyResource(), eq(outWidth), eq(outHeight)))
+        .thenAnswer(invocation -> invocation.getArguments()[1]);
 
     Resource<BitmapDrawable> transformed =
         transformation.transform(context, drawableResourceToTransform, outWidth, outHeight);
@@ -93,7 +85,7 @@ public class BitmapDrawableTransformationTest {
     Bitmap transformedBitmap = Bitmap.createBitmap(outWidth, outHeight, Bitmap.Config.RGB_565);
     Resource<Bitmap> transformedBitmapResource = Util.mockResource();
     when(transformedBitmapResource.get()).thenReturn(transformedBitmap);
-    when(wrapped.transform(anyContext(), Util.<Bitmap>anyResource(), eq(outWidth), eq(outHeight)))
+    when(wrapped.transform(anyContext(), Util.anyResource(), eq(outWidth), eq(outHeight)))
         .thenReturn(transformedBitmapResource);
 
     Resource<BitmapDrawable> transformed =
@@ -109,7 +101,7 @@ public class BitmapDrawableTransformationTest {
     Resource<Bitmap> transformed = Util.mockResource();
     when(transformed.get())
         .thenReturn(Bitmap.createBitmap(outWidth, outHeight, Bitmap.Config.ARGB_8888));
-    when(wrapped.transform(anyContext(), Util.<Bitmap>anyResource(), anyInt(), anyInt()))
+    when(wrapped.transform(anyContext(), Util.anyResource(), anyInt(), anyInt()))
         .thenReturn(transformed);
 
     transformation.transform(context, drawableResourceToTransform, outWidth, outHeight);

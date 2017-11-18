@@ -22,8 +22,6 @@ import java.util.concurrent.TimeoutException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -251,12 +249,9 @@ public class RequestFutureTargetTest {
   @Test(expected = InterruptedException.class)
   public void testThrowsInterruptedExceptionIfThreadInterruptedWhenDoneWaiting()
       throws InterruptedException, ExecutionException {
-    doAnswer(new Answer<Void>() {
-      @Override
-      public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-        Thread.currentThread().interrupt();
-        return null;
-      }
+    doAnswer(invocationOnMock -> {
+      Thread.currentThread().interrupt();
+      return null;
     }).when(waiter).waitForTimeout(eq(future), anyLong());
 
     future.get();
@@ -265,12 +260,9 @@ public class RequestFutureTargetTest {
   @Test(expected = ExecutionException.class)
   public void testThrowsExecutionExceptionIfLoadFailsWhileWaiting()
       throws ExecutionException, InterruptedException {
-    doAnswer(new Answer<Void>() {
-      @Override
-      public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-        future.onLoadFailed(/*e=*/ null, /*model=*/ null, future, /*isFirstResource=*/ true);
-        return null;
-      }
+    doAnswer(invocationOnMock -> {
+      future.onLoadFailed(/*e=*/ null, /*model=*/ null, future, /*isFirstResource=*/ true);
+      return null;
     }).when(waiter).waitForTimeout(eq(future), anyLong());
     future.get();
   }
@@ -278,12 +270,9 @@ public class RequestFutureTargetTest {
   @Test(expected = CancellationException.class)
   public void testThrowsCancellationExceptionIfCancelledWhileWaiting()
       throws ExecutionException, InterruptedException {
-    doAnswer(new Answer<Void>() {
-      @Override
-      public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-        future.cancel(false);
-        return null;
-      }
+    doAnswer(invocationOnMock -> {
+      future.cancel(false);
+      return null;
     }).when(waiter).waitForTimeout(eq(future), anyLong());
     future.get();
   }
@@ -335,17 +324,14 @@ public class RequestFutureTargetTest {
   public void testReturnsResourceIfReceivedWhileWaiting()
       throws ExecutionException, InterruptedException {
     final Object expected = new Object();
-    doAnswer(new Answer<Void>() {
-      @Override
-      public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-        future.onResourceReady(
-            /*resource=*/ expected,
-            /*model=*/ null,
-            /*target=*/future,
-            DataSource.DATA_DISK_CACHE,
-            true /*isFirstResource*/);
-        return null;
-      }
+    doAnswer(invocationOnMock -> {
+      future.onResourceReady(
+          /*resource=*/ expected,
+          /*model=*/ null,
+          /*target=*/future,
+          DataSource.DATA_DISK_CACHE,
+          true /*isFirstResource*/);
+      return null;
     }).when(waiter).waitForTimeout(eq(future), anyLong());
     assertEquals(expected, future.get());
   }

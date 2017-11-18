@@ -24,12 +24,10 @@ import java.security.MessageDigest;
  * {@link #hashCode()}.
  */
 public final class Option<T> {
-  private static final CacheKeyUpdater<Object> EMPTY_UPDATER = new CacheKeyUpdater<Object>() {
-    @Override
-    public void update(byte[] keyBytes, Object value, MessageDigest messageDigest) {
-      // Do nothing.
-    }
-  };
+  private static final CacheKeyUpdater<Object> EMPTY_UPDATER =
+      (keyBytes, value, messageDigest) -> {
+        // Do nothing.
+      };
 
   private final T defaultValue;
   private final CacheKeyUpdater<T> cacheKeyUpdater;
@@ -55,7 +53,7 @@ public final class Option<T> {
    *            stable across builds, so {@link Class#getName()} should <em>not</em> be used).
    */
   public static <T> Option<T> memory(String key, T defaultValue) {
-    return new Option<>(key, defaultValue, Option.<T>emptyUpdater());
+    return new Option<>(key, defaultValue, Option.emptyUpdater());
   }
 
   /**
@@ -81,7 +79,7 @@ public final class Option<T> {
     return new Option<>(key, defaultValue, cacheKeyUpdater);
   }
 
-  Option(String key, T defaultValue, CacheKeyUpdater<T> cacheKeyUpdater) {
+  private Option(String key, T defaultValue, CacheKeyUpdater<T> cacheKeyUpdater) {
     this.key = Preconditions.checkNotEmpty(key);
     this.defaultValue = defaultValue;
     this.cacheKeyUpdater = Preconditions.checkNotNull(cacheKeyUpdater);
@@ -90,6 +88,8 @@ public final class Option<T> {
   /**
    * Returns a reasonable default to use if no other value is set, or {@code null}.
    */
+  // Public API.
+  @SuppressWarnings("WeakerAccess")
   @Nullable
   public T getDefaultValue() {
     return defaultValue;

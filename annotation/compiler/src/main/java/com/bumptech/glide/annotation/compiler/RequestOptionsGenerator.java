@@ -7,6 +7,7 @@ import com.bumptech.glide.annotation.GlideOption;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
@@ -69,6 +70,8 @@ import javax.lang.model.type.TypeKind;
  * </pre>
  * </p>
  */
+// Streams require min sdk of 24+.
+@SuppressWarnings({"Guava", "StaticPseudoFunctionalStyleMethod"})
 final class RequestOptionsGenerator {
   private static final String GENERATED_REQUEST_OPTIONS_SIMPLE_NAME = "GlideOptions";
   static final String REQUEST_OPTIONS_PACKAGE_NAME = "com.bumptech.glide.request";
@@ -104,15 +107,11 @@ final class RequestOptionsGenerator {
     List<MethodAndStaticVar> methodsForExtensions =
         generateMethodsForExtensions(glideExtensionClassNames);
 
-    Set<MethodSignature> extensionMethodSignatures = ImmutableSet.copyOf(
-        Iterables.transform(methodsForExtensions,
-            new Function<MethodAndStaticVar, MethodSignature>() {
-              @Nullable
-              @Override
-              public MethodSignature apply(MethodAndStaticVar f) {
-                return new MethodSignature(f.method);
-              }
-            }));
+    Set<MethodSignature> extensionMethodSignatures =
+        ImmutableSet.copyOf(
+            Iterables.transform(
+                methodsForExtensions,
+                f -> new MethodSignature(Preconditions.checkNotNull(f).method)));
 
     List<MethodAndStaticVar> staticOverrides = generateStaticMethodOverridesForRequestOptions();
     List<MethodSpec> instanceOverrides = generateInstanceMethodOverridesForRequestOptions();
@@ -184,12 +183,7 @@ final class RequestOptionsGenerator {
   private List<MethodSpec> generateInstanceMethodOverridesForRequestOptions() {
     return Lists.transform(
         processorUtil.findInstanceMethodsReturning(requestOptionsType, requestOptionsType),
-        new Function<ExecutableElement, MethodSpec>() {
-          @Override
-          public MethodSpec apply(ExecutableElement input) {
-            return generateRequestOptionOverride(input);
-          }
-        });
+        this::generateRequestOptionOverride);
   }
 
   private MethodSpec generateRequestOptionOverride(ExecutableElement methodToOverride) {
@@ -199,12 +193,7 @@ final class RequestOptionsGenerator {
         .addCode(CodeBlock.builder()
             .add("return ($T) super.$N(", glideOptionsName, methodToOverride.getSimpleName())
             .add(FluentIterable.from(methodToOverride.getParameters())
-                .transform(new Function<VariableElement, String>() {
-                  @Override
-                  public String apply(VariableElement input) {
-                    return input.getSimpleName().toString();
-                  }
-                })
+                .transform((input) -> Preconditions.checkNotNull(input).getSimpleName().toString())
                 .join(Joiner.on(", ")))
             .add(");\n")
             .build());
@@ -262,13 +251,14 @@ final class RequestOptionsGenerator {
 
       List<Object> methodArgs = new ArrayList<>();
       methodArgs.add(element.getSimpleName().toString());
-      String methodLiterals = "";
+      StringBuilder methodLiterals = new StringBuilder();
       if (!parameters.isEmpty()) {
         for (VariableElement variable : parameters) {
-          methodLiterals += "$L, ";
+          methodLiterals.append("$L, ");
           methodArgs.add(variable.getSimpleName().toString());
         }
-        methodLiterals = methodLiterals.substring(0, methodLiterals.length() - 2);
+        methodLiterals = new StringBuilder(
+            methodLiterals.substring(0, methodLiterals.length() - 2));
       }
       extensionRequestOptionsArgument = CodeBlock.builder()
           .add(
@@ -280,20 +270,20 @@ final class RequestOptionsGenerator {
     }
 
     List<Object> args = new ArrayList<>();
-    String code = "return ($T) $T.$L($L, ";
+    StringBuilder code = new StringBuilder("return ($T) $T.$L($L, ");
     args.add(glideOptionsName);
     args.add(ClassName.get(element.getEnclosingElement().asType()));
     args.add(element.getSimpleName().toString());
     args.add(extensionRequestOptionsArgument);
     if (!parameters.isEmpty()) {
       for (VariableElement variable : parameters) {
-        code += "$L, ";
+        code.append("$L, ");
         args.add(variable.getSimpleName().toString());
       }
     }
-    code = code.substring(0, code.length() - 2);
-    code += ")";
-    builder.addStatement(code, args.toArray(new Object[0]));
+    code = new StringBuilder(code.substring(0, code.length() - 2));
+    code.append(")");
+    builder.addStatement(code.toString(), args.toArray(new Object[0]));
     builder.addAnnotation(AnnotationSpec.builder(CHECK_RESULT_CLASS_NAME).build());
 
     List<MethodAndStaticVar> result = new ArrayList<>();
@@ -326,13 +316,13 @@ final class RequestOptionsGenerator {
     // IE centerCrop(context) creates methodLiterals="%L" and methodArgs=[centerCrop, context].
     List<Object> methodArgs = new ArrayList<>();
     methodArgs.add(element.getSimpleName().toString());
-    String methodLiterals = "";
+    StringBuilder methodLiterals = new StringBuilder();
     if (!parameters.isEmpty()) {
       for (VariableElement variable : parameters) {
-        methodLiterals += "$L, ";
+        methodLiterals.append("$L, ");
         methodArgs.add(variable.getSimpleName().toString());
       }
-      methodLiterals = methodLiterals.substring(0, methodLiterals.length() - 2);
+      methodLiterals = new StringBuilder(methodLiterals.substring(0, methodLiterals.length() - 2));
     }
 
     builder.beginControlFlow("if (isAutoCloneEnabled())")
@@ -352,19 +342,19 @@ final class RequestOptionsGenerator {
 
     // Adds: <AnnotatedClass>.<thisMethodName>(RequestOptions<?>, <arg1>, <arg2>, <argN>);
     List<Object> args = new ArrayList<>();
-    String code = "$T.$L($L, ";
+    StringBuilder code = new StringBuilder("$T.$L($L, ");
     args.add(ClassName.get(element.getEnclosingElement().asType()));
     args.add(element.getSimpleName().toString());
     args.add("this");
     if (!parameters.isEmpty()) {
       for (VariableElement variable : parameters) {
-        code += "$L, ";
+        code.append("$L, ");
         args.add(variable.getSimpleName().toString());
       }
     }
-    code = code.substring(0, code.length() - 2);
-    code += ")";
-    builder.addStatement(code, args.toArray(new Object[0]));
+    code = new StringBuilder(code.substring(0, code.length() - 2));
+    code.append(")");
+    builder.addStatement(code.toString(), args.toArray(new Object[0]));
 
     builder.addStatement("return this");
     builder.addAnnotation(AnnotationSpec.builder(CHECK_RESULT_CLASS_NAME).build());
@@ -439,21 +429,21 @@ final class RequestOptionsGenerator {
         .returns(glideOptionsName);
 
     List<? extends VariableElement> parameters = staticMethod.getParameters();
-    String createNewOptionAndCall = "new $T().$N(";
+    StringBuilder createNewOptionAndCall = new StringBuilder("new $T().$N(");
     if (!parameters.isEmpty()) {
       methodSpecBuilder.addParameters(ProcessorUtil.getParameters(staticMethod));
       for (VariableElement parameter : parameters) {
-        createNewOptionAndCall += parameter.getSimpleName().toString();
+        createNewOptionAndCall.append(parameter.getSimpleName().toString());
         // use the Application Context to avoid memory leaks.
         if (memoize && isAndroidContext(parameter)) {
-          createNewOptionAndCall += ".getApplicationContext()";
+          createNewOptionAndCall.append(".getApplicationContext()");
         }
-        createNewOptionAndCall += ", ";
+        createNewOptionAndCall.append(", ");
       }
-      createNewOptionAndCall =
-          createNewOptionAndCall.substring(0, createNewOptionAndCall.length() - 2);
+      createNewOptionAndCall = new StringBuilder(
+          createNewOptionAndCall.substring(0, createNewOptionAndCall.length() - 2));
     }
-    createNewOptionAndCall += ")";
+    createNewOptionAndCall.append(")");
 
     FieldSpec requiredStaticField = null;
     if (memoize) {
@@ -517,6 +507,8 @@ final class RequestOptionsGenerator {
     }
     boolean memoize = memoizeStaticMethodFromAnnotation(instanceMethod);
 
+    //noinspection ResultOfMethodCallIgnored
+    Preconditions.checkNotNull(staticMethodName);
     MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(staticMethodName)
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
         .addJavadoc(processorUtil.generateSeeMethodJavadoc(instanceMethod))
@@ -535,21 +527,21 @@ final class RequestOptionsGenerator {
     // Remove is not supported.
     parameters = parameters.subList(1, parameters.size());
 
-    String createNewOptionAndCall = "new $T().$L(";
+    StringBuilder createNewOptionAndCall = new StringBuilder("new $T().$L(");
     if (!parameters.isEmpty()) {
       methodSpecBuilder.addParameters(ProcessorUtil.getParameters(parameters));
       for (VariableElement parameter : parameters) {
-        createNewOptionAndCall += parameter.getSimpleName().toString();
+        createNewOptionAndCall.append(parameter.getSimpleName().toString());
         // use the Application Context to avoid memory leaks.
         if (memoize && isAndroidContext(parameter)) {
-          createNewOptionAndCall += ".getApplicationContext()";
+          createNewOptionAndCall.append(".getApplicationContext()");
         }
-        createNewOptionAndCall += ", ";
+        createNewOptionAndCall.append(", ");
       }
-      createNewOptionAndCall =
-          createNewOptionAndCall.substring(0, createNewOptionAndCall.length() - 2);
+      createNewOptionAndCall = new StringBuilder(
+          createNewOptionAndCall.substring(0, createNewOptionAndCall.length() - 2));
     }
-    createNewOptionAndCall += ")";
+    createNewOptionAndCall.append(")");
 
     FieldSpec requiredStaticField = null;
     if (memoize) {

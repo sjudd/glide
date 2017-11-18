@@ -25,11 +25,10 @@ import org.junit.runners.JUnit4;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class LruResourceCacheTest {
   private static class TrimClearMemoryCacheHarness {
-    LruResourceCache resourceCache = new LruResourceCache(100);
-    Resource<?> first = mockResource();
-    Resource<?> second = mockResource();
-
-    ResourceRemovedListener listener = mock(ResourceRemovedListener.class);
+    final LruResourceCache resourceCache = new LruResourceCache(100);
+    final Resource<?> first = mockResource();
+    final Resource<?> second = mockResource();
+    final ResourceRemovedListener listener = mock(ResourceRemovedListener.class);
 
     public TrimClearMemoryCacheHarness() {
       when(first.getSize()).thenReturn(50);
@@ -118,12 +117,9 @@ public class LruResourceCacheTest {
     Resource<?> third = getResource(30);
     Key thirdKey = new MockKey();
     cache.put(thirdKey, third);
-    cache.setResourceRemovedListener(new ResourceRemovedListener() {
-      @Override
-      public void onResourceRemoved(Resource<?> removed) {
-        if (removed == first) {
-          cache.put(firstKey, first);
-        }
+    cache.setResourceRemovedListener(removed -> {
+      if (removed == first) {
+        cache.put(firstKey, first);
       }
     });
 

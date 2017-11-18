@@ -20,7 +20,7 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 18)
 public class DiskLruCacheWrapperTest {
-  private DiskLruCacheWrapper cache;
+  private DiskCache cache;
   private byte[] data;
   private StringKey key;
   private File dir;
@@ -28,7 +28,7 @@ public class DiskLruCacheWrapperTest {
   @Before
   public void setUp() {
     dir = RuntimeEnvironment.application.getCacheDir();
-    cache = new DiskLruCacheWrapper(dir, 10 * 1024 * 1024);
+    cache = DiskLruCacheWrapper.create(dir, 10 * 1024 * 1024);
     key = new StringKey("test" + Math.random());
     data = new byte[] { 1, 2, 3, 4, 5, 6 };
   }
@@ -62,16 +62,13 @@ public class DiskLruCacheWrapperTest {
 
   @Test
   public void testCanInsertAndGet() throws IOException {
-    cache.put(key, new DiskCache.Writer() {
-      @Override
-      public boolean write(File file) {
-        try {
-          Util.writeFile(file, data);
-        } catch (IOException e) {
-          fail(e.toString());
-        }
-        return true;
+    cache.put(key, file -> {
+      try {
+        Util.writeFile(file, data);
+      } catch (IOException e) {
+        fail(e.toString());
       }
+      return true;
     });
 
     byte[] received = Util.readFile(cache.get(key), data.length);
@@ -81,28 +78,20 @@ public class DiskLruCacheWrapperTest {
 
   @Test
   public void testDoesNotCommitIfWriterReturnsFalse() {
-    cache.put(key, new DiskCache.Writer() {
-      @Override
-      public boolean write(File file) {
-        return false;
-      }
-    });
+    cache.put(key, file -> false);
 
     assertNull(cache.get(key));
   }
 
   @Test
   public void testDoesNotCommitIfWriterWritesButReturnsFalse() {
-    cache.put(key, new DiskCache.Writer() {
-      @Override
-      public boolean write(File file) {
-        try {
-          Util.writeFile(file, data);
-        } catch (IOException e) {
-          fail(e.toString());
-        }
-        return false;
+    cache.put(key, file -> {
+      try {
+        Util.writeFile(file, data);
+      } catch (IOException e) {
+        fail(e.toString());
       }
+      return false;
     });
 
     assertNull(cache.get(key));
@@ -111,26 +100,20 @@ public class DiskLruCacheWrapperTest {
   @Test
   public void testEditIsAbortedIfWriterThrows() throws IOException {
     try {
-      cache.put(key, new DiskCache.Writer() {
-        @Override
-        public boolean write(File file) {
-          throw new RuntimeException("test");
-        }
+      cache.put(key, file -> {
+        throw new RuntimeException("test");
       });
     } catch (RuntimeException e) {
       // Expected.
     }
 
-    cache.put(key, new DiskCache.Writer() {
-      @Override
-      public boolean write(File file) {
-        try {
-          Util.writeFile(file, data);
-        } catch (IOException e) {
-          fail(e.toString());
-        }
-        return true;
+    cache.put(key, file -> {
+      try {
+        Util.writeFile(file, data);
+      } catch (IOException e) {
+        fail(e.toString());
       }
+      return true;
     });
 
     byte[] received = Util.readFile(cache.get(key), data.length);
@@ -138,10 +121,10 @@ public class DiskLruCacheWrapperTest {
     assertArrayEquals(data, received);
   }
 
-  private static class StringKey implements Key {
+  private static final class StringKey implements Key {
     private final String key;
 
-    public StringKey(String key) {
+    StringKey(String key) {
       this.key = key;
     }
 

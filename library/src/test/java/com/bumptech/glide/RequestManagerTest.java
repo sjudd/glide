@@ -22,21 +22,17 @@ import com.bumptech.glide.manager.RequestTracker;
 import com.bumptech.glide.request.target.BaseTarget;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.transition.Transition;
-import com.bumptech.glide.tests.BackgroundUtil;
 import com.bumptech.glide.tests.GlideShadowLooper;
 import com.bumptech.glide.tests.TearDownGlide;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -63,12 +59,9 @@ public class RequestManagerTest {
     connectivityMonitor = mock(ConnectivityMonitor.class);
     ConnectivityMonitorFactory factory = mock(ConnectivityMonitorFactory.class);
     when(factory.build(isA(Context.class), isA(ConnectivityMonitor.ConnectivityListener.class)))
-        .thenAnswer(new Answer<ConnectivityMonitor>() {
-          @Override
-          public ConnectivityMonitor answer(InvocationOnMock invocation) throws Throwable {
-            connectivityListener = (ConnectivityListener) invocation.getArguments()[1];
-            return connectivityMonitor;
-          }
+        .thenAnswer(invocation -> {
+          connectivityListener = (ConnectivityListener) invocation.getArguments()[1];
+          return connectivityMonitor;
         });
 
      target = new BaseTarget<Drawable>() {
@@ -159,22 +152,12 @@ public class RequestManagerTest {
 
   @Test(expected = RuntimeException.class)
   public void testThrowsIfResumeCalledOnBackgroundThread() throws InterruptedException {
-    testInBackground(new BackgroundUtil.BackgroundTester() {
-      @Override
-      public void runTest() throws Exception {
-        manager.resumeRequests();
-      }
-    });
+    testInBackground(() -> manager.resumeRequests());
   }
 
   @Test(expected = RuntimeException.class)
   public void testThrowsIfPauseCalledOnBackgroundThread() throws InterruptedException {
-    testInBackground(new BackgroundUtil.BackgroundTester() {
-      @Override
-      public void runTest() throws Exception {
-        manager.pauseRequests();
-      }
-    });
+    testInBackground(() -> manager.pauseRequests());
   }
 
   @Test
@@ -187,27 +170,15 @@ public class RequestManagerTest {
 
   @Test
   public void clear_withRequestStartedInSiblingManager_doesNotThrow() {
-    final RequestManager child1 = new RequestManager(Glide.get(context), lifecycle,
-        new RequestManagerTreeNode() {
-          @Override
-          public Set<RequestManager> getDescendants() {
-            return Collections.emptySet();
-          }
-        }, context);
-     final RequestManager child2 = new RequestManager(Glide.get(context), lifecycle,
-        new RequestManagerTreeNode() {
-          @Override
-          public Set<RequestManager> getDescendants() {
-            return Collections.emptySet();
-          }
-        }, context);
-    new RequestManager(Glide.get(context), lifecycle,
-        new RequestManagerTreeNode() {
-          @Override
-          public Set<RequestManager> getDescendants() {
-            return new HashSet<>(java.util.Arrays.asList(child1, child2));
-          }
-        }, context);
+    final RequestManager child1 =
+        new RequestManager(Glide.get(context), lifecycle, Collections::emptySet, context);
+     final RequestManager child2 =
+         new RequestManager(Glide.get(context), lifecycle, Collections::emptySet, context);
+
+    new RequestManager(
+        Glide.get(context),
+        lifecycle,
+        () -> new HashSet<>(java.util.Arrays.asList(child1, child2)), context);
 
     File file = new File("fake");
     child1.load(file).into(target);
@@ -216,20 +187,13 @@ public class RequestManagerTest {
 
   @Test
   public void clear_withRequestStartedInChildManager_doesNotThrow() {
-    final RequestManager child = new RequestManager(Glide.get(context), lifecycle,
-        new RequestManagerTreeNode() {
-          @Override
-          public Set<RequestManager> getDescendants() {
-            return Collections.emptySet();
-          }
-        }, context);
-    RequestManager parent = new RequestManager(Glide.get(context), lifecycle,
-        new RequestManagerTreeNode() {
-          @Override
-          public Set<RequestManager> getDescendants() {
-            return Collections.singleton(child);
-          }
-        }, context);
+    final RequestManager child =
+        new RequestManager(Glide.get(context), lifecycle, Collections::emptySet, context);
+    RequestManager parent =
+        new RequestManager(
+            Glide.get(context),
+            lifecycle,
+            () -> Collections.singleton(child), context);
 
     File file = new File("fake");
     child.load(file).into(target);
@@ -238,20 +202,13 @@ public class RequestManagerTest {
 
   @Test
   public void clear_withRequestStartedInParentManager_doesNotThrow() {
-    final RequestManager child = new RequestManager(Glide.get(context), lifecycle,
-        new RequestManagerTreeNode() {
-          @Override
-          public Set<RequestManager> getDescendants() {
-            return Collections.emptySet();
-          }
-        }, context);
-    RequestManager parent = new RequestManager(Glide.get(context), lifecycle,
-        new RequestManagerTreeNode() {
-          @Override
-          public Set<RequestManager> getDescendants() {
-            return Collections.singleton(child);
-          }
-        }, context);
+    final RequestManager child =
+        new RequestManager(Glide.get(context), lifecycle, Collections::emptySet, context);
+    RequestManager parent =
+        new RequestManager(
+            Glide.get(context),
+            lifecycle,
+            () -> Collections.singleton(child), context);
 
     File file = new File("fake");
 

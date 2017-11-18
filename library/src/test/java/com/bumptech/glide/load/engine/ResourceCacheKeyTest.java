@@ -37,64 +37,36 @@ public class ResourceCacheKeyTest {
   @Test
   public void testDifferIfSourceKeyDiffers()
       throws UnsupportedEncodingException, NoSuchAlgorithmException {
-    mutateAndAssertDifferent(new FactoryMutation() {
-      @Override
-      public void mutate(Factory factory) {
-        factory.sourceKey = new ObjectKey("secondKey");
-      }
-    });
+    mutateAndAssertDifferent(factory -> factory.sourceKey = new ObjectKey("secondKey"));
   }
 
   @Test
   public void testDiffersIfSignatureDiffers() {
-    mutateAndAssertDifferent(new FactoryMutation() {
-      @Override
-      public void mutate(Factory factory) {
-        factory.signature = new ObjectKey("secondSignature");
-      }
-    });
+    mutateAndAssertDifferent(factory -> factory.signature = new ObjectKey("secondSignature"));
   }
 
   @Test
   public void testDiffersIfWidthDiffers() {
-    mutateAndAssertDifferent(new FactoryMutation() {
-      @Override
-      public void mutate(Factory factory) {
-        factory.width = factory.width * 2;
-      }
-    });
+    mutateAndAssertDifferent(factory -> factory.width = factory.width * 2);
   }
 
   @Test
   public void testDiffersIfHeightDiffers() {
-    mutateAndAssertDifferent(new FactoryMutation() {
-      @Override
-      public void mutate(Factory factory) {
-        factory.height = factory.height * 2;
-      }
-    });
+    mutateAndAssertDifferent(factory -> factory.height = factory.height * 2);
   }
 
   @Test
   public void tesDiffersIfTransformationDiffers() {
-    mutateAndAssertDifferent(new FactoryMutation() {
-      @Override
-      public void mutate(Factory factory) {
-        factory.transformation = mock(Transformation.class);
-        doAnswer(new Util.WriteDigest("otherTransformation")).when(factory.transformation)
-            .updateDiskCacheKey(any(MessageDigest.class));
-      }
+    mutateAndAssertDifferent(factory -> {
+      factory.transformation = mock(Transformation.class);
+      doAnswer(new Util.WriteDigest("otherTransformation")).when(factory.transformation)
+          .updateDiskCacheKey(any(MessageDigest.class));
     });
   }
 
   @Test
   public void testDiffersIfResourceDiffers() {
-    mutateAndAssertDifferent(new FactoryMutation() {
-      @Override
-      public void mutate(Factory factory) {
-        factory.resourceClass = Integer.class;
-      }
-    });
+    mutateAndAssertDifferent(factory -> factory.resourceClass = Integer.class);
   }
 
   interface FactoryMutation {
@@ -120,7 +92,7 @@ public class ResourceCacheKeyTest {
     int height = 100;
     Transformation<?> transformation = mock(Transformation.class);
     Class<?> resourceClass = Object.class;
-    Options options = new Options();
+    final Options options = new Options();
 
     Factory() {
       doAnswer(new Util.WriteDigest("transformation")).when(transformation)

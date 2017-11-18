@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.gif.GifDrawable.GifState;
-import com.bumptech.glide.load.resource.gif.GifFrameLoader.OnEveryFrameListener;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.test.GlideApp;
@@ -64,21 +63,13 @@ public class GifDrawableTest {
     final CountDownLatch waitForGifFrame = new CountDownLatch(1);
     // Starting/Stopping loads in GIFs must happen on the main thread.
     mainHandler.post(
-        new Runnable() {
-          @Override
-          public void run() {
-            // Make sure a frame is loaded while the drawable is stopped.
-            GifState gifState =
-                (GifState) Preconditions.checkNotNull(gifDrawable.getConstantState());
-            gifState.frameLoader.setOnEveryFrameReadyListener(new OnEveryFrameListener() {
-              @Override
-              public void onFrameReady() {
-                waitForGifFrame.countDown();
-              }
-            });
-            gifDrawable.start();
-            gifDrawable.stop();
-          }
+        () -> {
+          // Make sure a frame is loaded while the drawable is stopped.
+          GifState gifState =
+              (GifState) Preconditions.checkNotNull(gifDrawable.getConstantState());
+          gifState.frameLoader.setOnEveryFrameReadyListener(waitForGifFrame::countDown);
+          gifDrawable.start();
+          gifDrawable.stop();
         });
     waitOrThrow(waitForGifFrame);
 
@@ -88,16 +79,13 @@ public class GifDrawableTest {
     final WaitForLoad<Drawable> waitForLoad = new WaitForLoad<>();
     // Starting loads into Views must happen on the main thread.
     mainHandler
-        .post(new Runnable() {
-          @Override
-          public void run() {
-            addViewToWindow(imageView);
-            GlideApp.with(context)
-                .load(gifDrawable)
-                .listener(waitForLoad)
-                .override(Target.SIZE_ORIGINAL)
-                .into(imageView);
-          }
+        .post(() -> {
+          addViewToWindow(imageView);
+          GlideApp.with(context)
+              .load(gifDrawable)
+              .listener(waitForLoad)
+              .override(Target.SIZE_ORIGINAL)
+              .into(imageView);
         });
     waitForLoad.await();
 
@@ -114,7 +102,7 @@ public class GifDrawableTest {
     layoutParams.type = LayoutParams.TYPE_SYSTEM_ALERT;
     final WindowManager windowManager =
         (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    windowManager.addView(view, layoutParams);
+    Preconditions.checkNotNull(windowManager).addView(view, layoutParams);
   }
 
   private static void waitOrThrow(CountDownLatch latch) {
@@ -145,12 +133,7 @@ public class GifDrawableTest {
     public boolean onResourceReady(T resource, Object model, Target<T> target,
         DataSource dataSource,
         boolean isFirstResource) {
-      mainHandler.post(new Runnable() {
-        @Override
-        public void run() {
-          countDownLatch.countDown();
-        }
-      });
+      mainHandler.post(countDownLatch::countDown);
       return false;
     }
   }

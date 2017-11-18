@@ -2,8 +2,7 @@ package com.bumptech.glide.annotation.compiler;
 
 import com.bumptech.glide.annotation.GlideExtension;
 import com.bumptech.glide.annotation.GlideType;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
@@ -49,6 +48,8 @@ import javax.lang.model.util.Elements;
  * </code>
  * </pre>
  */
+// Not supported with minAPI < 24.
+@SuppressWarnings("Guava")
 final class RequestManagerGenerator {
   private static final String GLIDE_QUALIFIED_NAME =
       "com.bumptech.glide.Glide";
@@ -66,7 +67,7 @@ final class RequestManagerGenerator {
   private static final String GENERATED_REQUEST_MANAGER_SIMPLE_NAME =
       "GlideRequests";
 
-  private ProcessingEnvironment processingEnv;
+  private final ProcessingEnvironment processingEnv;
   private final ProcessorUtil processorUtil;
   private final ClassName requestManagerClassName;
   private final TypeElement lifecycleType;
@@ -95,7 +96,6 @@ final class RequestManagerGenerator {
     glideType = elementUtils.getTypeElement(GLIDE_QUALIFIED_NAME);
   }
 
-  @Nullable
   TypeSpec generate(
       String generatedCodePackageName, @Nullable TypeSpec requestOptions, TypeSpec requestBuilder,
       Set<String> glideExtensions) {
@@ -121,7 +121,7 @@ final class RequestManagerGenerator {
              FluentIterable.from(
                  Collections.singletonList(
                      generateOverrideSetRequestOptions(generatedCodePackageName, requestOptions)))
-                 .filter(Predicates.<MethodSpec>notNull()))
+                 .filter(Predicates.notNull()))
          .build();
   }
 
@@ -164,13 +164,9 @@ final class RequestManagerGenerator {
       final String generatedPackageName) {
     return FluentIterable.from(
         processorUtil.findInstanceMethodsReturning(requestManagerType, requestManagerType))
-        .transform(new Function<ExecutableElement, MethodSpec>() {
-          @Nullable
-          @Override
-          public MethodSpec apply(@Nullable ExecutableElement input) {
-            return generateRequestManagerRequestManagerMethodOverride(generatedPackageName, input);
-          }
-        })
+        .transform(
+            input ->
+                generateRequestManagerRequestManagerMethodOverride(generatedPackageName, input))
         .toList();
   }
 
@@ -194,19 +190,11 @@ final class RequestManagerGenerator {
 
     return FluentIterable.from(
         processorUtil.findInstanceMethodsReturning(requestManagerType, rawRequestBuilder))
-        .filter(new Predicate<ExecutableElement>() {
-          @Override
-          public boolean apply(ExecutableElement input) {
-            // Skip the <T> as(Class<T>) method.
-            return !input.getSimpleName().toString().equals("as");
-          }
+        .filter(input -> {
+          // Skip the <T> as(Class<T>) method.
+          return !Preconditions.checkNotNull(input).getSimpleName().toString().equals("as");
         })
-        .transform(new Function<ExecutableElement, MethodSpec>() {
-          @Override
-          public MethodSpec apply(ExecutableElement input) {
-            return generateRequestManagerRequestBuilderMethodOverride(input);
-          }
-        })
+        .transform(this::generateRequestManagerRequestBuilderMethodOverride)
         .toList();
   }
 
@@ -241,13 +229,8 @@ final class RequestManagerGenerator {
     List<ExecutableElement> requestManagerExtensionMethods =
         processorUtil.findAnnotatedElementsInClasses(glideExtensions, GlideType.class);
 
-    return Lists.transform(requestManagerExtensionMethods,
-        new Function<ExecutableElement, MethodSpec>() {
-          @Override
-          public MethodSpec apply(ExecutableElement input) {
-            return generateAdditionalRequestManagerMethod(input);
-          }
-        });
+    return Lists.transform(
+        requestManagerExtensionMethods, this::generateAdditionalRequestManagerMethod);
   }
 
   // Generates methods added to RequestManager via GlideExtensions.

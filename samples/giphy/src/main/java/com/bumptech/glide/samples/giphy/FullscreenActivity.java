@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.DataSource;
@@ -16,6 +15,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.util.Preconditions;
 import com.google.gson.Gson;
 
 /**
@@ -41,19 +41,16 @@ public class FullscreenActivity extends Activity {
 
     ImageView gifView = (ImageView) findViewById(R.id.fullscreen_gif);
 
-    gifView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("giphy_url", result.images.original.url);
-        clipboard.setPrimaryClip(clip);
+    gifView.setOnClickListener(view -> {
+      ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+      ClipData clip = ClipData.newPlainText("giphy_url", result.images.original.url);
+      Preconditions.checkNotNull(clipboard).setPrimaryClip(clip);
 
-        if (gifDrawable != null) {
-          if (gifDrawable.isRunning()) {
-            gifDrawable.stop();
-          } else {
-            gifDrawable.start();
-          }
+      if (gifDrawable != null) {
+        if (gifDrawable.isRunning()) {
+          gifDrawable.stop();
+        } else {
+          gifDrawable.start();
         }
       }
     });

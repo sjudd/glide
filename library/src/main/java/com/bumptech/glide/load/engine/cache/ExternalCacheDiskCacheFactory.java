@@ -11,6 +11,8 @@ import java.io.File;
  *
  * @deprecated use {@link ExternalPreferredCacheDiskCacheFactory} instead.
  */
+// Public API.
+@SuppressWarnings({"unused", "WeakerAccess"})
 @Deprecated
 public final class ExternalCacheDiskCacheFactory extends DiskLruCacheFactory {
 
@@ -25,18 +27,15 @@ public final class ExternalCacheDiskCacheFactory extends DiskLruCacheFactory {
 
   public ExternalCacheDiskCacheFactory(final Context context, final String diskCacheName,
       int diskCacheSize) {
-    super(new CacheDirectoryGetter() {
-      @Override
-      public File getCacheDirectory() {
-        File cacheDirectory = context.getExternalCacheDir();
-        if (cacheDirectory == null) {
-          return null;
-        }
-        if (diskCacheName != null) {
-          return new File(cacheDirectory, diskCacheName);
-        }
-        return cacheDirectory;
+    super(() -> {
+      File cacheDirectory = context.getExternalCacheDir();
+      if (cacheDirectory == null) {
+        return null;
       }
+      if (diskCacheName != null) {
+        return new File(cacheDirectory, diskCacheName);
+      }
+      return cacheDirectory;
     }, diskCacheSize);
   }
 }

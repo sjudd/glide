@@ -47,10 +47,11 @@ public class FlickrSearchActivity extends AppCompatActivity
   private static final Query DEFAULT_QUERY = new SearchQuery("kitten");
 
   private final QueryListener queryListener = new QueryListener();
+  private final Set<PhotoViewer> photoViewers = new HashSet<>();
+
+  private List<Photo> currentPhotos = new ArrayList<>();
   private View searching;
   private TextView searchTerm;
-  private Set<PhotoViewer> photoViewers = new HashSet<>();
-  private List<Photo> currentPhotos = new ArrayList<>();
   private View searchLoading;
   private BackgroundThumbnailFetcher backgroundThumbnailFetcher;
   private HandlerThread backgroundThread;
@@ -191,7 +192,7 @@ public class FlickrSearchActivity extends AppCompatActivity
   private void executeQuery(Query query) {
     currentQuery = query;
     if (query == null) {
-      queryListener.onSearchCompleted(null, Collections.<Photo>emptyList());
+      queryListener.onSearchCompleted(null, Collections.emptyList());
       return;
     }
 
@@ -248,12 +249,12 @@ public class FlickrSearchActivity extends AppCompatActivity
     }
   }
 
-  private class FlickrPagerAdapter extends FragmentPagerAdapter {
+  private final class FlickrPagerAdapter extends FragmentPagerAdapter {
 
     private int mLastPosition = -1;
     private Fragment mLastFragment;
 
-    public FlickrPagerAdapter(FragmentManager fm) {
+    FlickrPagerAdapter(FragmentManager fm) {
       super(fm);
     }
 
@@ -311,16 +312,17 @@ public class FlickrSearchActivity extends AppCompatActivity
   }
 
   private static class BackgroundThumbnailFetcher implements Runnable {
-    private boolean isCancelled;
-    private Context context;
-    private List<Photo> photos;
+    private final Context context;
+    private final List<Photo> photos;
 
-    public BackgroundThumbnailFetcher(Context context, List<Photo> photos) {
+    private boolean isCancelled;
+
+    BackgroundThumbnailFetcher(Context context, List<Photo> photos) {
       this.context = context;
       this.photos = photos;
     }
 
-    public void cancel() {
+    void cancel() {
       isCancelled = true;
     }
 

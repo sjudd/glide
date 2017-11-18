@@ -6,6 +6,7 @@ import com.bumptech.glide.annotation.GlideExtension;
 import com.bumptech.glide.annotation.GlideOption;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
@@ -51,6 +52,8 @@ import javax.tools.Diagnostic;
 /**
  * Utilities for writing classes and logging.
  */
+// Requires min sdk of 24+.
+@SuppressWarnings("Guava")
 final class ProcessorUtil {
   private static final String GLIDE_MODULE_PACKAGE_NAME = "com.bumptech.glide.module";
   private static final String APP_GLIDE_MODULE_SIMPLE_NAME = "AppGlideModule";
@@ -179,43 +182,34 @@ final class ProcessorUtil {
       List<? extends VariableElement> methodParameters) {
     return generateSeeMethodJavadocInternal(nameOfClassContainingMethod,
         methodSimpleName, Lists.transform(methodParameters,
-            new Function<VariableElement, Object>() {
-              @Override
-              public Object apply(VariableElement input) {
-                return getJavadocSafeName(input);
-              }
-            }));
+            (Function<VariableElement, Object>) this::getJavadocSafeName));
   }
 
   CodeBlock generateSeeMethodJavadoc(
       TypeName nameOfClassContainingMethod, MethodSpec methodSpec) {
-    return generateSeeMethodJavadocInternal(nameOfClassContainingMethod,
-        methodSpec.name, Lists.transform(methodSpec.parameters,
-            new Function<ParameterSpec, Object>() {
-              @Override
-              public Object apply(ParameterSpec input) {
-                return input.type;
-              }
-            }));
+    return generateSeeMethodJavadocInternal(
+        nameOfClassContainingMethod,
+        methodSpec.name,
+        Lists.transform(methodSpec.parameters, input -> Preconditions.checkNotNull(input).type));
   }
 
   private CodeBlock generateSeeMethodJavadocInternal(
       TypeName nameOfClassContainingMethod, String methodName,
       List<Object> safeParameterNames) {
-     String javadocString = "@see $T#$L(";
+    StringBuilder javadocString = new StringBuilder("@see $T#$L(");
     List<Object> javadocArgs = new ArrayList<>();
     javadocArgs.add(nameOfClassContainingMethod);
     javadocArgs.add(methodName);
 
     for (Object param : safeParameterNames) {
-      javadocString += "$T, ";
+      javadocString.append("$T, ");
       javadocArgs.add(param);
     }
     if (javadocArgs.size() > 2) {
-      javadocString = javadocString.substring(0, javadocString.length() - 2);
+      javadocString = new StringBuilder(javadocString.substring(0, javadocString.length() - 2));
     }
-    javadocString += ")\n";
-    return CodeBlock.of(javadocString, javadocArgs.toArray(new Object[0]));
+    javadocString.append(")\n");
+    return CodeBlock.of(javadocString.toString(), javadocArgs.toArray(new Object[0]));
   }
 
    /**
@@ -254,13 +248,9 @@ final class ProcessorUtil {
         .add("return ($T) super.$N(", toReturn, method.getSimpleName())
         .add(
             FluentIterable.from(method.getParameters())
-                .transform(new Function<VariableElement, String>() {
-                  @Nullable
-                  @Override
-                  public String apply(VariableElement input) {
-                    return input.getSimpleName().toString();
-                  }
-                })
+                .transform(
+                    (Function<VariableElement, String>) input ->
+                        Preconditions.checkNotNull(input).getSimpleName().toString())
                 .join(Joiner.on(",")))
         .add(");\n")
         .build();
@@ -436,10 +426,7 @@ final class ProcessorUtil {
         return false;
       }
       ExecutableElement method = (ExecutableElement) input;
-      if (returnType == null) {
-        return true;
-      }
-      return isReturnValueTypeMatching(method, returnType);
+      return returnType == null || isReturnValueTypeMatching(method, returnType);
     }
   }
 

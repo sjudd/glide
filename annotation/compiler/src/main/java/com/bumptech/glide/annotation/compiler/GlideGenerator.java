@@ -124,15 +124,12 @@ final class GlideGenerator {
   private List<MethodSpec> generateOverridesForGlideMethods(
       final String generatedCodePackageName, final TypeSpec generatedRequestManager) {
     return Lists.transform(discoverGlideMethodsToOverride(),
-        new Function<ExecutableElement, MethodSpec>() {
-          @Override
-          public MethodSpec apply(ExecutableElement input) {
-            if (isGlideWithMethod(input)) {
-              return overrideGlideWithMethod(
-                  generatedCodePackageName, generatedRequestManager, input);
-            } else {
-              return overrideGlideStaticMethod(input);
-            }
+        input -> {
+          if (isGlideWithMethod(input)) {
+            return overrideGlideWithMethod(
+                generatedCodePackageName, generatedRequestManager, input);
+          } else {
+            return overrideGlideStaticMethod(input);
           }
         });
   }
@@ -148,12 +145,7 @@ final class GlideGenerator {
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addJavadoc(processorUtil.generateSeeMethodJavadoc(methodToOverride))
             .addParameters(Lists.transform(parameters,
-                new Function<VariableElement, ParameterSpec>() {
-                  @Override
-                  public ParameterSpec apply(VariableElement input) {
-                    return ParameterSpec.get(input);
-                  }
-            }));
+                (Function<VariableElement, ParameterSpec>) ParameterSpec::get));
 
     String visibleForTestingTypeQualifiedName =
         processingEnv
@@ -180,20 +172,20 @@ final class GlideGenerator {
       builder.returns(ClassName.get(element));
     }
 
-    String code = returnsValue ? "return " : "";
-    code += "$T.$N(";
+    StringBuilder code = new StringBuilder(returnsValue ? "return " : "");
+    code.append("$T.$N(");
     List<Object> args = new ArrayList<>();
     args.add(ClassName.get(glideType));
     args.add(methodToOverride.getSimpleName());
     if (!parameters.isEmpty()) {
       for (VariableElement param : parameters) {
-        code += "$L, ";
+        code.append("$L, ");
         args.add(param.getSimpleName());
       }
-      code = code.substring(0, code.length() - 2);
+      code = new StringBuilder(code.substring(0, code.length() - 2));
     }
-    code += ")";
-    builder.addStatement(code, args.toArray(new Object[0]));
+    code.append(")");
+    builder.addStatement(code.toString(), args.toArray(new Object[0]));
     return builder.build();
   }
 

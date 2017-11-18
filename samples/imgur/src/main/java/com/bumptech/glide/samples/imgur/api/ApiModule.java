@@ -2,13 +2,10 @@ package com.bumptech.glide.samples.imgur.api;
 
 import dagger.Module;
 import dagger.Provides;
-import java.io.IOException;
 import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -38,16 +35,12 @@ public final class ApiModule {
 
   @Provides Retrofit retrofit() {
     OkHttpClient client = new OkHttpClient.Builder()
-        .addInterceptor(new Interceptor() {
-          @Override
-          public Response intercept(Chain chain) throws IOException {
-            return chain.proceed(
+        .addInterceptor(chain ->
+            chain.proceed(
                 chain.request()
                     .newBuilder()
                     .addHeader("Authorization", "Client-ID " + ImgurService.CLIENT_ID)
-                    .build());
-          }
-        })
+                    .build()))
         .build();
     return new Retrofit.Builder()
         .client(client)

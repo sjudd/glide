@@ -49,14 +49,14 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 18)
 public class ReEncodingGifResourceEncoderTest {
-  @Mock Resource<GifDrawable> resource;
-  @Mock GifDecoder decoder;
-  @Mock GifHeaderParser parser;
-  @Mock AnimatedGifEncoder gifEncoder;
-  @Mock Resource<Bitmap> frameResource;
-  @Mock GifDrawable gifDrawable;
-  @Mock Transformation<Bitmap> frameTransformation;
-  @Mock Resource<Bitmap> transformedResource;
+  @Mock private Resource<GifDrawable> resource;
+  @Mock private GifDecoder decoder;
+  @Mock private GifHeaderParser parser;
+  @Mock private AnimatedGifEncoder gifEncoder;
+  @Mock private Resource<Bitmap> frameResource;
+  @Mock private GifDrawable gifDrawable;
+  @Mock private Transformation<Bitmap> frameTransformation;
+  @Mock private Resource<Bitmap> transformedResource;
 
   private ReEncodingGifResourceEncoder encoder;
   private Options options;
@@ -316,7 +316,7 @@ public class ReEncodingGifResourceEncoderTest {
       throws IOException {
     // Most likely an instance of http://stackoverflow.com/q/991489/253468
     assumeTrue(!System.getProperty("os.name").startsWith("Windows"));
-    when(gifDrawable.getFrameTransformation()).thenReturn(UnitTransformation.<Bitmap>get());
+    when(gifDrawable.getFrameTransformation()).thenReturn(UnitTransformation.get());
     String expected = "expected";
     when(gifDrawable.getBuffer()).thenReturn(ByteBuffer.wrap(expected.getBytes()));
 
