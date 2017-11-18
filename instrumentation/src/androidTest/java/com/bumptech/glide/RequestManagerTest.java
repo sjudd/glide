@@ -22,10 +22,10 @@ import org.mockito.MockitoAnnotations;
 
 @RunWith(AndroidJUnit4.class)
 public class RequestManagerTest {
-  @Rule public TearDownGlide tearDownGlide = new TearDownGlide();
+  @Rule public final TearDownGlide tearDownGlide = new TearDownGlide();
   @Mock private RequestManagerTreeNode treeNode;
 
-  private ConcurrencyHelper concurrency = new ConcurrencyHelper();
+  private final ConcurrencyHelper concurrency = new ConcurrencyHelper();
   private RequestManager requestManager;
   private Context context;
 
@@ -62,12 +62,7 @@ public class RequestManagerTest {
     concurrency.loadOnMainThread(requestManager.load(ResourceIds.raw.canonical), imageView);
 
     // Finally clear our new load with any RequestManager other than the one we used to start it.
-    concurrency.runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        Glide.with(context).clear(imageView);
-      }
-    });
+    concurrency.runOnMainThread(() -> Glide.with(context).clear(imageView));
   }
 
   /**
@@ -75,21 +70,11 @@ public class RequestManagerTest {
    */
   @Test
   public void clear_withNonOwningRequestManager_onBackgroundTHread_doesNotThrow() {
-    concurrency.runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        requestManager.onDestroy();
-      }
-    });
+    concurrency.runOnMainThread(() -> requestManager.onDestroy());
 
     final FutureTarget<Drawable> target =
         concurrency.wait(requestManager.load(raw.canonical).submit());
 
-    concurrency.runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        Glide.with(context).clear(target);
-      }
-    });
+    concurrency.runOnMainThread(() -> Glide.with(context).clear(target));
   }
 }

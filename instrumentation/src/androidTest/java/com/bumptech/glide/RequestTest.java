@@ -37,7 +37,7 @@ import org.mockito.MockitoAnnotations;
 public class RequestTest {
   @Rule public TearDownGlide tearDownGlide = new TearDownGlide();
   @Mock private RequestListener<Drawable> requestListener;
-  private ConcurrencyHelper concurrency = new ConcurrencyHelper();
+  private final ConcurrencyHelper concurrency = new ConcurrencyHelper();
   private Context context;
   private ImageView imageView;
 
@@ -91,12 +91,7 @@ public class RequestTest {
         imageView);
     assertThat(imageView.getDrawable()).isNotNull();
 
-    concurrency.runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        GlideApp.with(context).onStop();
-      }
-    });
+    concurrency.runOnMainThread(() -> GlideApp.with(context).onStop());
     assertThat(imageView.getDrawable()).isNotNull();
   }
 
@@ -112,12 +107,7 @@ public class RequestTest {
         imageView);
     assertThat(imageView.getDrawable()).isNotNull();
 
-    concurrency.runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        GlideApp.with(context).onStop();
-      }
-    });
+    concurrency.runOnMainThread(() -> GlideApp.with(context).onStop());
     assertThat(imageView.getDrawable()).isNotNull();
   }
 
@@ -125,20 +115,10 @@ public class RequestTest {
   public void onStop_withSingleRequestInProgress_nullsOutDrawableInView() {
     final WaitModel<Integer> model = WaitModelLoader.Factory.waitOn(ResourceIds.raw.canonical);
     concurrency.runOnMainThread(
-        new Runnable() {
-          @Override
-          public void run() {
-            GlideApp.with(context)
-                .load(ResourceIds.raw.canonical)
-                .into(imageView);
-          }
-        });
-    concurrency.runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        GlideApp.with(context).onStop();
-      }
-    });
+        () -> GlideApp.with(context)
+            .load(ResourceIds.raw.canonical)
+            .into(imageView));
+    concurrency.runOnMainThread(() -> GlideApp.with(context).onStop());
     assertThat(imageView.getDrawable()).isNull();
     model.countDown();
   }
@@ -147,26 +127,16 @@ public class RequestTest {
   public void onStop_withRequestWithThumbnailBothInProgress_nullsOutDrawableInView() {
     final WaitModel<Integer> model = WaitModelLoader.Factory.waitOn(ResourceIds.raw.canonical);
     concurrency.runOnMainThread(
-        new Runnable() {
-          @Override
-          public void run() {
+        () ->
             GlideApp.with(context)
                 .load(model)
                 .thumbnail(
                     GlideApp.with(context)
                     .load(model)
                     .override(100, 100))
-                .into(imageView);
+                .into(imageView));
 
-          }
-        });
-
-    concurrency.runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        GlideApp.with(context).onStop();
-      }
-    });
+    concurrency.runOnMainThread(() -> GlideApp.with(context).onStop());
     assertThat(imageView.getDrawable()).isNull();
     model.countDown();
   }
@@ -185,12 +155,7 @@ public class RequestTest {
                     .override(100, 100)),
         imageView);
 
-    concurrency.runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        GlideApp.with(context).onStop();
-      }
-    });
+    concurrency.runOnMainThread(() -> GlideApp.with(context).onStop());
 
     verify(requestListener, never())
         .onResourceReady(
@@ -223,12 +188,7 @@ public class RequestTest {
                     .override(100, 100)),
         imageView);
 
-    concurrency.runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        GlideApp.with(context).onStop();
-      }
-    });
+    concurrency.runOnMainThread(() -> GlideApp.with(context).onStop());
 
     verify(requestListener, never())
         .onResourceReady(

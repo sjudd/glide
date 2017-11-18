@@ -43,209 +43,188 @@ public class ConcurrencyHelper {
     return future;
   }
 
-  public Target<Drawable> loadOnMainThread(
+  public void loadOnMainThread(
       final RequestBuilder<Drawable> builder, ImageView imageView) {
-    return loadOnMainThread(builder, new DrawableImageViewTarget(imageView));
+    loadOnMainThread(builder, new DrawableImageViewTarget(imageView));
   }
 
   public void clearOnMainThread(final ImageView imageView) {
-    runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
+    runOnMainThread(() ->
         GlideApp.with(InstrumentationRegistry.getTargetContext())
-            .clear(imageView);
-      }
-    });
+            .clear(imageView));
   }
 
-  public Target<Drawable> loadUntilFirstFinish(
+  public void loadUntilFirstFinish(
       final RequestBuilder<Drawable> builder, ImageView imageView) {
-    return loadUntilFirstFinish(builder, new DrawableImageViewTarget(imageView));
+    loadUntilFirstFinish(builder, new DrawableImageViewTarget(imageView));
   }
 
-  public <T> Target<T> loadUntilFirstFinish(
+  private <T> void loadUntilFirstFinish(
       final RequestBuilder<T> builder, final Target<T> target) {
     final CountDownLatch latch = new CountDownLatch(1);
-    Target<T> result = callOnMainThread(new Callable<Target<T>>() {
-      @Override
-      public Target<T> call() throws Exception {
-        builder.into(new Target<T>() {
-          @Override
-          public void onStart() {
-            target.onStart();
-          }
+    callOnMainThread(() -> {
+      builder.into(new Target<T>() {
+        @Override
+        public void onStart() {
+          target.onStart();
+        }
 
-          @Override
-          public void onStop() {
-            target.onStop();
-          }
+        @Override
+        public void onStop() {
+          target.onStop();
+        }
 
-          @Override
-          public void onDestroy() {
-            target.onDestroy();
-          }
+        @Override
+        public void onDestroy() {
+          target.onDestroy();
+        }
 
-          @Override
-          public void onResourceReady(T resource, Transition<? super T> transition) {
-            target.onResourceReady(resource, transition);
-            latch.countDown();
-          }
+        @Override
+        public void onResourceReady(T resource, Transition<? super T> transition) {
+          target.onResourceReady(resource, transition);
+          latch.countDown();
+        }
 
-          @Override
-          public void onLoadCleared(@Nullable Drawable placeholder) {
-            target.onLoadCleared(placeholder);
-          }
+        @Override
+        public void onLoadCleared(@Nullable Drawable placeholder) {
+          target.onLoadCleared(placeholder);
+        }
 
-          @Override
-          public void onLoadStarted(@Nullable Drawable placeholder) {
-            target.onLoadStarted(placeholder);
-          }
+        @Override
+        public void onLoadStarted(@Nullable Drawable placeholder) {
+          target.onLoadStarted(placeholder);
+        }
 
-          @Override
-          public void onLoadFailed(@Nullable Drawable errorDrawable) {
-            target.onLoadFailed(errorDrawable);
-            latch.countDown();
-          }
+        @Override
+        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+          target.onLoadFailed(errorDrawable);
+          latch.countDown();
+        }
 
-          @Override
-          public void getSize(SizeReadyCallback cb) {
-            target.getSize(cb);
-          }
+        @Override
+        public void getSize(SizeReadyCallback cb) {
+          target.getSize(cb);
+        }
 
-          @Override
-          public void removeCallback(SizeReadyCallback cb) {
-            target.removeCallback(cb);
-          }
+        @Override
+        public void removeCallback(SizeReadyCallback cb) {
+          target.removeCallback(cb);
+        }
 
-          @Override
-          public void setRequest(@Nullable Request request) {
-            target.setRequest(request);
-          }
+        @Override
+        public void setRequest(@Nullable Request request) {
+          target.setRequest(request);
+        }
 
-          @Nullable
-          @Override
-          public Request getRequest() {
-            return target.getRequest();
-          }
-        });
-        return target;
-      }
+        @Nullable
+        @Override
+        public Request getRequest() {
+          return target.getRequest();
+        }
+      });
+      return target;
     });
     waitOnLatch(latch);
-    return result;
   }
 
-  public <T> Target<T> loadOnMainThread(final RequestBuilder<T> builder, final Target<T> target) {
+  private <T> void loadOnMainThread(final RequestBuilder<T> builder, final Target<T> target) {
     final CountDownLatch latch = new CountDownLatch(1);
-    Target<T> result = callOnMainThread(new Callable<Target<T>>() {
-      @Override
-      public Target<T> call() throws Exception {
-        builder.into(new Target<T>() {
-          @Override
-          public void onStart() {
-            target.onStart();
-          }
+    callOnMainThread(() -> {
+      builder.into(new Target<T>() {
+        @Override
+        public void onStart() {
+          target.onStart();
+        }
 
-          @Override
-          public void onStop() {
-            target.onStop();
-          }
+        @Override
+        public void onStop() {
+          target.onStop();
+        }
 
-          @Override
-          public void onDestroy() {
-            target.onDestroy();
-          }
+        @Override
+        public void onDestroy() {
+          target.onDestroy();
+        }
 
-          @Override
-          public void onResourceReady(T resource, Transition<? super T> transition) {
-            target.onResourceReady(resource, transition);
-            if (!Preconditions.checkNotNull(getRequest()).isRunning()) {
-              latch.countDown();
-            }
+        @Override
+        public void onResourceReady(T resource, Transition<? super T> transition) {
+          target.onResourceReady(resource, transition);
+          if (!Preconditions.checkNotNull(getRequest()).isRunning()) {
+            latch.countDown();
           }
+        }
 
-          @Override
-          public void onLoadCleared(@Nullable Drawable placeholder) {
-            target.onLoadCleared(placeholder);
-          }
+        @Override
+        public void onLoadCleared(@Nullable Drawable placeholder) {
+          target.onLoadCleared(placeholder);
+        }
 
-          @Override
-          public void onLoadStarted(@Nullable Drawable placeholder) {
-            target.onLoadStarted(placeholder);
-          }
+        @Override
+        public void onLoadStarted(@Nullable Drawable placeholder) {
+          target.onLoadStarted(placeholder);
+        }
 
-          @Override
-          public void onLoadFailed(@Nullable Drawable errorDrawable) {
-            target.onLoadFailed(errorDrawable);
-            if (!Preconditions.checkNotNull(getRequest()).isRunning()) {
-              latch.countDown();
-            }
+        @Override
+        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+          target.onLoadFailed(errorDrawable);
+          if (!Preconditions.checkNotNull(getRequest()).isRunning()) {
+            latch.countDown();
           }
+        }
 
-          @Override
-          public void getSize(SizeReadyCallback cb) {
-            target.getSize(cb);
-          }
+        @Override
+        public void getSize(SizeReadyCallback cb) {
+          target.getSize(cb);
+        }
 
-          @Override
-          public void removeCallback(SizeReadyCallback cb) {
-            target.removeCallback(cb);
-          }
+        @Override
+        public void removeCallback(SizeReadyCallback cb) {
+          target.removeCallback(cb);
+        }
 
-          @Override
-          public void setRequest(@Nullable Request request) {
-            target.setRequest(request);
-          }
+        @Override
+        public void setRequest(@Nullable Request request) {
+          target.setRequest(request);
+        }
 
-          @Nullable
-          @Override
-          public Request getRequest() {
-            return target.getRequest();
-          }
-        });
-        return target;
-      }
+        @Nullable
+        @Override
+        public Request getRequest() {
+          return target.getRequest();
+        }
+      });
+      return target;
     });
     waitOnLatch(latch);
-    return result;
   }
 
   public void pokeMainThread() {
-    runOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        // Do nothing.
-      }
+    runOnMainThread(() -> {
+      // Do nothing.
     });
   }
 
   public void runOnMainThread(final Runnable runnable) {
-    callOnMainThread(new Callable<Void>() {
-      @Override
-      public Void call() throws Exception {
-        runnable.run();
-        return null;
-      }
+    callOnMainThread((Callable<Void>) () -> {
+      runnable.run();
+      return null;
     });
   }
 
-  public <T> T callOnMainThread(final Callable<T> callable) {
+  private <T> void callOnMainThread(final Callable<T> callable) {
     final AtomicReference<T> reference = new AtomicReference<>();
     final CountDownLatch latch = new CountDownLatch(1);
-    handler.post(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          T result = callable.call();
-          reference.set(result);
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-        latch.countDown();
+    handler.post(() -> {
+      try {
+        T result = callable.call();
+        reference.set(result);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
       }
+      latch.countDown();
     });
     waitOnLatch(latch);
-    return reference.get();
+    reference.get();
   }
 
   private static void waitOnLatch(CountDownLatch latch) {
