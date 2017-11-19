@@ -2,6 +2,7 @@
 
 set -e
 
+# First build the sample apps and library
 ./gradlew :samples:flickr:build \
   :samples:giphy:build \
   :samples:contacturi:build \
@@ -11,15 +12,19 @@ set -e
   --parallel &
 pid=$!
 
+# Then install firebase.
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   wait $pid
-  echo "Unable to run Firebase tests for pull requests, exiting"
+  echo "Unable to run Firebase tests for pull requests, skipping"
+  ./scripts/travis_unit.sh
   exit 0
 else
   ./scripts/install_firebase.sh
   wait $pid
 fi
 
+./scripts/travis_unit.sh &
+unit_pid=$!
 
 declare -a samples=("flickr"
                 "giphy"
@@ -27,7 +32,7 @@ declare -a samples=("flickr"
                 "gallery"
                 "imgur"
                 "svg")
-pids=()
+firebase_pids=()
 
 for sample in "${samples[@]}"
 do
@@ -41,10 +46,12 @@ do
     --no-auto-google-login \
     --timeout 5m \
     &
-  pids+=("$!")
+  firebase_pids+=("$!")
 done
 
-for current in "${pids[@]}"
+wait $unit_pid
+
+for current in "${firebase_pids[@]}"
 do
   wait $current
 done

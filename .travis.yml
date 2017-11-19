@@ -18,7 +18,7 @@ jdk:
 
 env:
   matrix:
-    - COMPONENT=unit
+    - COMPONENT=base
     - COMPONENT=firebase
     - COMPONENT=instrumentation ANDROID_TARGET=16
     - COMPONENT=instrumentation ANDROID_TARGET=17
@@ -26,7 +26,6 @@ env:
     - COMPONENT=instrumentation ANDROID_TARGET=19
     - COMPONENT=instrumentation ANDROID_TARGET=21
     - COMPONENT=instrumentation ANDROID_TARGET=22
-    - COMPONENT=samples
 
 before_script:
   - ./scripts/travis_before_script.sh
