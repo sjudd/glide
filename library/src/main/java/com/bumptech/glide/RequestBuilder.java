@@ -15,7 +15,6 @@ import android.support.annotation.RawRes;
 import android.widget.ImageView;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.gif.GifOptions;
 import com.bumptech.glide.request.ErrorRequestCoordinator;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.Request;
@@ -970,7 +969,6 @@ public class RequestBuilder<TranscodeType> implements Cloneable {
       Priority priority,
       int overrideWidth,
       int overrideHeight) {
-    requestOptions = requestOptions.set(GifOptions.GIF_SOURCE_KEY, new ObjectKey(model));
     return SingleRequest.obtain(
         context,
         glideContext,

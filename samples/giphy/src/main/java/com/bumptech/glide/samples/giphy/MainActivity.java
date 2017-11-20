@@ -38,7 +38,7 @@ public class MainActivity extends Activity implements Api.Monitor {
     ImageView giphyLogoView = (ImageView) findViewById(R.id.giphy_logo_view);
 
     GlideApp.with(this)
-        .load(R.raw.slow)
+        .load(R.raw.large_giphy_logo)
         .into(giphyLogoView);
 
     RecyclerView gifList = (RecyclerView) findViewById(R.id.gif_list);
