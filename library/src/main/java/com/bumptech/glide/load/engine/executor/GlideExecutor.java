@@ -156,8 +156,8 @@ public final class GlideExecutor implements ExecutorService {
   public static GlideExecutor newSourceExecutor(
       UncaughtThrowableStrategy uncaughtThrowableStrategy) {
     return newSourceExecutor(
-        DEFAULT_DISK_CACHE_EXECUTOR_THREADS,
-        DEFAULT_DISK_CACHE_EXECUTOR_NAME,
+        calculateBestThreadCount(),
+        DEFAULT_SOURCE_EXECUTOR_NAME,
         uncaughtThrowableStrategy);
   }
 
