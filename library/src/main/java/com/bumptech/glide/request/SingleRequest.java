@@ -556,11 +556,11 @@ public final class SingleRequest<R> implements Request,
     status = Status.COMPLETE;
     this.resource = resource;
 
-    if (glideContext.getLogLevel() <= Log.DEBUG) {
+//    if (glideContext.getLogLevel() <= Log.DEBUG) {
       Log.d(GLIDE_TAG, "Finished loading " + result.getClass().getSimpleName() + " from "
           + dataSource + " for " + model + " with size [" + width + "x" + height + "] in "
           + LogTime.getElapsedMillis(startTime) + " ms");
-    }
+//    }
 
     isCallingCallbacks = true;
     try {

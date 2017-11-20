@@ -17,6 +17,7 @@ import android.support.annotation.VisibleForTesting;
 import android.view.Gravity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.gifdecoder.GifDecoder;
+import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.util.Preconditions;
@@ -100,6 +101,7 @@ public class GifDrawable extends Drawable implements GifFrameLoader.FrameCallbac
   @SuppressWarnings("deprecation")
   @Deprecated
   public GifDrawable(
+      Key tag,
       Context context,
       GifDecoder gifDecoder,
       @SuppressWarnings("unused") BitmapPool bitmapPool,
@@ -107,7 +109,7 @@ public class GifDrawable extends Drawable implements GifFrameLoader.FrameCallbac
       int targetFrameWidth,
       int targetFrameHeight,
       Bitmap firstFrame) {
-    this(context, gifDecoder, frameTransformation, targetFrameWidth, targetFrameHeight, firstFrame);
+    this(tag, context, gifDecoder, frameTransformation, targetFrameWidth, targetFrameHeight, firstFrame);
   }
 
    /**
@@ -129,6 +131,7 @@ public class GifDrawable extends Drawable implements GifFrameLoader.FrameCallbac
    * @see #setFrameTransformation(com.bumptech.glide.load.Transformation, android.graphics.Bitmap)
    */
   public GifDrawable(
+      Key tag,
       Context context,
       GifDecoder gifDecoder,
       Transformation<Bitmap> frameTransformation,
@@ -141,6 +144,7 @@ public class GifDrawable extends Drawable implements GifFrameLoader.FrameCallbac
                 // TODO(b/27524013): Factor out this call to Glide.get()
                 Glide.get(context),
                 gifDecoder,
+                tag,
                 targetFrameWidth,
                 targetFrameHeight,
                 frameTransformation,

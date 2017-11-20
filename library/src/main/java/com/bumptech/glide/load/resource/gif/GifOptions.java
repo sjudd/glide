@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.resource.gif;
 
 import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Option;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceDecoder;
@@ -25,6 +26,9 @@ public final class GifOptions {
    */
   public static final Option<Boolean> DISABLE_ANIMATION = Option.memory(
       "com.bumptech.glide.load.resource.gif.GifOptions.DisableAnimation", false);
+
+  public static final Option<Key> GIF_SOURCE_KEY = Option.memory(
+      "com.bumptech.glide.load.resource.gif.GifOptions.GIF_SOURCE_KEY");
 
   private GifOptions() {
     // Utility class.
