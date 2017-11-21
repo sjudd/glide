@@ -14,9 +14,13 @@ import java.util.WeakHashMap;
 public final class TargetTracker implements LifecycleListener {
   private final Set<Target<?>> targets =
       Collections.newSetFromMap(new WeakHashMap<Target<?>, Boolean>());
+  private boolean isStarted;
 
   public void track(Target<?> target) {
     targets.add(target);
+    if (isStarted) {
+      target.onStart();
+    }
   }
 
   public void untrack(Target<?> target) {
@@ -25,6 +29,7 @@ public final class TargetTracker implements LifecycleListener {
 
   @Override
   public void onStart() {
+    isStarted = true;
     for (Target<?> target : Util.getSnapshot(targets)) {
       target.onStart();
     }
@@ -32,6 +37,7 @@ public final class TargetTracker implements LifecycleListener {
 
   @Override
   public void onStop() {
+    isStarted = false;
     for (Target<?> target : Util.getSnapshot(targets)) {
       target.onStop();
     }
