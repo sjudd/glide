@@ -24,11 +24,10 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.transition.Transition;
+import com.bumptech.glide.tests.AttachStateShadowView;
 import com.bumptech.glide.tests.Util;
 import com.bumptech.glide.util.Preconditions;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.junit.After;
 import org.junit.Before;
@@ -43,10 +42,8 @@ import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
-import org.robolectric.annotation.RealObject;
 import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowDisplay;
-import org.robolectric.shadows.ShadowView;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 19, shadows = { ViewTargetTest.SizedShadowView.class,
@@ -687,14 +684,12 @@ public class ViewTargetTest {
 
   @SuppressWarnings("UnusedReturnValue")
   @Implements(View.class)
-  public static final class SizedShadowView extends ShadowView {
-    @RealObject private View view;
+  public static final class SizedShadowView extends AttachStateShadowView {
     private int width;
     private int height;
     private LayoutParams layoutParams;
     private boolean isLaidOut;
     private boolean isLayoutRequested;
-    private final Set<OnAttachStateChangeListener> attachStateListeners = new HashSet<>();
 
     public SizedShadowView setWidth(int width) {
       this.width = width;
@@ -704,40 +699,6 @@ public class ViewTargetTest {
     public SizedShadowView setHeight(int height) {
       this.height = height;
       return this;
-    }
-
-    @Implementation
-    public void addOnAttachStateChangeListener(OnAttachStateChangeListener listener) {
-      attachStateListeners.add(listener);
-    }
-
-    @Implementation
-    public void removeOnAttachStateChangeListener(OnAttachStateChangeListener listener) {
-      attachStateListeners.remove(listener);
-    }
-
-    @Implementation
-    public void onAttachedToWindow() {
-      for (OnAttachStateChangeListener listener : attachStateListeners) {
-        listener.onViewAttachedToWindow(view);
-      }
-    }
-
-    @Implementation
-    public void onDetachedFromWindow() {
-      for (OnAttachStateChangeListener listener : attachStateListeners) {
-        listener.onViewDetachedFromWindow(view);
-      }
-    }
-
-    @Override
-    public void callOnAttachedToWindow() {
-      super.callOnAttachedToWindow();
-    }
-
-    @Override
-    public void callOnDetachedFromWindow() {
-      super.callOnDetachedFromWindow();
     }
 
     @Implementation

@@ -52,7 +52,6 @@ public abstract class ViewTarget<T extends View, Z> extends BaseTarget<Z> {
   private boolean isClearedByUs;
   private boolean isAttachStateListenerAdded;
 
-
   /**
    * Constructor that defaults {@code waitForLayout} to {@code false}.
    */

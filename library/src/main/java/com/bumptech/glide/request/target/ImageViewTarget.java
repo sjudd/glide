@@ -2,7 +2,11 @@ package com.bumptech.glide.request.target;
 
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.view.View.OnAttachStateChangeListener;
 import android.widget.ImageView;
 import com.bumptech.glide.request.transition.Transition;
 
@@ -20,6 +24,10 @@ public abstract class ImageViewTarget<Z> extends ViewTarget<ImageView, Z>
 
   @Nullable
   private Animatable animatable;
+  @Nullable
+  private OnAttachStateChangeListener changeAnimatableState;
+  private boolean isStarted;
+  private boolean isAttachedToWindow;
 
   public ImageViewTarget(ImageView view) {
     super(view);
@@ -56,6 +64,7 @@ public abstract class ImageViewTarget<Z> extends ViewTarget<ImageView, Z>
    *
    * @param placeholder {@inheritDoc}
    */
+  @CallSuper
   @Override
   public void onLoadStarted(@Nullable Drawable placeholder) {
     super.onLoadStarted(placeholder);
@@ -69,6 +78,7 @@ public abstract class ImageViewTarget<Z> extends ViewTarget<ImageView, Z>
    *
    * @param errorDrawable {@inheritDoc}
    */
+  @CallSuper
   @Override
   public void onLoadFailed(@Nullable Drawable errorDrawable) {
     super.onLoadFailed(errorDrawable);
@@ -82,16 +92,15 @@ public abstract class ImageViewTarget<Z> extends ViewTarget<ImageView, Z>
    *
    * @param placeholder {@inheritDoc}
    */
+  @CallSuper
   @Override
   public void onLoadCleared(@Nullable Drawable placeholder) {
     super.onLoadCleared(placeholder);
-    if (animatable != null) {
-      animatable.stop();
-    }
     setResourceInternal(null);
     setDrawable(placeholder);
   }
 
+  @CallSuper
   @Override
   public void onResourceReady(Z resource, @Nullable Transition<? super Z> transition) {
     if (transition == null || !transition.transition(resource, this)) {
@@ -101,18 +110,18 @@ public abstract class ImageViewTarget<Z> extends ViewTarget<ImageView, Z>
     }
   }
 
+  @CallSuper
   @Override
   public void onStart() {
-    if (animatable != null) {
-      animatable.start();
-    }
+    isStarted = true;
+    maybeStartAnimatable();
   }
 
+  @CallSuper
   @Override
   public void onStop() {
-    if (animatable != null) {
-      animatable.stop();
-    }
+    isStarted = false;
+    maybeStopAnimatable();
   }
 
   private void setResourceInternal(@Nullable Z resource) {
@@ -125,12 +134,58 @@ public abstract class ImageViewTarget<Z> extends ViewTarget<ImageView, Z>
   private void maybeUpdateAnimatable(@Nullable Z resource) {
     if (resource instanceof Animatable) {
       animatable = (Animatable) resource;
-      animatable.start();
+
+      // Avoid short circuiting because doing so can break sdk checks on older versions.
+      //noinspection SimplifiableIfStatement
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        isAttachedToWindow = view.isAttachedToWindow();
+      } else {
+        // Default to true here because it's the common case.
+        isAttachedToWindow = true;
+      }
+
+      if (changeAnimatableState == null) {
+        changeAnimatableState = new ChangeAnimatableState();
+        view.addOnAttachStateChangeListener(changeAnimatableState);
+      }
+      maybeStartAnimatable();
     } else {
+      maybeStopAnimatable();
+      if (changeAnimatableState != null) {
+        view.removeOnAttachStateChangeListener(changeAnimatableState);
+        changeAnimatableState = null;
+      }
       animatable = null;
     }
   }
 
+  private void maybeStartAnimatable() {
+    if (animatable != null && isStarted && isAttachedToWindow) {
+      animatable.start();
+    }
+  }
+
+  private void maybeStopAnimatable() {
+    if (animatable != null) {
+      animatable.stop();
+    }
+  }
+
   protected abstract void setResource(@Nullable Z resource);
+
+  private final class ChangeAnimatableState implements OnAttachStateChangeListener {
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+      isAttachedToWindow = true;
+      maybeStartAnimatable();
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
+      isAttachedToWindow = false;
+      maybeStopAnimatable();
+    }
+  }
 }
 
