@@ -518,6 +518,7 @@ public class StandardGifDecoder implements GifDecoder {
         iline += inc;
       }
       line += downsampledIY;
+      boolean isNotDownsampling = sampleSize == 1;
       if (line < downsampledHeight) {
         int k = line * downsampledWidth;
         // Start of line in dest.
@@ -531,24 +532,34 @@ public class StandardGifDecoder implements GifDecoder {
         // Start of line in source.
         int sx = i * sampleSize * currentFrame.iw;
         int maxPositionInSource = sx + ((dlim - dx) * sampleSize);
-        while (dx < dlim) {
-          // Map color and insert in destination.
-          @ColorInt int averageColor;
-          if (sampleSize == 1) {
+        if (isNotDownsampling) {
+          int averageColor;
+          while (dx < dlim) {
             int currentColorIndex = ((int) mainPixels[sx]) & MASK_INT_LOWEST_BYTE;
             averageColor = act[currentColorIndex];
-          } else {
+            if (averageColor != COLOR_TRANSPARENT_BLACK) {
+              dest[dx] = averageColor;
+            } else if (isFirstFrame && !isFirstFrameTransparent) {
+              isFirstFrameTransparent = true;
+            }
+            sx += sampleSize;
+            dx++;
+          }
+        } else {
+          int averageColor;
+          while (dx < dlim) {
+            // Map color and insert in destination.
             // TODO: This is substantially slower (up to 50ms per frame) than just grabbing the
             // current color index above, even with a sample size of 1.
             averageColor = averageColorsNear(sx, maxPositionInSource, currentFrame.iw);
+             if (averageColor != COLOR_TRANSPARENT_BLACK) {
+              dest[dx] = averageColor;
+            } else if (isFirstFrame && !isFirstFrameTransparent) {
+              isFirstFrameTransparent = true;
+            }
+            sx += sampleSize;
+            dx++;
           }
-          if (averageColor != COLOR_TRANSPARENT_BLACK) {
-            dest[dx] = averageColor;
-          } else if (isFirstFrame && !isFirstFrameTransparent) {
-            isFirstFrameTransparent = true;
-          }
-          sx += sampleSize;
-          dx++;
         }
       }
     }
@@ -683,8 +694,8 @@ public class StandardGifDecoder implements GifDecoder {
 
       datum += (((int) block[bi]) & MASK_INT_LOWEST_BYTE) << bits;
       bits += 8;
-      bi++;
-      count--;
+      ++bi;
+      --count;
 
       while (bits >= codeSize) {
         // Get the next code.
@@ -712,30 +723,34 @@ public class StandardGifDecoder implements GifDecoder {
         }
 
         if (oldCode == NULL_CODE) {
-          pixelStack[top++] = suffix[code];
+          pixelStack[top] = suffix[code];
+          ++top;
           oldCode = code;
           first = code;
           continue;
         }
         inCode = code;
         if (code >= available) {
-          pixelStack[top++] = (byte) first;
+          pixelStack[top] = (byte) first;
+          ++top;
           code = oldCode;
         }
         while (code >= clear) {
-          pixelStack[top++] = suffix[code];
+          pixelStack[top] = suffix[code];
+          ++top;
           code = prefix[code];
         }
         first = ((int) suffix[code]) & MASK_INT_LOWEST_BYTE;
-        pixelStack[top++] = (byte) first;
+        pixelStack[top] = (byte) first;
+        ++top;
 
         // Add a new string to the string table.
         if (available < MAX_STACK_SIZE) {
           prefix[available] = (short) oldCode;
           suffix[available] = (byte) first;
-          available++;
+          ++available;
           if (((available & codeMask) == 0) && (available < MAX_STACK_SIZE)) {
-            codeSize++;
+            ++codeSize;
             codeMask += available;
           }
         }
@@ -743,8 +758,9 @@ public class StandardGifDecoder implements GifDecoder {
 
         while (top > 0) {
           // Pop a pixel off the pixel stack.
-          mainPixels[pi++] = pixelStack[--top];
-          i++;
+          mainPixels[pi] = pixelStack[--top];
+          ++pi;
+          ++i;
         }
       }
     }
