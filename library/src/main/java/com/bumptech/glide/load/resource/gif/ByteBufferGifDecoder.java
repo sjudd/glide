@@ -13,6 +13,7 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.ImageHeaderParser;
 import com.bumptech.glide.load.ImageHeaderParser.ImageType;
 import com.bumptech.glide.load.ImageHeaderParserUtils;
+import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.Transformation;
@@ -96,6 +97,7 @@ public class ByteBufferGifDecoder implements ResourceDecoder<ByteBuffer, GifDraw
 
     Bitmap.Config config = options.get(GifOptions.DECODE_FORMAT) == DecodeFormat.PREFER_RGB_565
         ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888;
+    Key tag = options.get(GifOptions.GIF_SOURCE_KEY);
 
     int sampleSize = getSampleSize(header, width, height);
     GifDecoder gifDecoder = gifDecoderFactory.build(provider, header, byteBuffer, sampleSize);
@@ -109,7 +111,7 @@ public class ByteBufferGifDecoder implements ResourceDecoder<ByteBuffer, GifDraw
     Transformation<Bitmap> unitTransformation = UnitTransformation.get();
 
     GifDrawable gifDrawable =
-        new GifDrawable(context, gifDecoder, unitTransformation, width, height, firstFrame);
+        new GifDrawable(tag, context, gifDecoder, unitTransformation, width, height, firstFrame);
 
     if (Log.isLoggable(TAG, Log.VERBOSE)) {
       Log.v(TAG, "Decoded GIF from stream in " + LogTime.getElapsedMillis(startTime));

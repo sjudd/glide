@@ -10,6 +10,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.util.Log;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
@@ -27,12 +28,16 @@ import com.bumptech.glide.util.Synthetic;
 import com.bumptech.glide.util.Util;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class GifFrameLoader {
+  private static final Map<Key, Integer> RUNNING_DECODERS = new HashMap<>();
   private final GifDecoder gifDecoder;
   private final Handler handler;
   private final List<FrameCallback> callbacks = new ArrayList<>();
+  private Key tag;
   @SuppressWarnings("WeakerAccess") @Synthetic final RequestManager requestManager;
   private final BitmapPool bitmapPool;
 
@@ -56,11 +61,13 @@ class GifFrameLoader {
   GifFrameLoader(
       Glide glide,
       GifDecoder gifDecoder,
+      Key tag,
       int width,
       int height,
       Transformation<Bitmap> transformation,
       Bitmap firstFrame) {
     this(
+        tag,
         glide.getBitmapPool(),
         Glide.with(glide.getContext()),
         gifDecoder,
@@ -72,6 +79,7 @@ class GifFrameLoader {
 
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   GifFrameLoader(
+      Key tag,
       BitmapPool bitmapPool,
       RequestManager requestManager,
       GifDecoder gifDecoder,
@@ -79,6 +87,7 @@ class GifFrameLoader {
       RequestBuilder<Bitmap> requestBuilder,
       Transformation<Bitmap> transformation,
       Bitmap firstFrame) {
+    this.tag = tag;
     this.requestManager = requestManager;
     if (handler == null) {
       handler = new Handler(Looper.getMainLooper(), new FrameLoaderCallback());
@@ -166,12 +175,35 @@ class GifFrameLoader {
     }
     isRunning = true;
     isCleared = false;
+    synchronized (RUNNING_DECODERS) {
+      Integer current = RUNNING_DECODERS.get(tag);
+      if (current == null) {
+        current = 0;
+      }
+      RUNNING_DECODERS.put(tag, current + 1);
+      Log.v("TEST", "Starting: " + tag + " running: " + totalDecodersRunning());
+    }
 
     loadNextFrame();
   }
 
   private void stop() {
+    if (isRunning) {
+      synchronized (RUNNING_DECODERS) {
+        int current = RUNNING_DECODERS.get(tag);
+        RUNNING_DECODERS.put(tag, current - 1);
+        Log.v("TEST", "Stopping: " + tag + " running: " + totalDecodersRunning());
+      }
+    }
     isRunning = false;
+  }
+
+  private static int totalDecodersRunning() {
+    int result = 0;
+    for (int value : RUNNING_DECODERS.values()) {
+      result += value;
+    }
+    return result;
   }
 
   void clear() {
@@ -263,6 +295,10 @@ class GifFrameLoader {
     if (!isRunning) {
       pendingTarget = delayTarget;
       return;
+    }
+
+    if (!RUNNING_DECODERS.containsKey(tag) || RUNNING_DECODERS.get(tag) <= 0) {
+      Log.v("TEST", "Got frame after stop for: " + tag);
     }
 
     if (delayTarget.getResource() != null) {
