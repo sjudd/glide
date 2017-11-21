@@ -741,8 +741,17 @@ public class StandardGifDecoder implements GifDecoder {
           code = prefix[code];
         }
         first = ((int) suffix[code]) & MASK_INT_LOWEST_BYTE;
-        pixelStack[top] = (byte) first;
-        ++top;
+
+        mainPixels[pi] = (byte) first;
+        ++pi;
+        ++i;
+
+        while (top > 0) {
+          // Pop a pixel off the pixel stack.
+          mainPixels[pi] = pixelStack[--top];
+          ++pi;
+          ++i;
+        }
 
         // Add a new string to the string table.
         if (available < MAX_STACK_SIZE) {
@@ -756,12 +765,6 @@ public class StandardGifDecoder implements GifDecoder {
         }
         oldCode = inCode;
 
-        while (top > 0) {
-          // Pop a pixel off the pixel stack.
-          mainPixels[pi] = pixelStack[--top];
-          ++pi;
-          ++i;
-        }
       }
     }
 
