@@ -90,6 +90,7 @@ public class WideGamutTest {
     assertThat(toCompress.compress(CompressFormat.PNG, 100, os)).isTrue();
     byte[] data = os.toByteArray();
 
+    @SuppressWarnings("deprecation")
     Bitmap bitmap =
         concurrency.get(
             Glide.with(context)
@@ -112,6 +113,7 @@ public class WideGamutTest {
     assertThat(toCompress.compress(CompressFormat.JPEG, 100, os)).isTrue();
     byte[] data = os.toByteArray();
 
+    @SuppressWarnings("deprecation")
     Bitmap bitmap =
         concurrency.get(
             Glide.with(context)
@@ -131,6 +133,7 @@ public class WideGamutTest {
     assertThat(toCompress.compress(CompressFormat.WEBP, 100, os)).isTrue();
     byte[] data = os.toByteArray();
 
+    @SuppressWarnings("deprecation")
     Bitmap bitmap =
         concurrency.get(
             Glide.with(context)

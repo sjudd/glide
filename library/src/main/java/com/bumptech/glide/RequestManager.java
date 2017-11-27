@@ -14,7 +14,9 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.ByteArrayModel;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.manager.ConnectivityMonitor;
 import com.bumptech.glide.manager.ConnectivityMonitorFactory;
@@ -32,6 +34,7 @@ import com.bumptech.glide.util.Synthetic;
 import com.bumptech.glide.util.Util;
 import java.io.File;
 import java.net.URL;
+import java.security.MessageDigest;
 
 /**
  * A class for managing and starting requests for Glide. Can use activity, fragment and connectivity
@@ -468,11 +471,43 @@ public class RequestManager implements LifecycleListener,
    * Equivalent to calling {@link #asDrawable()} and then {@link RequestBuilder#load(byte[])}.
    *
    * @return A new request builder for loading a {@link Drawable} using the given model.
+   *
+   * @deprecated Strongly prefer {@link #load(ByteArrayModel)} if you have any object that
+   * implements equals() and hashCode() or can otherwise be used as a
+   * {@link com.bumptech.glide.load.Key} so that disk and memory caching in Glide function
+   * coherently.
+   */
+  @NonNull
+  @SuppressWarnings("deprecation")
+  @Deprecated
+  @CheckResult
+  @Override
+  public RequestBuilder<Drawable> load(@Nullable byte[] model) {
+    return asDrawable().load(model);
+  }
+
+  /**
+   * Equivalent to calling {@link #asDrawable()} and then {@link RequestBuilder#load(byte[])}.
+   *
+   * <p>To use this method, ensure that the {@link Key} you provide to the {@link ByteArrayModel}
+   * provided here implements {@link Object#equals(Object)}, {@link Object#hashCode()} and
+   * {@link Key#updateDiskCacheKey(MessageDigest)} correctly. If you don't have a valid identifier
+   * for your {@code byte[]}, use {@link #load(byte[])} instead.
+   *
+   * <p>It's best to avoid loading {@code byte[]}s. Although using {@link ByteArrayModel} enables
+   * caching in Glide and is preferable to loading the {@code byte[]} directly, even obtaining the
+   * {@code byte[]} to pass in to Glide here is often expensive. You should instead use an existing
+   * or custom {@link com.bumptech.glide.load.model.ModelLoader} to obtain your {@code byte[]} so
+   * that the work and allocation are avoided if the request can complete from cache.
+   *
+   * @param model the data to load.
+   * @see #load(Object)
+   * @see #load(byte[])
    */
   @NonNull
   @CheckResult
   @Override
-  public RequestBuilder<Drawable> load(@Nullable byte[] model) {
+  public RequestBuilder<Drawable> load(@Nullable ByteArrayModel model) {
     return asDrawable().load(model);
   }
 

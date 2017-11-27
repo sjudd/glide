@@ -31,6 +31,8 @@ import com.bumptech.glide.load.engine.prefill.BitmapPreFiller;
 import com.bumptech.glide.load.engine.prefill.PreFillType;
 import com.bumptech.glide.load.model.AssetUriLoader;
 import com.bumptech.glide.load.model.ByteArrayLoader;
+import com.bumptech.glide.load.model.ByteArrayModel;
+import com.bumptech.glide.load.model.ByteArrayModelLoader;
 import com.bumptech.glide.load.model.ByteBufferEncoder;
 import com.bumptech.glide.load.model.ByteBufferFileLoader;
 import com.bumptech.glide.load.model.DataUrlLoader;
@@ -477,6 +479,10 @@ public class Glide implements ComponentCallbacks2 {
         .append(GlideUrl.class, InputStream.class, new HttpGlideUrlLoader.Factory())
         .append(byte[].class, ByteBuffer.class, new ByteArrayLoader.ByteBufferFactory())
         .append(byte[].class, InputStream.class, new ByteArrayLoader.StreamFactory())
+        .append(
+            ByteArrayModel.class, ByteBuffer.class, new ByteArrayModelLoader.ByteBufferFactory())
+        .append(
+            ByteArrayModel.class, InputStream.class, new ByteArrayModelLoader.StreamFactory())
         .append(Uri.class, Uri.class, UnitModelLoader.Factory.<Uri>getInstance())
         .append(Drawable.class, Drawable.class, UnitModelLoader.Factory.<Drawable>getInstance())
         .append(Drawable.class, Drawable.class, new UnitDrawableDecoder())

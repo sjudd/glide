@@ -8,6 +8,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
+import com.bumptech.glide.load.model.ByteArrayModel;
 import java.io.File;
 import java.net.URL;
 
@@ -45,10 +46,14 @@ interface ModelTypes<T> {
   T load(@Nullable URL url);
 
   @NonNull
+  @Deprecated
   @CheckResult
   T load(@Nullable byte[] model);
 
   @NonNull
+  @CheckResult
+  T load(@Nullable ByteArrayModel model);
+
   @CheckResult
   @SuppressWarnings("unchecked")
   T load(@Nullable Object model);

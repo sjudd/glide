@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.model.ByteArrayModel;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.manager.Lifecycle;
 import com.bumptech.glide.manager.RequestManagerTreeNode;
@@ -131,9 +132,17 @@ public class GlideRequests extends RequestManager {
   }
 
   @Override
+  @Deprecated
   @NonNull
   @CheckResult
   public GlideRequest<Drawable> load(@Nullable byte[] arg0) {
+    return (GlideRequest<Drawable>) super.load(arg0);
+  }
+
+  @Override
+  @NonNull
+  @CheckResult
+  public GlideRequest<Drawable> load(@Nullable ByteArrayModel arg0) {
     return (GlideRequest<Drawable>) super.load(arg0);
   }
 

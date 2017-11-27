@@ -22,6 +22,7 @@ import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Option;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.ByteArrayModel;
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
@@ -754,9 +755,17 @@ public class GlideRequest<TranscodeType> extends RequestBuilder<TranscodeType> i
   }
 
   @Override
+  @Deprecated
   @NonNull
   @CheckResult
   public GlideRequest<TranscodeType> load(@Nullable byte[] arg0) {
+    return (GlideRequest<TranscodeType>) super.load(arg0);
+  }
+
+  @Override
+  @NonNull
+  @CheckResult
+  public GlideRequest<TranscodeType> load(@Nullable ByteArrayModel arg0) {
     return (GlideRequest<TranscodeType>) super.load(arg0);
   }
 

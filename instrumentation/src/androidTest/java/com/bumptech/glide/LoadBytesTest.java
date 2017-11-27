@@ -10,7 +10,6 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
@@ -31,11 +30,10 @@ import com.bumptech.glide.test.BitmapSubject;
 import com.bumptech.glide.test.ConcurrencyHelper;
 import com.bumptech.glide.test.GlideApp;
 import com.bumptech.glide.test.ResourceIds;
+import com.bumptech.glide.test.ResourceUtil;
 import com.bumptech.glide.test.TearDownGlide;
-import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,6 +44,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+// We're testing a deprecated method.
+@SuppressWarnings("deprecation")
 @RunWith(AndroidJUnit4.class)
 public class LoadBytesTest {
   @Rule public final TearDownGlide tearDownGlide = new TearDownGlide();
@@ -517,9 +517,6 @@ public class LoadBytesTest {
   }
 
   private byte[] getCanonicalBytes() throws IOException {
-    int resourceId = ResourceIds.raw.canonical;
-    Resources resources = context.getResources();
-    InputStream is = resources.openRawResource(resourceId);
-    return ByteStreams.toByteArray(is);
+    return ResourceUtil.loadData(ResourceIds.raw.canonical);
   }
 }

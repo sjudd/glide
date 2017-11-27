@@ -14,8 +14,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.widget.ImageView;
+import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.ByteArrayModel;
 import com.bumptech.glide.request.ErrorRequestCoordinator;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.Request;
@@ -34,6 +36,7 @@ import com.bumptech.glide.util.Synthetic;
 import com.bumptech.glide.util.Util;
 import java.io.File;
 import java.net.URL;
+import java.security.MessageDigest;
 
 /**
  * A generic class that can handle setting options and staring loads for generic resource types.
@@ -517,14 +520,27 @@ public class RequestBuilder<TranscodeType> implements Cloneable,
   }
 
   /**
-   * Returns a request to load the given byte array.
+   * Sets the model for this request to the given {@code byte[]} and disables memory and disk
+   * caching if they haven't been set previously.
    *
-   * <p>Note - by default loads for bytes are not cached in either the memory or the disk cache.
+   * <p>Enabling memory or disk caching when loading {@code byte[]} can cause undefined behavior.
+   *
+   * <p>Loading {@code byte[]} without a cache key disables some key features of Glide and is
+   * usually inefficient. Even obtaining the {@code byte[]} is often expensive and should usually be
+   * done in a {@link com.bumptech.glide.load.model.ModelLoader} so it's avoided if a request can
+   * complete from cache.
    *
    * @param model the data to load.
    * @see #load(Object)
+   * @see #load(ByteArrayModel)
+   *
+   * @deprecated Strongly prefer {@link #load(ByteArrayModel)} if you have any object that
+   * implements equals() and hashCode() or can otherwise be used as a
+   * {@link com.bumptech.glide.load.Key} so that disk and memory caching in Glide function
+   * coherently.
    */
   @NonNull
+  @Deprecated
   @CheckResult
   @Override
   public RequestBuilder<TranscodeType> load(@Nullable byte[] model) {
@@ -536,6 +552,32 @@ public class RequestBuilder<TranscodeType> implements Cloneable,
       result = result.apply(skipMemoryCacheOf(true /*skipMemoryCache*/));
     }
     return result;
+  }
+
+  /**
+   * Sets the model for this request to the given {@link ByteArrayModel} with no change to this
+   * requests memory or disk caching behavior.
+   *
+   * <p>To use this method, ensure that the {@link Key} you provide to the {@link ByteArrayModel}
+   * provided here implements {@link Object#equals(Object)}, {@link Object#hashCode()} and
+   * {@link Key#updateDiskCacheKey(MessageDigest)} correctly. If you don't have a valid identifier
+   * for your {@code byte[]}, use {@link #load(byte[])} instead.
+   *
+   * <p>It's best to avoid loading {@code byte[]}s. Although using {@link ByteArrayModel} enables
+   * caching in Glide and is preferable to loading the {@code byte[]} directly, even obtaining the
+   * {@code byte[]} to pass in to Glide here is often expensive. You should instead use an existing
+   * or custom {@link com.bumptech.glide.load.model.ModelLoader} to obtain your {@code byte[]} so
+   * that the work and allocation are avoided if the request can complete from cache.
+   *
+   * @param model the data to load.
+   * @see #load(Object)
+   * @see #load(byte[])
+   */
+  @NonNull
+  @CheckResult
+  @Override
+  public RequestBuilder<TranscodeType> load(@Nullable ByteArrayModel model) {
+    return loadGeneric(model);
   }
 
   /**

@@ -43,6 +43,7 @@ import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.engine.cache.MemoryCache;
 import com.bumptech.glide.load.engine.executor.GlideExecutor;
 import com.bumptech.glide.load.engine.executor.MockGlideExecutor;
+import com.bumptech.glide.load.model.ByteArrayModel;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
@@ -486,6 +487,7 @@ public class GlideTest {
     assertNotNull(imageView.getDrawable());
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void testByteArrayDefaultLoader() {
     byte[] bytes = new byte[10];
@@ -497,7 +499,17 @@ public class GlideTest {
 
     assertNotNull(imageView.getDrawable());
   }
+  @Test
+  public void testByteArrayModelDefaultLoader() {
+    byte[] bytes = new byte[10];
+    requestManager.load(new ByteArrayModel(mock(Key.class), bytes)).into(target);
+    requestManager.load(new ByteArrayModel(mock(Key.class), bytes)).into(imageView);
 
+    verify(target).onResourceReady(isA(BitmapDrawable.class), isA(Transition.class));
+    verify(target).setRequest((Request) notNull());
+
+    assertNotNull(imageView.getDrawable());
+  }
 
   @Test(expected = Exception.class)
   public void testUnregisteredModelThrowsException() {
@@ -678,12 +690,6 @@ public class GlideTest {
   }
 
   @Test
-  public void testByteData() {
-    byte[] data = new byte[] { 1, 2, 3, 4, 5, 6 };
-    requestManager.load(data).into(target);
-  }
-
-  @Test
   public void removeFromManagers_afterRequestManagerRemoved_clearsRequest() {
     target = requestManager.load(mockUri("content://uri")).into(new SimpleTarget<Drawable>() {
       @Override
@@ -841,11 +847,12 @@ public class GlideTest {
   // a different part of the test. Each one ends up with different registered uris, which causes
   // tests to fail. We shouldn't need to do this, but using static maps seems to fix the issue.
   @Implements(value = ContentResolver.class)
-  @SuppressWarnings("unused")
   public static class ShadowFileDescriptorContentResolver {
     private static final Map<Uri, AssetFileDescriptor> URI_TO_FILE_DESCRIPTOR = new HashMap<>();
     private static final Map<Uri, InputStream> URI_TO_INPUT_STREAMS = new HashMap<>();
 
+    // Used by reflection in Robolectric.
+    @SuppressWarnings("unused")
     @Resetter
     public static void reset() {
       URI_TO_INPUT_STREAMS.clear();
@@ -860,6 +867,8 @@ public class GlideTest {
       URI_TO_FILE_DESCRIPTOR.put(uri, assetFileDescriptor);
     }
 
+    // Used by reflection in Robolectric.
+    @SuppressWarnings("unused")
     @Implementation
     public InputStream openInputStream(Uri uri) {
       if (!URI_TO_INPUT_STREAMS.containsKey(uri)) {
@@ -869,6 +878,8 @@ public class GlideTest {
       return URI_TO_INPUT_STREAMS.get(uri);
     }
 
+    // Used by reflection in Robolectric.
+    @SuppressWarnings("unused")
     @Implementation
     public AssetFileDescriptor openAssetFileDescriptor(Uri uri, String type) {
       if (!URI_TO_FILE_DESCRIPTOR.containsKey(uri)) {
