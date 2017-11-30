@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 final class ActiveResources {
+  private final boolean isResourceRetentionAllowed;
   @VisibleForTesting
   final Map<Key, ResourceWeakReference> activeEngineResources = new HashMap<>();
   // Lazily instantiate to avoid exceptions if Glide is initialized on a background thread. See
@@ -23,14 +24,19 @@ final class ActiveResources {
   private ReferenceQueue<EngineResource<?>> resourceReferenceQueue;
   private ResourceListener listener;
 
+  ActiveResources(boolean isResourceRetentionAllowed) {
+    this.isResourceRetentionAllowed = isResourceRetentionAllowed;
+  }
+
   void setListener(ResourceListener listener) {
     this.listener = listener;
   }
 
   void activate(Key key, EngineResource<?> resource) {
-    ResourceWeakReference removed =
-        activeEngineResources.put(
-            key, new ResourceWeakReference(key, resource, getReferenceQueue()));
+    ResourceWeakReference toPut =
+        new ResourceWeakReference(key, resource, getReferenceQueue(), isResourceRetentionAllowed);
+
+    ResourceWeakReference removed = activeEngineResources.put(key, toPut);
     if (removed != null) {
       removed.reset();
     }
@@ -103,11 +109,13 @@ final class ActiveResources {
     ResourceWeakReference(
         @NonNull Key key,
         @NonNull EngineResource<?> referent,
-        @NonNull ReferenceQueue<? super EngineResource<?>> queue) {
+        @NonNull ReferenceQueue<? super EngineResource<?>> queue,
+        boolean isResourceRetentionAllowed) {
       super(referent, queue);
       this.key = Preconditions.checkNotNull(key);
       this.resource =
-          referent.isCacheable() ? Preconditions.checkNotNull(referent.getResource()) : null;
+          referent.isCacheable() && isResourceRetentionAllowed
+              ? Preconditions.checkNotNull(referent.getResource()) : null;
       isCacheable = referent.isCacheable();
     }
 
