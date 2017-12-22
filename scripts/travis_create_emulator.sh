@@ -9,7 +9,7 @@ which sdkmanager
 which avdmanager
 sdkmanager --version
 sdkmanager --list | grep emulator
-echo no | avdmanager create avd --force -n test -k $target -c 2048M
+avdmanager create avd --force -n test -k $target --device "Nexus 4" -c 2048M
 QEMU_AUDIO_DRV=none $ANDROID_HOME/emulator/emulator -avd test -no-window -memory 2048 &
 
 exit 0
