@@ -1,6 +1,6 @@
 language: android
 sudo: required
-dist: trusty
+dist: precise
 
 before_install:
   - mkdir "$ANDROID_HOME/licenses" || true
