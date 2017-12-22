@@ -10,6 +10,6 @@ which avdmanager
 sdkmanager --version
 sdkmanager --list | grep emulator
 avdmanager create avd --force -n test -k $target --device "Nexus 5X" -c 2048M
-QEMU_AUDIO_DRV=none $ANDROID_HOME/emulator/emulator -avd test -no-window -memory 2048 -gpu host &
+QEMU_AUDIO_DRV=none $ANDROID_HOME/emulator/emulator -avd test -no-window -memory 2048 -gpu swiftshader_indirect &
 
 exit 0
