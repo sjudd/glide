@@ -13,6 +13,7 @@ until [[ "$bootanim" =~ "stopped" ]]; do
   echo "About to get bootanim"
   bootanim=`adb -e shell getprop init.svc.bootanim 2>&1 &`
   echo "Got bootanim: ${bootanim}"
+  adb logcat -t 25
   if [[ "$bootanim" =~ "device not found" || "$bootanim" =~ "device offline"
     || "$bootanim" =~ "running" ]]; then
     let "failcounter += 1"
