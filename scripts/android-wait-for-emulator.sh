@@ -9,6 +9,7 @@ failcounter=0
 timeout_in_sec=360
 
 until [[ "$bootanim" =~ "stopped" ]]; do
+  free -m
   echo "About to get bootanim"
   bootanim=`adb -e shell getprop init.svc.bootanim 2>&1 &`
   echo "Got bootanim: ${bootanim}"
