@@ -86,7 +86,8 @@ public class SupportRequestManagerFragment extends Fragment {
    * Returns the set of fragments that this RequestManagerFragment's parent is a parent to. (i.e.
    * our parent is the fragment that we are annotating).
    */
-  private Set<SupportRequestManagerFragment> getDescendantRequestManagerFragments() {
+  @Synthetic
+  Set<SupportRequestManagerFragment> getDescendantRequestManagerFragments() {
     if (rootRequestManagerFragment == null) {
       return Collections.emptySet();
     } else if (this.equals(rootRequestManagerFragment)) {

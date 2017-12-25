@@ -86,7 +86,8 @@ public class RequestManagerFragment extends Fragment {
    * our parent is the fragment that we are annotating).
    */
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-  private Set<RequestManagerFragment> getDescendantRequestManagerFragments() {
+  @Synthetic
+  Set<RequestManagerFragment> getDescendantRequestManagerFragments() {
     if (this.equals(rootRequestManagerFragment)) {
       return Collections.unmodifiableSet(childRequestManagerFragments);
     } else if (rootRequestManagerFragment == null

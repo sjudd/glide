@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.transition.Transition;
+import com.bumptech.glide.util.Synthetic;
 
 /**
  * A one time use {@link com.bumptech.glide.request.target.Target} class that loads a resource into
@@ -16,7 +17,7 @@ import com.bumptech.glide.request.transition.Transition;
  * @param <Z> The type of resource that will be loaded into memory.
  */
 public final class PreloadTarget<Z> extends SimpleTarget<Z> {
-  private static final int MESSAGE_CLEAR = 1;
+  @SuppressWarnings("WeakerAccess") @Synthetic static final int MESSAGE_CLEAR = 1;
   private static final Handler HANDLER = new Handler(Looper.getMainLooper(), new Callback() {
     @Override
     public boolean handleMessage(Message message) {
@@ -51,7 +52,9 @@ public final class PreloadTarget<Z> extends SimpleTarget<Z> {
     HANDLER.obtainMessage(MESSAGE_CLEAR, this).sendToTarget();
   }
 
-  private void clear() {
+  @SuppressWarnings("WeakerAccess")
+  @Synthetic
+  void clear() {
     requestManager.clear(this);
   }
 }
