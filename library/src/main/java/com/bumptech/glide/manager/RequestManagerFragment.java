@@ -28,8 +28,7 @@ public class RequestManagerFragment extends Fragment {
   private final ActivityFragmentLifecycle lifecycle;
   private final RequestManagerTreeNode requestManagerTreeNode =
       new FragmentRequestManagerTreeNode();
-  private final HashSet<RequestManagerFragment> childRequestManagerFragments =
-      new HashSet<>();
+  private final Set<RequestManagerFragment> childRequestManagerFragments = new HashSet<>();
 
   @Nullable private RequestManager requestManager;
   @Nullable private RequestManagerFragment rootRequestManagerFragment;

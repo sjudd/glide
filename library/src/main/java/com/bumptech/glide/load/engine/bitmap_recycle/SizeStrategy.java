@@ -7,7 +7,7 @@ import android.support.annotation.RequiresApi;
 import android.support.annotation.VisibleForTesting;
 import com.bumptech.glide.util.Synthetic;
 import com.bumptech.glide.util.Util;
-import java.util.TreeMap;
+import java.util.NavigableMap;
 
 /**
  * A strategy for reusing bitmaps that relies on
@@ -20,7 +20,7 @@ final class SizeStrategy implements LruPoolStrategy {
   private static final int MAX_SIZE_MULTIPLE = 8;
   private final KeyPool keyPool = new KeyPool();
   private final GroupedLinkedMap<Key, Bitmap> groupedMap = new GroupedLinkedMap<>();
-  private final TreeMap<Integer, Integer> sortedSizes = new PrettyPrintTreeMap<>();
+  private final NavigableMap<Integer, Integer> sortedSizes = new PrettyPrintTreeMap<>();
 
   @Override
   public void put(Bitmap bitmap) {
@@ -97,17 +97,16 @@ final class SizeStrategy implements LruPoolStrategy {
     return "SizeStrategy:\n  " + groupedMap + "\n" + "  SortedSizes" + sortedSizes;
   }
 
+  @SuppressWarnings("WeakerAccess")
+  @Synthetic
   static String getBitmapString(Bitmap bitmap) {
     int size = Util.getBitmapByteSize(bitmap);
     return getBitmapString(size);
   }
 
-  // PMD will warn that this creates an accessor class unless it's public, package private doesn't
-  // appear to be sufficient. Since this class isn't public, it seems fine to make this method
-  // public.
   @SuppressWarnings("WeakerAccess")
   @Synthetic
-  public static String getBitmapString(int size) {
+  static String getBitmapString(int size) {
     return "[" + size + "]";
   }
 
