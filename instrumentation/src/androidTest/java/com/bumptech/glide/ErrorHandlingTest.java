@@ -3,6 +3,7 @@ package com.bumptech.glide;
 import static com.bumptech.glide.test.Matchers.anyDrawable;
 import static com.bumptech.glide.test.Matchers.anyDrawableTarget;
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.never;
@@ -26,7 +27,10 @@ import com.bumptech.glide.load.engine.executor.GlideExecutor.UncaughtThrowableSt
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.test.ConcurrencyHelper;
+import com.bumptech.glide.test.FailModelLoader;
+import com.bumptech.glide.test.FailModelLoader.FailModel;
 import com.bumptech.glide.test.ResourceIds;
+import com.bumptech.glide.test.ResourceIds.raw;
 import com.bumptech.glide.test.TearDownGlide;
 import com.bumptech.glide.test.WaitModelLoader;
 import com.bumptech.glide.test.WaitModelLoader.WaitModel;
@@ -35,6 +39,7 @@ import java.util.concurrent.CountDownLatch;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -131,6 +136,162 @@ public class ErrorHandlingTest {
     Glide.tearDown();
     // Make sure that any callbacks posted back to the main thread run.
     concurrency.pokeMainThread();
+  }
+
+  @Test
+  public void get_withError_whenPrimaryRequestGivenNullModel_returnsResultFromErrorRequest() {
+    Drawable result = concurrency.get(
+        Glide.with(context)
+            .load((Object) null)
+            .error(
+                Glide.with(context)
+                    .load(ResourceIds.raw.canonical))
+            .submit());
+    assertThat(result).isNotNull();
+  }
+
+  @Test
+  public void get_withError_whenPrimaryRequestThrows_returnsResultFromErrorRequest() {
+    FailModel<Integer> failModel = FailModelLoader.Factory.failWith(raw.canonical);
+    Drawable result = concurrency.get(
+        Glide.with(context)
+            .load(failModel)
+            .error(
+                Glide.with(context)
+                    .load(ResourceIds.raw.canonical))
+            .submit());
+    assertThat(result).isNotNull();
+  }
+
+  @Test
+  public void get_withError_whenPrimaryRequestGivenNullModel_notifiesListenerOfSuccessOnly() {
+    concurrency.get(
+        Glide.with(context)
+            .load((Object) null)
+            .listener(requestListener)
+            .error(
+                Glide.with(context)
+                    .load(ResourceIds.raw.canonical)
+                    .listener(requestListener))
+            .submit());
+
+    verify(requestListener)
+        .onResourceReady(
+            anyDrawable(), any(), anyDrawableTarget(), any(DataSource.class), anyBoolean());
+    verify(requestListener, never())
+        .onLoadFailed(any(GlideException.class), any(), anyDrawableTarget(), anyBoolean());
+  }
+
+  @Test
+  public void get_withError_whenPrimaryRequestThrows_notifiesListenerOfSuccessOnly() {
+    FailModel<Integer> failModel = FailModelLoader.Factory.failWith(raw.canonical);
+    concurrency.get(
+        Glide.with(context)
+            .load(failModel)
+            .listener(requestListener)
+            .error(
+                Glide.with(context)
+                    .load(ResourceIds.raw.canonical)
+                    .listener(requestListener))
+            .submit());
+
+    verify(requestListener)
+        .onResourceReady(
+            anyDrawable(), any(), anyDrawableTarget(), any(DataSource.class), anyBoolean());
+    verify(requestListener, never())
+        .onLoadFailed(any(GlideException.class), any(), anyDrawableTarget(), anyBoolean());
+  }
+
+
+  @Test
+  public void get_withError_whenPrimaryAndErrorGivenNullModel_throws() {
+    assertThrows(
+        RuntimeException.class,
+        new ThrowingRunnable() {
+          @Override
+          public void run() throws Throwable {
+            concurrency.get(
+            Glide.with(context)
+                .load((Object) null)
+                .error(
+                    Glide.with(context)
+                        .load((Object) null))
+                .submit());
+          }
+        });
+  }
+
+
+  @Test
+  public void get_withError_whenPrimaryAndErrorThrow_throws() {
+    final FailModel<Integer> failModel = FailModelLoader.Factory.failWith(raw.canonical);
+    assertThrows(
+        RuntimeException.class,
+        new ThrowingRunnable() {
+          @Override
+          public void run() throws Throwable {
+            concurrency.get(
+            Glide.with(context)
+                .load(failModel)
+                .error(
+                    Glide.with(context)
+                        .load(failModel))
+                .submit());
+          }
+        });
+  }
+
+  @Test
+  public void get_withError_whenPrimaryAndErrorGivenNullModel_notifiesListenerOfFailureOnce() {
+    assertThrows(
+        RuntimeException.class,
+        new ThrowingRunnable() {
+          @Override
+          public void run() throws Throwable {
+            concurrency.get(
+            Glide.with(context)
+                .load((Object) null)
+                .listener(requestListener)
+                .error(
+                    Glide.with(context)
+                        .load((Object) null)
+                        .listener(requestListener))
+                .submit());
+          }
+        });
+
+    verify(requestListener)
+        .onLoadFailed(any(GlideException.class), any(), anyDrawableTarget(), anyBoolean());
+    verify(requestListener, never())
+        .onResourceReady(
+            anyDrawable(), any(), anyDrawableTarget(), any(DataSource.class), anyBoolean());
+  }
+
+    @Test
+  public void get_withError_whenPrimaryAndErrorThrow_notifiesListenerOfFailureOnce() {
+      final FailModel<Integer> failModel = FailModelLoader.Factory.failWith(raw.canonical);
+    assertThrows(
+        RuntimeException.class,
+        new ThrowingRunnable() {
+          @Override
+          public void run() throws Throwable {
+            concurrency.get(
+            Glide.with(context)
+                .load(failModel)
+                .listener(requestListener)
+                .error(
+                    Glide.with(context)
+                        .load(failModel)
+                        .listener(requestListener))
+                .submit());
+          }
+        });
+
+    verify(requestListener)
+        .onLoadFailed(any(GlideException.class), any(), anyDrawableTarget(), anyBoolean());
+    verify(requestListener, never())
+        .onResourceReady(
+            anyDrawable(), any(), anyDrawableTarget(), any(DataSource.class), anyBoolean());
   }
 
   private static final class WaitForErrorStrategy implements UncaughtThrowableStrategy {

@@ -51,8 +51,13 @@ public class ThumbnailRequestCoordinator implements RequestCoordinator,
    * @param request {@inheritDoc}.
    */
   @Override
-  public boolean canNotifyStatusChanged(Request request) {
-    return parentCanNotifyStatusChanged() && request.equals(full) && !isAnyResourceSet();
+  public boolean canNotifyLoadStarted(Request request) {
+    return parentCanNotifyLoadStarted() && request.equals(full) && !isAnyResourceSet();
+  }
+
+  @Override
+  public boolean canNotifyLoadFailed(Request request) {
+    return parentCanNotifyLoadFailed() && request.equals(full) && !isAnyResourceSet();
   }
 
   @Override
@@ -64,8 +69,12 @@ public class ThumbnailRequestCoordinator implements RequestCoordinator,
     return parent == null || parent.canNotifyCleared(this);
   }
 
-  private boolean parentCanNotifyStatusChanged() {
-    return parent == null || parent.canNotifyStatusChanged(this);
+  private boolean parentCanNotifyLoadStarted() {
+    return parent == null || parent.canNotifyLoadStarted(this);
+  }
+
+  private boolean parentCanNotifyLoadFailed() {
+    return parent == null || parent.canNotifyLoadFailed(this);
   }
 
   @Override

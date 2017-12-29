@@ -711,7 +711,7 @@ public class SingleRequestTest {
     SingleRequest<List> request = builder
         .setErrorDrawable(new ColorDrawable(Color.RED))
         .build();
-    when(builder.requestCoordinator.canNotifyStatusChanged(any(Request.class))).thenReturn(false);
+    when(builder.requestCoordinator.canNotifyLoadFailed(any(Request.class))).thenReturn(false);
     request.onLoadFailed(new GlideException("test"));
 
     verify(builder.target, never()).onLoadFailed(any(Drawable.class));
@@ -927,7 +927,8 @@ public class SingleRequestTest {
     SingleRequestBuilder() {
       when(requestCoordinator.canSetImage(any(Request.class))).thenReturn(true);
       when(requestCoordinator.canNotifyCleared(any(Request.class))).thenReturn(true);
-      when(requestCoordinator.canNotifyStatusChanged(any(Request.class))).thenReturn(true);
+      when(requestCoordinator.canNotifyLoadStarted(any(Request.class))).thenReturn(true);
+      when(requestCoordinator.canNotifyLoadFailed(any(Request.class))).thenReturn(true);
       when(resource.get()).thenReturn(result);
     }
 

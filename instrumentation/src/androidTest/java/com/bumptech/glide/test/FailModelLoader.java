@@ -11,59 +11,51 @@ import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
-import com.bumptech.glide.test.WaitModelLoader.WaitModel;
+import com.bumptech.glide.test.FailModelLoader.FailModel;
 import java.io.InputStream;
-import java.util.concurrent.CountDownLatch;
+
 
 /**
- * Allows callers to load an object but force the load to pause until {@link WaitModel#countDown()}
- * is called.
+ * Allows callers to force a failure when loading an object.
  */
-public final class WaitModelLoader<Model, Data>
-    implements ModelLoader<WaitModel<Model>, Data> {
+public final class FailModelLoader<Model, Data> implements ModelLoader<FailModel<Model>, Data> {
 
   private final ModelLoader<Model, Data> wrapped;
 
-  private WaitModelLoader(ModelLoader<Model, Data> wrapped) {
+  private FailModelLoader(ModelLoader<Model, Data> wrapped) {
     this.wrapped = wrapped;
   }
 
   @Nullable
   @Override
   public LoadData<Data> buildLoadData(
-      @NonNull WaitModel<Model> waitModel, int width, int height, @NonNull Options options) {
+      @NonNull FailModel<Model> failModel, int width, int height, @NonNull Options options) {
     LoadData<Data> wrappedLoadData = wrapped
-        .buildLoadData(waitModel.wrapped, width, height, options);
+        .buildLoadData(failModel.wrapped, width, height, options);
     if (wrappedLoadData == null) {
       return null;
     }
     return new LoadData<>(
-        wrappedLoadData.sourceKey, new WaitFetcher<>(wrappedLoadData.fetcher, waitModel.latch));
+        wrappedLoadData.sourceKey, new FailFetcher<>(wrappedLoadData.fetcher, failModel.toThrow));
   }
 
   @Override
-  public boolean handles(@NonNull WaitModel<Model> waitModel) {
-    return wrapped.handles(waitModel.wrapped);
+  public boolean handles(@NonNull FailModel<Model> failModel) {
+    return wrapped.handles(failModel.wrapped);
   }
 
-  public static final class WaitModel<T> {
-    private final CountDownLatch latch = new CountDownLatch(1);
-    private final T wrapped;
+  public static final class FailModel<Model> {
+    private final Model wrapped;
+    private final RuntimeException toThrow;
 
-    WaitModel(T wrapped) {
+    FailModel(Model wrapped, RuntimeException toThrow) {
       this.wrapped = wrapped;
-    }
-
-    public void countDown() {
-      if (latch.getCount() != 1) {
-        throw new IllegalStateException();
-      }
-      latch.countDown();
+      this.toThrow = toThrow;
     }
   }
 
   public static final class Factory<Model, Data>
-      implements ModelLoaderFactory<WaitModel<Model>, Data> {
+      implements ModelLoaderFactory<FailModel<Model>, Data> {
 
     private final Class<Model> modelClass;
     private final Class<Data> dataClass;
@@ -73,21 +65,25 @@ public final class WaitModelLoader<Model, Data>
       this.dataClass = dataClass;
     }
 
-    public static synchronized <T> WaitModel<T> waitOn(T model) {
-      @SuppressWarnings("unchecked") ModelLoaderFactory<WaitModel<T>, InputStream> streamFactory =
+    public static synchronized <T> FailModel<T> failWith(T model) {
+      return failWith(model, new RuntimeException());
+    }
+
+    public static synchronized <T> FailModel<T> failWith(T model, RuntimeException toThrow) {
+      @SuppressWarnings("unchecked") ModelLoaderFactory<FailModel<T>, InputStream> streamFactory =
           new Factory<>((Class<T>) model.getClass(), InputStream.class);
       Glide.get(InstrumentationRegistry.getTargetContext())
           .getRegistry()
-          .replace(WaitModel.class, InputStream.class, streamFactory);
+          .replace(FailModel.class, InputStream.class, streamFactory);
 
-      return new WaitModel<>(model);
+      return new FailModel<>(model, toThrow);
     }
 
     @NonNull
     @Override
-    public ModelLoader<WaitModel<Model>, Data> build(
+    public ModelLoader<FailModel<Model>, Data> build(
         @NonNull MultiModelLoaderFactory multiFactory) {
-      return new WaitModelLoader<>(multiFactory.build(modelClass, dataClass));
+      return new FailModelLoader<>(multiFactory.build(modelClass, dataClass));
     }
 
     @Override
@@ -96,20 +92,19 @@ public final class WaitModelLoader<Model, Data>
     }
   }
 
-  private static final class WaitFetcher<Data> implements DataFetcher<Data> {
+  private static final class FailFetcher<Data> implements DataFetcher<Data> {
 
     private final DataFetcher<Data> wrapped;
-    private final CountDownLatch toWaitOn;
+    private RuntimeException toThrow;
 
-    WaitFetcher(DataFetcher<Data> wrapped, CountDownLatch toWaitOn) {
+    FailFetcher(DataFetcher<Data> wrapped, RuntimeException toThrow) {
       this.wrapped = wrapped;
-      this.toWaitOn = toWaitOn;
+      this.toThrow = toThrow;
     }
 
     @Override
     public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super Data> callback) {
-      ConcurrencyHelper.waitOnLatch(toWaitOn);
-      wrapped.loadData(priority, callback);
+      throw toThrow;
     }
 
     @Override

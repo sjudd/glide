@@ -2,6 +2,7 @@ package com.bumptech.glide.request;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -335,56 +336,122 @@ public class ErrorRequestCoordinatorTest {
   }
 
   @Test
-  public void canNotifyStatusChanged_withNotFailedPrimary_nullParent_returnsTrue() {
-    assertThat(coordinator.canNotifyStatusChanged(primary)).isTrue();
+  public void canNotifyLoadStarted_withNotFailedPrimary_nullParent_returnsTrue() {
+    assertThat(coordinator.canNotifyLoadStarted(primary)).isTrue();
   }
 
   @Test
-  public void canNotifyStatusChanged_withNotFailedPrimary_nonNullParentCantNotify_returnsFalse() {
+  public void canNotifyLoadStarted_withNotFailedPrimary_nonNullParentCantNotify_returnsFalse() {
     coordinator = new ErrorRequestCoordinator(parent);
     coordinator.setRequests(primary, error);
+    when(parent.canNotifyLoadStarted(eq(coordinator))).thenReturn(false);
 
-    assertThat(coordinator.canNotifyStatusChanged(primary)).isFalse();
+    assertThat(coordinator.canNotifyLoadStarted(primary)).isFalse();
   }
 
   @Test
-  public void canNotifyStatusChanged_withNotFailedPrimary_nonNullParentCanNotify_returnsTrue() {
+  public void canNotifyLoadStarted_withNotFailedPrimary_nonNullParentCanNotify_returnsTrue() {
     coordinator = new ErrorRequestCoordinator(parent);
     coordinator.setRequests(primary, error);
-    when(parent.canNotifyStatusChanged(coordinator)).thenReturn(true);
+    when(parent.canNotifyLoadStarted(coordinator)).thenReturn(true);
 
-    assertThat(coordinator.canNotifyStatusChanged(primary)).isTrue();
+    assertThat(coordinator.canNotifyLoadStarted(primary)).isTrue();
   }
 
   @Test
-  public void canNotifyStatusChanged_withError_notFailedPrimary_nullParent_returnsFalse() {
-    assertThat(coordinator.canNotifyStatusChanged(error)).isFalse();
+  public void canNotifyLoadStarted_withError_notFailedPrimary_nullParent_returnsFalse() {
+    assertThat(coordinator.canNotifyLoadStarted(error)).isFalse();
   }
 
   @Test
-  public void canNotifyStatusChanged_withError_failedPrimary_nullParent_returnsTrue() {
+  public void canNotifyLoadStarted_withError_failedPrimary_nullParent_returnsFalse() {
     when(primary.isFailed()).thenReturn(true);
 
-    assertThat(coordinator.canNotifyStatusChanged(error)).isTrue();
+    assertThat(coordinator.canNotifyLoadStarted(error)).isFalse();
   }
 
   @Test
-  public void canNotifyStatusChanged_withError_failedPrimary_nonNullParentCantNotify_false() {
-    coordinator = new ErrorRequestCoordinator(parent);
-    coordinator.setRequests(primary, error);
-    when(primary.isFailed()).thenReturn(true);
-
-    assertThat(coordinator.canNotifyStatusChanged(error)).isFalse();
-  }
-
-  @Test
-  public void canNotifyStatusChanged_withError_failedPrimary_nonNullParentCanNotify_returnsTrue() {
+  public void canNotifyLoadStarted_withError_failedPrimary_nonNullParentCantNotify_returnsFalse() {
     coordinator = new ErrorRequestCoordinator(parent);
     coordinator.setRequests(primary, error);
     when(primary.isFailed()).thenReturn(true);
-    when(parent.canNotifyStatusChanged(coordinator)).thenReturn(true);
 
-    assertThat(coordinator.canNotifyStatusChanged(primary)).isTrue();
+    assertThat(coordinator.canNotifyLoadStarted(error)).isFalse();
+  }
+
+  @Test
+  public void canNotifyLoadStarted_withPrimary_failedPrimary_nonNullParentCanNotify_returnsTrue() {
+    coordinator = new ErrorRequestCoordinator(parent);
+    coordinator.setRequests(primary, error);
+    when(primary.isFailed()).thenReturn(true);
+    when(parent.canNotifyLoadStarted(coordinator)).thenReturn(true);
+
+    assertThat(coordinator.canNotifyLoadStarted(primary)).isTrue();
+  }
+
+  @Test
+  public void canNotifyLoadFailed_withNotFailedPrimary_nullParent_returnsFalse() {
+    assertThat(coordinator.canNotifyLoadFailed(primary)).isFalse();
+  }
+
+  @Test
+  public void canNotifyLoadFailed_withNotFailedPrimary_nonNullParentCantNotify_returnsFalse() {
+    coordinator = new ErrorRequestCoordinator(parent);
+    coordinator.setRequests(primary, error);
+    when(parent.canNotifyLoadFailed(eq(coordinator))).thenReturn(false);
+
+    assertThat(coordinator.canNotifyLoadFailed(primary)).isFalse();
+  }
+
+  @Test
+  public void canNotifyLoadFailed_withNotFailedPrimary_nonNullParentCanNotify_returnsFalse() {
+    coordinator = new ErrorRequestCoordinator(parent);
+    coordinator.setRequests(primary, error);
+    when(parent.canNotifyLoadFailed(coordinator)).thenReturn(true);
+
+    assertThat(coordinator.canNotifyLoadFailed(primary)).isFalse();
+  }
+
+  @Test
+  public void canNotifyLoadFailed_withError_nullParent_returnsTrue() {
+    assertThat(coordinator.canNotifyLoadFailed(error)).isTrue();
+  }
+
+  @Test
+  public void canNotifyLoadFailed_withError_failedPrimary_nullParent_returnsTrue() {
+    when(primary.isFailed()).thenReturn(true);
+
+    assertThat(coordinator.canNotifyLoadFailed(error)).isTrue();
+  }
+
+  @Test
+  public void canNotifyLoadFailed_withError_failedPrimary_nonNullParentCantNotify_returnsFalse() {
+    coordinator = new ErrorRequestCoordinator(parent);
+    coordinator.setRequests(primary, error);
+    when(primary.isFailed()).thenReturn(true);
+    when(parent.canNotifyLoadFailed(coordinator)).thenReturn(false);
+
+    assertThat(coordinator.canNotifyLoadFailed(error)).isFalse();
+  }
+
+  @Test
+  public void canNotifyLoadFailed_withError_failedPrimary_nonNullParentCanNotify_returnsTrue() {
+    coordinator = new ErrorRequestCoordinator(parent);
+    coordinator.setRequests(primary, error);
+    when(primary.isFailed()).thenReturn(true);
+    when(parent.canNotifyLoadFailed(coordinator)).thenReturn(true);
+
+    assertThat(coordinator.canNotifyLoadFailed(error)).isTrue();
+  }
+
+  @Test
+  public void canNotifyLoadFailed_withPrimary_failedPrimary_nonNullParentCanNotify_returnsFalse() {
+    coordinator = new ErrorRequestCoordinator(parent);
+    coordinator.setRequests(primary, error);
+    when(primary.isFailed()).thenReturn(true);
+    when(parent.canNotifyLoadFailed(coordinator)).thenReturn(true);
+
+    assertThat(coordinator.canNotifyLoadFailed(primary)).isFalse();
   }
 
   @Test
@@ -602,9 +669,9 @@ public class ErrorRequestCoordinatorTest {
   }
 
   @Test
-  public void canNotifyCleared_errorRequest_primaryFailed_nullParent_returnsTrue() {
+  public void canNotifyCleared_errorRequest_primaryFailed_nullParent_returnsFalse() {
     when(primary.isFailed()).thenReturn(true);
-    assertThat(coordinator.canNotifyCleared(error)).isTrue();
+    assertThat(coordinator.canNotifyCleared(error)).isFalse();
   }
 
   @Test
@@ -624,6 +691,6 @@ public class ErrorRequestCoordinatorTest {
     when(parent.canNotifyCleared(coordinator)).thenReturn(true);
     when(primary.isFailed()).thenReturn(true);
 
-    assertThat(coordinator.canNotifyCleared(error)).isTrue();
+    assertThat(coordinator.canNotifyCleared(error)).isFalse();
   }
 }

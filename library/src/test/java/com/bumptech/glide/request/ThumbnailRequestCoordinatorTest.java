@@ -202,49 +202,97 @@ public class ThumbnailRequestCoordinatorTest {
   }
 
   @Test
-  public void testCanNotifyStatusChangedIfFullAndNoRequestsAreComplete() {
-    assertTrue(coordinator.canNotifyStatusChanged(full));
+  public void testCanNotifyLoadStartedIfFullAndNoRequestsAreComplete() {
+    assertTrue(coordinator.canNotifyLoadStarted(full));
   }
 
   @Test
-  public void testCanNotNotifyStatusChangedIfThumb() {
-    assertFalse(coordinator.canNotifyStatusChanged(thumb));
+  public void testCanNotNotifyLoadStartedIfThumb() {
+    assertFalse(coordinator.canNotifyLoadStarted(thumb));
   }
 
   @Test
-  public void testCanNotNotifyStatusChangedIfFullHasResourceSet() {
+  public void testCanNotNotifyLoadStartedIfFullHasResourceSet() {
     when(full.isResourceSet()).thenReturn(true);
-    assertFalse(coordinator.canNotifyStatusChanged(full));
+    assertFalse(coordinator.canNotifyLoadStarted(full));
   }
 
   @Test
-  public void testCanNotNotifyStatusChangedIfThumbHasResourceSet() {
+  public void testCanNotNotifyLoadStartedIfThumbHasResourceSet() {
     when(thumb.isResourceSet()).thenReturn(true);
-    assertFalse(coordinator.canNotifyStatusChanged(full));
+    assertFalse(coordinator.canNotifyLoadStarted(full));
   }
 
   @Test
-  public void testCanNotNotifyStatusChangedIfParentHasResourceSet() {
+  public void testCanNotNotifyLoadStartedIfParentHasResourceSet() {
     coordinator = new ThumbnailRequestCoordinator(parent);
     coordinator.setRequests(full, thumb);
     when(parent.isAnyResourceSet()).thenReturn(true);
-    assertFalse(coordinator.canNotifyStatusChanged(full));
+    assertFalse(coordinator.canNotifyLoadStarted(full));
   }
 
   @Test
-  public void testCanNotifyStatusChangedIfParentAllowsNotify() {
+  public void testCanNotifyLoadStartedIfParentAllowsNotify() {
     coordinator = new ThumbnailRequestCoordinator(parent);
     coordinator.setRequests(full, thumb);
-    when(parent.canNotifyStatusChanged(eq(coordinator))).thenReturn(true);
-    assertTrue(coordinator.canNotifyStatusChanged(full));
+    when(parent.canNotifyLoadStarted(eq(coordinator))).thenReturn(true);
+    assertTrue(coordinator.canNotifyLoadStarted(full));
   }
 
   @Test
-  public void testCanNotNotifyStatusChangedIfParentDoesNotAllowNotify() {
+  public void testCanNotNotifyLoadStartedIfParentDoesNotAllowNotify() {
     coordinator = new ThumbnailRequestCoordinator(parent);
     coordinator.setRequests(full, thumb);
-    when(parent.canNotifyStatusChanged(eq(coordinator))).thenReturn(false);
-    assertFalse(coordinator.canNotifyStatusChanged(full));
+    when(parent.canNotifyLoadStarted(eq(coordinator))).thenReturn(false);
+    assertFalse(coordinator.canNotifyLoadStarted(full));
+  }
+
+
+  @Test
+  public void canNotifyLoadFailed_withFullRequest_noRequestsComplete_returnsTrue() {
+    assertThat(coordinator.canNotifyLoadFailed(full)).isTrue();
+  }
+
+  @Test
+  public void canNotNotifyLoadFailed_withThumbRequest_noRequestsComplete_returnsFalse() {
+    assertThat(coordinator.canNotifyLoadFailed(thumb)).isFalse();
+  }
+
+  // This should never happen in practice.
+  @Test
+  public void canNotNotifyLoadFailed_withFull_afterFullResourceSet_returnsFalse() {
+    when(full.isResourceSet()).thenReturn(true);
+    assertThat(coordinator.canNotifyLoadFailed(full)).isFalse();
+  }
+
+  @Test
+  public void canNotNotifyLoadFailed_withFull_afterThumbResourceSet_returnsFalse() {
+    when(thumb.isResourceSet()).thenReturn(true);
+    assertThat(coordinator.canNotifyLoadFailed(full)).isFalse();
+  }
+
+  @Test
+  public void canNotNotifyLoadFailed_withFull_ifParentHasResourceSet_returnsFalse() {
+    coordinator = new ThumbnailRequestCoordinator(parent);
+    coordinator.setRequests(full, thumb);
+    when(parent.isAnyResourceSet()).thenReturn(true);
+    assertThat(coordinator.canNotifyLoadFailed(full)).isFalse();
+  }
+
+  @Test
+  public void canNotifyLoadFailed_withFull_parentAllowsNotify_returnsTrue() {
+    coordinator = new ThumbnailRequestCoordinator(parent);
+    coordinator.setRequests(full, thumb);
+    when(parent.canNotifyLoadFailed(eq(coordinator))).thenReturn(true);
+    assertThat(coordinator.canNotifyLoadFailed(full)).isTrue();
+  }
+
+  @Test
+  public void canNotNotifyLoadFailed_withFull_parentDoesNotAllowNotify_returnsFalse() {
+    coordinator = new ThumbnailRequestCoordinator(parent);
+    coordinator.setRequests(full, thumb);
+    when(parent.canNotifyLoadFailed(eq(coordinator))).thenReturn(false);
+    assertThat(coordinator.canNotifyLoadFailed(full)).isFalse();
   }
 
   @Test

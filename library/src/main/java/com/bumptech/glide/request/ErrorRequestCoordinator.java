@@ -100,30 +100,39 @@ public final class ErrorRequestCoordinator implements RequestCoordinator,
     return parentCanSetImage() && isValidRequest(request);
   }
 
+  private boolean isValidRequest(Request request) {
+    return request.equals(primary) || (primary.isFailed() && request.equals(error));
+  }
+
   private boolean parentCanSetImage() {
     return parent == null || parent.canSetImage(this);
   }
 
   @Override
-  public boolean canNotifyStatusChanged(Request request) {
-    return parentCanNotifyStatusChanged() && isValidRequest(request);
+  public boolean canNotifyLoadStarted(Request request) {
+    return parentCanNotifyLoadStarted() && request.equals(primary);
+  }
+
+  @Override
+  public boolean canNotifyLoadFailed(Request request) {
+    return parentCanNotifyLoadFailed() && request.equals(error);
   }
 
   @Override
   public boolean canNotifyCleared(Request request) {
-    return parentCanNotifyCleared() && isValidRequest(request);
+    return parentCanNotifyCleared() && request.equals(primary);
+  }
+
+  private boolean parentCanNotifyLoadFailed() {
+    return parent == null || parent.canNotifyLoadFailed(this);
   }
 
   private boolean parentCanNotifyCleared() {
     return parent == null || parent.canNotifyCleared(this);
   }
 
-  private boolean parentCanNotifyStatusChanged() {
-    return parent == null || parent.canNotifyStatusChanged(this);
-  }
-
-  private boolean isValidRequest(Request request) {
-    return request.equals(primary) || (primary.isFailed() && request.equals(error));
+  private boolean parentCanNotifyLoadStarted() {
+    return parent == null || parent.canNotifyLoadStarted(this);
   }
 
   @Override

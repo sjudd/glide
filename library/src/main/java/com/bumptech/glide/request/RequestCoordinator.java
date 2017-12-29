@@ -18,7 +18,16 @@ public interface RequestCoordinator {
    *
    * @param request The {@link Request} requesting permission to display a placeholder.
    */
-  boolean canNotifyStatusChanged(Request request);
+  boolean canNotifyLoadStarted(Request request);
+
+  /**
+   * Returns {@code true} if the {@link Request} can notify the
+   * {@link com.bumptech.glide.request.target.Target} and/or {@link RequestListener} that the
+   * load has failed.
+   *
+   * @param request The {@link Request} requesting permission to notify.
+   */
+  boolean canNotifyLoadFailed(Request request);
 
   /**
    * Returns {@code true} if the {@link Request} can clear the

@@ -265,7 +265,7 @@ public final class SingleRequest<R> implements Request,
     }
 
     if ((status == Status.RUNNING || status == Status.WAITING_FOR_SIZE)
-        && canNotifyStatusChanged()) {
+        && canNotifyLoadStarted()) {
       target.onLoadStarted(getPlaceholderDrawable());
     }
     if (IS_VERBOSE_LOGGABLE) {
@@ -319,7 +319,7 @@ public final class SingleRequest<R> implements Request,
       return;
     }
     cancel();
-    // Resource must be released before canNotifyStatusChanged is called.
+    // Resource must be released before canNotifyCleared is called.
     if (resource != null) {
       releaseResource(resource);
     }
@@ -408,10 +408,6 @@ public final class SingleRequest<R> implements Request,
   }
 
   private void setErrorPlaceholder() {
-    if (!canNotifyStatusChanged()) {
-      return;
-    }
-
     Drawable error = null;
     if (model == null) {
       error = getFallbackDrawable();
@@ -491,8 +487,12 @@ public final class SingleRequest<R> implements Request,
     return requestCoordinator == null || requestCoordinator.canNotifyCleared(this);
   }
 
-  private boolean canNotifyStatusChanged() {
-    return requestCoordinator == null || requestCoordinator.canNotifyStatusChanged(this);
+  private boolean canNotifyLoadStarted() {
+    return requestCoordinator == null || requestCoordinator.canNotifyLoadStarted(this);
+  }
+
+  private boolean canNotifyLoadFailed() {
+    return requestCoordinator == null || requestCoordinator.canNotifyLoadFailed(this);
   }
 
   private boolean isFirstReadyResource() {
@@ -606,17 +606,19 @@ public final class SingleRequest<R> implements Request,
     loadStatus = null;
     status = Status.FAILED;
 
-    isCallingCallbacks = true;
-    try {
-      //TODO: what if this is a thumbnail request?
-      if ((requestListener == null
-          || !requestListener.onLoadFailed(e, model, target, isFirstReadyResource()))
-          && (targetListener == null
-          || !targetListener.onLoadFailed(e, model, target, isFirstReadyResource()))) {
-        setErrorPlaceholder();
+    if (canNotifyLoadFailed()) {
+      isCallingCallbacks = true;
+      try {
+        //TODO: what if this is a thumbnail request?
+        if ((requestListener == null
+            || !requestListener.onLoadFailed(e, model, target, isFirstReadyResource()))
+            && (targetListener == null
+            || !targetListener.onLoadFailed(e, model, target, isFirstReadyResource()))) {
+          setErrorPlaceholder();
+        }
+      } finally {
+        isCallingCallbacks = false;
       }
-    } finally {
-      isCallingCallbacks = false;
     }
 
     notifyLoadFailed();
