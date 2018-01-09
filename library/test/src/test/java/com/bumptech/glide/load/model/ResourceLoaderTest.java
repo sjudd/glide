@@ -10,6 +10,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.content.ContentResolver;
+import android.content.res.Resources;
 import android.net.Uri;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Options;
@@ -37,19 +39,26 @@ public class ResourceLoaderTest {
   private Options options;
 
   private ResourceLoader<Object> loader;
+  private Resources resources;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     options = new Options();
 
-    loader = new ResourceLoader<>(RuntimeEnvironment.application.getResources(), uriLoader);
+    resources = RuntimeEnvironment.application.getResources();
+    loader = new ResourceLoader<>(resources, uriLoader);
   }
 
   @Test
   public void testCanHandleId() {
     int id = android.R.drawable.star_off;
-    Uri contentUri = Uri.parse("android.resource://android/drawable/star_off");
+    Uri contentUri =
+        new Uri.Builder()
+            .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+            .authority(resources.getResourcePackageName(android.R.drawable.star_off))
+            .path(String.valueOf(android.R.drawable.star_off))
+            .build();
     when(uriLoader.buildLoadData(eq(contentUri), anyInt(), anyInt(), any(Options.class)))
         .thenReturn(new ModelLoader.LoadData<>(key, fetcher));
 

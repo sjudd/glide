@@ -474,11 +474,18 @@ public class GlideTest {
   }
 
   private void runTestIntegerDefaultLoader() {
-    int integer = android.R.drawable.star_on;
-    mockUri("android.resource://" + "android" + "/drawable/star_on");
+    int resourceId = android.R.drawable.star_on;
+    Uri uri =
+        new Uri.Builder()
+            .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+            .authority(context.getResources().getResourcePackageName(resourceId))
+            .path(String.valueOf(resourceId))
+            .build();
 
-    requestManager.load(integer).into(target);
-    requestManager.load(integer).into(imageView);
+    mockUri(uri);
+
+    requestManager.load(resourceId).into(target);
+    requestManager.load(resourceId).into(imageView);
 
     verify(target).onResourceReady(isA(BitmapDrawable.class), isA(Transition.class));
     verify(target).setRequest((Request) notNull());

@@ -39,10 +39,11 @@ public class ResourceLoader<Data> implements ModelLoader<Integer, Data> {
   @Nullable
   private Uri getResourceUri(Integer model) {
     try {
-      return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
-          + resources.getResourcePackageName(model) + '/'
-          + resources.getResourceTypeName(model) + '/'
-          + resources.getResourceEntryName(model));
+      return new Uri.Builder()
+          .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+          .authority(resources.getResourcePackageName(model))
+          .path(model.toString())
+          .build();
     } catch (Resources.NotFoundException e) {
       if (Log.isLoggable(TAG, Log.WARN)) {
         Log.w(TAG, "Received invalid resource id: " + model, e);
