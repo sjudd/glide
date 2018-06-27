@@ -2,14 +2,18 @@ package com.bumptech.glide.samples.gallery;
 
 import android.Manifest.permission;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 import com.bumptech.glide.MemoryCategory;
 
@@ -33,6 +37,29 @@ public class MainActivity extends FragmentActivity {
     } else {
       replaceFragment();
     }
+
+  }
+
+  private void runUriTest() {
+    for (Uri uri : new Uri[] {
+        MediaStore.Files.getContentUri("external"),
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+    }) {
+      Log.d("TEST", "querying: " + uri);
+      Integer count = null;
+      Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+      try {
+        if (cursor != null) {
+          count = cursor.getCount();
+        }
+      } finally {
+        if (cursor != null) {
+          cursor.close();
+        }
+      }
+      Log.d("TEST", "queried: " + uri + " got count: " + count);
+    }
   }
 
   private void requestStoragePermission() {
@@ -42,6 +69,7 @@ public class MainActivity extends FragmentActivity {
   }
 
   private void replaceFragment() {
+    runUriTest();
     Fragment fragment = new HorizontalGalleryFragment();
     getSupportFragmentManager()
         .beginTransaction()
