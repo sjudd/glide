@@ -606,7 +606,7 @@ public class CustomViewTargetTest {
 
   @Test
   public void onLoadCleared_withoutClearOnDetach_doesNotRemoveListeners() {
-    AtomicInteger count = new AtomicInteger();
+    final AtomicInteger count = new AtomicInteger();
     OnAttachStateChangeListener expected =
         new OnAttachStateChangeListener() {
           @Override

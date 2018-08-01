@@ -41,7 +41,7 @@ public abstract class CustomViewTarget<T extends View, Z> implements Target<Z> {
   @Nullable private OnAttachStateChangeListener attachStateListener;
   private boolean isClearedByUs;
   private boolean isAttachStateListenerAdded;
-  @IdRes private int overrideTag = 0;
+  @IdRes private int overrideTag;
 
   /** Constructor that defaults {@code waitForLayout} to {@code false}. */
   public CustomViewTarget(@NonNull T view) {
