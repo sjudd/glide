@@ -1,6 +1,6 @@
 package com.bumptech.glide.test;
 
-import androidx.test.InstrumentationRegistry;
+import android.support.test.InstrumentationRegistry;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import org.junit.rules.TestRule;
