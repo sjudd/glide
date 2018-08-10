@@ -2,11 +2,10 @@
   package="com.bumptech.glide.instrumentation.test">
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <application android:label="GlideTest">
-    <uses-library android:name="android.test.runner"
-      android:required="false" />
+    <uses-library android:name="android.test.runner" />
   </application>
 
   <instrumentation android:targetPackage="com.bumptech.glide.instrumentation"
-                   android:name="android.test.InstrumentationTestRunner"
+                   android:name="com.google.android.apps.common.testing.testrunner.Google3InstrumentationTestRunner"
                    android:label="Glide Emulator Tests" />
 </manifest>
