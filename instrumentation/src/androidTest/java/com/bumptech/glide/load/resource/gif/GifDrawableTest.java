@@ -1,10 +1,14 @@
 package com.bumptech.glide.load.resource.gif;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.TruthJUnit.assume;
 
 import android.Manifest.permission;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
@@ -12,9 +16,14 @@ import android.widget.ImageView;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 import androidx.test.runner.AndroidJUnit4;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.gif.GifDrawable.GifState;
 import com.bumptech.glide.load.resource.gif.GifFrameLoader.OnEveryFrameListener;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.DrawableImageViewTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.test.ConcurrencyHelper;
 import com.bumptech.glide.test.GlideApp;
 import com.bumptech.glide.test.ResourceIds;
@@ -49,6 +58,91 @@ public class GifDrawableTest {
   public void setUp() {
     context = InstrumentationRegistry.getTargetContext();
   }
+
+  @Test
+  public void loadGif_onResourceReadyInTarget_stopAndThenStartFromFirstFrame_doesNotThrow() {
+    // N+ uses various properties other than the View's visibility to call setVisible on any given Drawable. We could
+    // write tests that met those requirements, but it seems more effort than it's worth.
+    assume().that(Build.VERSION.SDK_INT).isAtMost(Build.VERSION_CODES.M);
+
+    final ImageView imageView = new ImageView(context);
+    imageView.layout(0, 0, 100, 100);
+    imageView.setVisibility(View.VISIBLE);
+
+    concurrencyHelper.loadOnMainThread(
+            GlideApp.with(context).load(ResourceIds.raw.dl_world_anim),
+            new DrawableImageViewTarget(imageView) {
+              @Override
+              public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                super.onResourceReady(resource, transition);
+                GifDrawable gifDrawable = (GifDrawable) resource;
+                gifDrawable.stop();
+                gifDrawable.startFromFirstFrame();
+              }
+            });
+  }
+
+  @Test
+  public void loadGif_onResourceReadyInTarget_stopAndThenRestartGifWithSingleLoop_doesNotThrow() {
+    // N+ uses various properties other than the View's visibility to call setVisible on any given Drawable. We could
+    // write tests that met those requirements, but it seems more effort than it's worth.
+    assume().that(Build.VERSION.SDK_INT).isAtMost(Build.VERSION_CODES.M);
+
+    final ImageView imageView = new ImageView(context);
+    imageView.layout(0, 0, 100, 100);
+
+    concurrencyHelper.loadOnMainThread(
+            GlideApp.with(context).load(ResourceIds.raw.dl_world_anim),
+            new DrawableImageViewTarget(imageView) {
+              @Override
+              public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                super.onResourceReady(resource, transition);
+                GifDrawable gifDrawable = (GifDrawable) resource;
+                gifDrawable.stop();
+                gifDrawable.setLoopCount(1);
+                gifDrawable.start();
+              }
+            });
+  }
+
+  @Test
+  public void loadGif_onResourceReadyInRequestListener_stopAndThenRestartGifWithSingleLoop_doesNotThrow() {
+    // N+ uses various properties other than the View's visibility to call setVisible on any given Drawable. We could
+    // write tests that met those requirements, but it seems more effort than it's worth.
+    assume().that(Build.VERSION.SDK_INT).isAtMost(Build.VERSION_CODES.M);
+
+    final ImageView imageView = new ImageView(context);
+    imageView.layout(0, 0, 100, 100);
+
+    concurrencyHelper.loadOnMainThread(
+            GlideApp.with(context)
+                    .load(ResourceIds.raw.dl_world_anim)
+                    .listener(new RequestListener<Drawable>() {
+                      @Override
+                      public boolean onLoadFailed(
+                              @Nullable GlideException e,
+                              Object model, Target<Drawable> target,
+                              boolean isFirstResource) {
+                        return false;
+                      }
+
+                      @Override
+                      public boolean onResourceReady(
+                              Drawable resource,
+                              Object model,
+                              Target<Drawable> target,
+                              DataSource dataSource,
+                              boolean isFirstResource) {
+                        GifDrawable gifDrawable = (GifDrawable) resource;
+                        gifDrawable.stop();
+                        gifDrawable.setLoopCount(1);
+                        gifDrawable.start();
+                        return false;
+                      }
+                    }),
+            imageView);
+  }
+
 
   @Test
   public void loadGif_withInterlacedTransparentGif_sizeOriginal_succeeds()

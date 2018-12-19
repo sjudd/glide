@@ -169,7 +169,7 @@ public class ConcurrencyHelper {
     waitOnLatch(latch);
   }
 
-  private <T> void loadOnMainThread(final RequestBuilder<T> builder, final Target<T> target) {
+  public <T> void loadOnMainThread(final RequestBuilder<T> builder, final Target<T> target) {
     final CountDownLatch latch = new CountDownLatch(1);
     callOnMainThread(new Callable<Target<T>>() {
       @Override
