@@ -203,6 +203,13 @@ public class GifDrawableTest {
     gifDrawable.stop();
   }
 
+  @Test
+  public void test_issue_3227() {
+    GifDrawable drawable =
+            concurrencyHelper.get(GlideApp.with(context).asGif().load(ResourceIds.raw.issue_3227).submit());
+    assertThat(drawable).isNotNull();
+  }
+
   @SuppressWarnings("deprecation")
   private void addViewToWindow(View view) {
     WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
